@@ -1,11 +1,10 @@
 <template>
 	 <div class='footer'>
         <p class="intro rflex">
-            <span>{{ $t('commons.xiaoai') }}Admin</span>
+            <span>小爱Admin</span>
             <a :href='github' target="_blank">
                <icon-svg icon-class="iconGithub" />
             </a>
-            <span>wdlhao2013({{ $t('commons.wechatNumber') }})</span>
         </p>
         <p class="beian">鄂ICP备18001612号</p>
     </div>
@@ -41,7 +40,7 @@ export default {
         .intro{
             width: 240px;
             margin: 0 auto;
-            justify-content: space-between;
+            justify-content: space-around;
             align-items: center;
         }
     }
