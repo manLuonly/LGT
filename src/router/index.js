@@ -83,35 +83,24 @@ export default new Router({
 
 //异步路由（需要权限的页面）
 export const asyncRouterMap = [{
-        path: '/userManager',
-        name: 'userManage',
-        component: Layout,
-        meta: {
-            title: '用户管理',
-            icon: 'iconuser',
-        },
-        noDropdown: true,
-        children: [{
-            path: 'userList',
-            meta: {
-                title: '用户管理',
-                icon: 'iconuser',
-                routerType: 'leftmenu'
-            },
-            component: () =>
-                import ('@/page/userList/userList'),
-        }]
-    },
-
-    {
         path: '/projectManagement',
         name: 'projectManagement',
         meta: {
             title: '项目管理',
-            icon: 'iconpay3',
+            icon: 'iconecharts',
         },
         component: Layout,
         children: [{
+                path: 'caseDataLook',
+                name: 'caseDataLook',
+                meta: {
+                    title: '案例数据查看',
+                    routerType: 'leftmenu'
+                },
+                component: () =>
+                    import ('@/page/fundList/caseDataLook'),
+            },
+            {
                 path: 'lookCase',
                 name: 'lookCase',
                 meta: {
@@ -152,6 +141,15 @@ export const asyncRouterMap = [{
                     import ('@/page/fundData/fundPosition')
             },
             {
+                path: 'addCustomerProject',
+                name: 'addCustomerProject',
+                meta: {
+                    title: '添加项目'
+                },
+                component: () =>
+                    import ('@/page/fundData/addCustomerProject')
+            },
+            {
                 path: 'userInfo',
                 name: 'userInfo',
                 meta: {
@@ -159,16 +157,7 @@ export const asyncRouterMap = [{
                 },
                 component: () =>
                     import ('@/page/fundData/typePosition')
-            },
-            // {
-            //     path: 'incomePayPosition',
-            //     name: 'incomePayPosition',
-            //     meta: {
-            //         title: '收支统计'
-            //     },
-            //     component: () =>
-            //         import ('@/page/fundData/incomePayPosition')
-            // }
+            }
         ]
     },
     {
@@ -258,22 +247,22 @@ export const asyncRouterMap = [{
                 component: Content,
                 children: filterTopRouterMap('infoShow')
             },
-            {
-                path: 'loginOut',
-                name: 'loginOut',
-                meta: {
-                    title: '退出',
-                    icon: 'iconinfo',
-                    routerType: 'leftmenu',
-                    titleList: [
-                        { "path": "infoModify1", "title": "修改信息子菜单1" },
-                        { "path": "infoModify2", "title": "修改信息子菜单2" },
-                        { "path": "infoModify3", "title": "修改信息子菜单3" }
-                    ]
-                },
-                component: Content,
-                children: filterTopRouterMap('infoModify')
-            }
+            // {
+            //     path: 'loginOut',
+            //     name: 'loginOut',
+            //     meta: {
+            //         title: '退出',
+            //         icon: 'iconinfo',
+            //         routerType: 'leftmenu',
+            //         titleList: [
+            //             { "path": "infoModify1", "title": "修改信息子菜单1" },
+            //             { "path": "infoModify2", "title": "修改信息子菜单2" },
+            //             { "path": "infoModify3", "title": "修改信息子菜单3" }
+            //         ]
+            //     },
+            //     component: Content,
+            //     children: filterTopRouterMap('infoModify')
+            // }
         ]
     },
 

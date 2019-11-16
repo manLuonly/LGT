@@ -1,7 +1,7 @@
 <template>
 	 <div class='footer'>
         <p class="intro rflex">
-            <span>小爱Admin</span>
+            <span>LGT后台管理</span>
             <a :href='github' target="_blank">
                <icon-svg icon-class="iconGithub" />
             </a>
