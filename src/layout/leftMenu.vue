@@ -1,7 +1,9 @@
 <template>
    <div class="menu_left cflex" :style="{width:sidebar.width+'px'}">
         <div class="menu_page_top rflex">
-            <img :class='["logo",{"closeLogo":!sidebar.opened}]' :src="logo">
+            <div class="logo">
+                <img  src="~@/assets/img/LGTlogo.png">
+            </div>
             <span class='title' v-show="sidebar.opened">LGT后台管理</span>
         </div>
         <div class="menu_page_bottom is-scroll-left">
@@ -51,8 +53,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import * as mUtils from "@/utils/mUtils";
-import logoImg from "@/assets/img/LGTlogo.png";
-
 
 export default {
   name: "left-Menu",
@@ -63,7 +63,6 @@ export default {
          textColor:'#666',
          activeTextColor:'#ff6428',
        },
-       logo:logoImg
     };
   },
   computed:{
@@ -95,7 +94,6 @@ export default {
         top:0;
         left:0;
         bottom:0;
-        transition: all .5s;
     }
     .menu_page_top{
         width:100%;
@@ -107,13 +105,12 @@ export default {
         box-shadow:0px 2px 5px 0px rgba(230,224,224,0.5);
         .logo {
             height: 25px;
-            width: 30px;
-            vertical-align: middle;
-            display: inline-block;
-        }
-        .closeLogo{
-            width:30px;
-            height:30px;
+            width: 36px;
+            
+            img {
+                width: 100%;
+                height: 100%;
+            }
         }
         .title{
             font-size: 21px;

@@ -22,22 +22,16 @@
 </template>
 
 <script>
-	import barChart from 'cps/echarts/barChart' // 用户投资类型 柱状图
 	import pieChart from 'cps/echarts/pieChart' // 用户投资类型 饼状图
-	import radarChart from 'cps/echarts/radarChart' // 用户投资类型 雷达图
 	import lineChart from 'cps/echarts/lineChart' // 用户投资类型 折线图
-	import { github } from "@/utils/env";
 
     export default {
     	data(){
     		return {
-			  github:github
     		}
     	},
     	components: {
-		   barChart,
 		   pieChart,
-		   radarChart,
 		   lineChart
 		},	
 		created(){
@@ -76,42 +70,6 @@
 				height: 370px;
 			}
 		}
-		.data_list{
-			text-align: center;
-			font-size: 14px;
-            border-radius: 6px;
-			padding: 10px;
-			color:#fff;
-			height: 80px;
-			.leftItem{
-				align-items: start;
-				justify-content: space-between;
-				text-align: left;
-			}
-			.rightItem{
-				width:62px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				.svg-icon{
-					font-size: 30px;
-				}
-			}
-		    .number{
-				font-size: 22px;
-				font-weight: bold;
-				.perTitle{
-					font-size: 13px;
-   				    margin-left: 5px;
-				}
-			}
-		}
-		.pay{
-			.leftItem{
-				justify-content: space-around;
-			}
-		}
-     
 	}
   
 </style>
