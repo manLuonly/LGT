@@ -104,7 +104,7 @@ export const asyncRouterMap = [{
                 path: 'lookCase',
                 name: 'lookCase',
                 meta: {
-                    title: '查看案例',
+                    title: '案例分类',
                     routerType: 'leftmenu'
                 },
                 component: () =>

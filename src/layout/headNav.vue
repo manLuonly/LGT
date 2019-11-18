@@ -8,7 +8,7 @@
           <el-menu class="el-menu-demo" mode="horizontal">
             <div class="welcome">
               <span class="name">你好,</span>
-              <span class="name avatarname">{{ name }}</span>
+              <span class="name avatarname">{{ trueName }}</span>
             </div>
             <img :src="avatar" class="avatar" alt />
           </el-menu>
@@ -42,7 +42,7 @@ export default {
       menu: {
         userBgcolor: "#f0f2f5"
       },
-      name: "卢广宗"
+      trueName: "卢广宗"
     };
   },
   components: {

@@ -11,7 +11,7 @@ const zh = {
         // share: '分享功能',
         projectManagement: '项目管理',
         caseDataLook: '案例数据查看',
-        lookCase: '查看案例',
+        lookCase: '案例分类',
         addCase: '添加案例',
         clientManagement: '客户管理',
         projectStatistics: '项目统计',
