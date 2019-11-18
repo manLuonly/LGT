@@ -1,7 +1,7 @@
 <template>
 	 <div class='bread_container' id="bread_container">
 	    <span @click="handleLefeMenu" class="bars"> 
-			<icon-svg icon-class="iconmenu-fold" :class="{isactive:changeBarDirection}" />
+			<icon-svg :icon-class="changeBarDirection ? 'icon-right' : 'icon-left'"  style="color:#409EFF" />
 		</span>
         <el-breadcrumb class="breadcrumb" separator="/">
             <el-breadcrumb-item 
@@ -72,13 +72,6 @@ export default {
 			float: left;
             margin: 4px 10px;
 			cursor: pointer;
-			.isactive{
-				-webkit-transform: rotate(90deg);
-				transform: rotate(90deg);
-				transition: .38s;
-				-webkit-transform-origin: 50% 50%;
-				transform-origin: 50% 50%;
-			}
 		}
 		.breadcrumb{
 			height: 30px;

@@ -95,6 +95,7 @@ export default {
         top:0;
         left:0;
         bottom:0;
+        transition: all .5s;
     }
     .menu_page_top{
         width:100%;
