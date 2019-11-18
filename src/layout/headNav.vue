@@ -5,12 +5,15 @@
       <div class="userinfo-right rflex">
         <div class="notify-row"></div>
         <div class="userinfo">
-          <el-menu class="el-menu-demo" mode="horizontal">
+          <el-menu  mode="horizontal" >
             <div class="welcome">
               <span class="name">你好,</span>
               <span class="name avatarname">{{ trueName }}</span>
             </div>
             <img :src="avatar" class="avatar" alt />
+            <el-tooltip class="item" effect="dark" content="退出登录" placement="bottom">
+              <i class="el-icon-switch-button loginout_icon"></i>
+            </el-tooltip>
           </el-menu>
         </div>
       </div>
@@ -24,21 +27,11 @@ import * as mUtils from "@/utils/mUtils";
 import { setToken, getToken } from "@/utils/auth";
 import store from "@/store";
 import topMenu from "./topMenu";
-import wechatImg from "@/assets/img/wechat.jpg";
-import qqImg from "@/assets/img/qq.png";
-import logoImg from "@/assets/img/logo.png";
-import chinaImg from "@/assets/img/china.svg";
-import americaImg from "@/assets/img/america.svg";
-import { github } from "@/utils/env";
 
 export default {
   name: "head-nav",
   data() {
     return {
-      logo: logoImg,
-      langLogo: getToken("langLogo") || americaImg,
-      chinaImg: chinaImg,
-      americaImg: americaImg,
       menu: {
         userBgcolor: "#f0f2f5"
       },
@@ -49,7 +42,7 @@ export default {
     topMenu
   },
   computed: {
-    ...mapGetters(["name", "avatar", "sidebar"]),
+    ...mapGetters([ "avatar", "sidebar"]),
     headNavWidth() {
       return document.body.clientWidth - this.sidebar.width;
     }
@@ -57,18 +50,6 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    showWechat() {
-      this.wechat.isWechat = true;
-    },
-    hideWechat() {
-      this.wechat.isWechat = false;
-    },
-    showQq() {
-      this.qq.isQq = true;
-    },
-    hideQq() {
-      this.qq.isQq = false;
-    },
     logout() {
       this.$store.dispatch("LogOut").then(() => {
         location.reload();
@@ -114,6 +95,11 @@ export default {
 .userinfo {
   line-height: 60px;
   text-align: right;
+  .loginout_icon {
+    padding: 10px 0;
+    margin-left: 10px;
+    cursor: pointer;
+  }
 }
 .avatar {
   width: 32px;
