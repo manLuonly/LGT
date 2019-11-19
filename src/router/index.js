@@ -114,7 +114,7 @@ export const asyncRouterMap = [{
                 path: 'addCase',
                 name: 'addCase',
                 meta: {
-                    title: '添加案例',
+                    title: '案例列表',
                     routerType: 'leftmenu'
                 },
                 component: () =>

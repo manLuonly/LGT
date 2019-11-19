@@ -17,22 +17,29 @@
       >
         <el-table-column v-if="idFlag" prop="id" label="id" align="center" width="180"></el-table-column>
         <el-table-column align="center" label="启停" width="60">
-          <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <template slot-scope="scope">
+            <el-switch
+              v-model="value"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              @change="changeSwitch(scope.row)"
+            ></el-switch>
+          </template>
         </el-table-column>
-        <el-table-column label="排序" align="center" width="80" >
-            <template slot-scope="scope">   
-               <span>{{ table_index(scope.$index) }}</span> 
-            </template>
+        <el-table-column label="排序" align="center" width="80">
+          <template slot-scope="scope">
+            <span>{{ table_index(scope.$index) }}</span>
+          </template>
         </el-table-column>
-        <el-table-column label="分类名称" align="center" width="80">
+        <el-table-column label="分类名称" align="center">
           <template slot-scope="scope">
             <el-tag>{{ scope.row.username }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column v-if="idFlag" prop="address" label="分类名称" align="center"></el-table-column>
-        <el-table-column prop="address" label="跳转地址" align="center">
+        <el-table-column prop="address" label="跳转地址" align="center" >
           <template slot-scope="scope">
-            <el-tag>{{ scope.row.address }}</el-tag>
+            <el-input placeholder="请输入内容" v-model="scope.row.address" :disabled="true"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="更新时间" align="center" sortable width="170">
@@ -280,8 +287,15 @@ export default {
       }
       this.$store.commit("SET_SEARCHBTN_DISABLED", isFlag);
     },
+    // 添加序号
     table_index(index) {
-      return (this.incomePayData.page - 1) * this.incomePayData.limit + index + 1;
+      return (
+        (this.incomePayData.page - 1) * this.incomePayData.limit + index + 1
+      );
+    },
+    // 改变 Switch状态
+    changeSwitch(val) {
+      console.log(val);
     }
   }
 };
