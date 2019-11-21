@@ -59,9 +59,9 @@ export default {
   data() {
     return {
        menuObj:{
-         bgColor:'#fff',
-         textColor:'#666',
-         activeTextColor:'#ff6428',
+         bgColor:'#304155',
+         textColor:'#fff',
+         activeTextColor:'#3D92E5',
        },
     };
   },

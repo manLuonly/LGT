@@ -13,7 +13,7 @@
       <div class="search">
         <el-input class="search-input" placeholder="请输入名称" v-model="searchVal" clearable></el-input>
         <div class="search-button">
-          <el-button icon="el-icon-search"></el-button>
+          <el-button icon="el-icon-search" size="medium"></el-button>
         </div>
       </div>
     </div>
@@ -347,6 +347,10 @@ export default {
     width: 217px;
     height: 40px;
     line-height: 40px;
+    /deep/ .el-input__inner {
+      height: 36px !important;
+      line-height: 36px !important;
+    }
   }
   .search-button {
     display: inline-block;
@@ -354,6 +358,14 @@ export default {
     line-height: 40px;
   }
 }
+// .fillcontain {
+//   .search-input {
+//     >>> .el-input__inner {
+//       height: 36px !important;
+//       line-height: 36px !important;
+//     }
+//   }
+// }
 </style>
 
 

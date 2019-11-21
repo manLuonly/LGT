@@ -13,7 +13,7 @@
                 :rules="form_rules"
                 :label-width="dialog.formLabelWidth" 
                 style="margin:10px;width:auto;">
-                <el-form-item prop='incomePayType' label="收支类型:" >
+                <!-- <el-form-item prop='incomePayType' label="收支类型:" >
                     <el-select v-model="form.incomePayType" placeholder="收支类型">
                         <el-option
                             v-for="item in payType"
@@ -22,13 +22,13 @@
                             :value="item.value">
                         </el-option>
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
 
-                <el-form-item prop='username' label="用户名:">
+                <el-form-item prop='username' label="分类名称:">
                     <el-input type="text" v-model="form.username"></el-input>
                 </el-form-item>
                 
-                 <el-form-item prop="address" label="籍贯:">
+                 <!-- <el-form-item prop="address" label="籍贯:">
                     <el-cascader
                         v-model="form.address"
                         placeholder="请选择地区"
@@ -37,19 +37,19 @@
                         @change="handleChange"
                         ref="cascaderAddr">
                     </el-cascader>
-                </el-form-item>
+                </el-form-item> -->
 
-                <el-form-item prop='income'  label="收入:">
+                <el-form-item prop='income'  label="跳转地址:">
                     <el-input v-model.number="form.income"></el-input>
                 </el-form-item>
 
-                <el-form-item prop='pay' label="支出:">
+                <el-form-item prop='pay' label="更新时间:">
                     <el-input v-model.number="form.pay"></el-input>
                 </el-form-item>
 
-                <el-form-item prop='accoutCash' label="账户现金:">
+                <!-- <el-form-item prop='accoutCash' label="账户现金:">
                     <el-input v-model.number="form.accoutCash"></el-input>
-                </el-form-item>
+                </el-form-item> -->
 
                 <el-form-item label="备注:">
                     <el-input type="textarea" v-model="form.remarks"></el-input>

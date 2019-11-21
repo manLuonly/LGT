@@ -127,7 +127,7 @@ export const asyncRouterMap = [{
         name: 'clientManagement',
         meta: {
             title: '客户管理',
-            icon: 'iconecharts',
+            icon: 'iconuser',
         },
         component: Layout,
         redirect: '/clientManagement/projectStatistics',
