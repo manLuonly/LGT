@@ -19,6 +19,7 @@
         <el-table-column align="center" label="启停" width="60">
           <template slot-scope="scope">
             <el-switch
+              :disabled="true"
               v-model="value"
               active-color="#13ce66"
               inactive-color="#ff4949"
