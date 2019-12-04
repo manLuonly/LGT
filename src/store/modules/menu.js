@@ -8,7 +8,7 @@ const types = {
 }
 const menu = { 
     state :{
-        minLeftMenuWidth:35,
+        minLeftMenuWidth:60,
         maxLeftMenuWidth:180,
         sidebar: {
             opened: true,  

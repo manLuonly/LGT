@@ -24,15 +24,15 @@
                             <el-menu-item class="dropItem" 
                                 :index="item.path+'/'+item.children[0].path"
                                 >
-                                <icon-svg v-if="item.meta.icon" :icon-class="item.meta.icon" />
-                                <span v-if="item.meta.title" slot="title">{{ $t(`commons.${item.name}`)}}</span> 
+                                <icon-svg v-if="item.meta.icon" :icon-class="item.meta.icon" class="submenu-item_icon"/>
+                                <span v-if="item.meta.title" slot="title" class="submenu-item_name">{{ $t(`commons.${item.name}`)}}</span> 
                             </el-menu-item>
                         </router-link>
 
                         <!--表示 有二级或者多级菜单 -->
                         <el-submenu v-if="item.children  && item.children.length >= 1 && !item.hidden && !item.noDropdown"  :index="item.path" :key="index">
                             <template slot="title">
-                                <icon-svg v-if="item.meta.icon" :icon-class="item.meta.icon" />
+                                <icon-svg v-if="item.meta.icon" :icon-class="item.meta.icon" class="submenu-item_icon"/>
                                 <span v-if="item.meta.title" slot="title" class="submenu-item_name">{{ $t(`commons.${item.name}`)}}</span>
                             </template>
                             <!--直接定位到子路由上，子路由也可以实现导航功能-->
@@ -127,8 +127,11 @@ export default {
         margin-top:3px;
         z-index: 10;
         box-shadow: 0 0 10px 0 rgba(230, 224, 224, 0.5);
-        .submenu-item_name {
+        .submenu-item_icon {
             margin-left: 10px;
+        }
+        .submenu-item_name {
+            margin-left: 14px;
         }
     }
 </style>
