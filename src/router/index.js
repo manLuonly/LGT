@@ -87,7 +87,7 @@ export const asyncRouterMap = [{
         name: 'projectManagement',
         meta: {
             title: '项目管理',
-            icon: 'iconecharts',
+            icon: 'icon-xiangmu',
         },
         component: Layout,
         children: [{
@@ -127,7 +127,7 @@ export const asyncRouterMap = [{
         name: 'clientManagement',
         meta: {
             title: '客户管理',
-            icon: 'iconuser',
+            icon: 'icon-kehuguanli',
         },
         component: Layout,
         redirect: '/clientManagement/projectStatistics',
@@ -166,7 +166,7 @@ export const asyncRouterMap = [{
         name: 'serviceProject',
         meta: {
             title: '服务项目',
-            icon: 'iconError'
+            icon: 'icon-fuwuxiangmu'
         },
         children: [{
                 path: 'addProject',
@@ -196,7 +196,7 @@ export const asyncRouterMap = [{
         name: 'permission',
         meta: {
             title: '权限设置',
-            icon: 'iconpermission',
+            icon: 'icon-quanxianguanli',
             roles: ['admin', 'editor'] // you can set roles in root nav
         },
         component: Layout,
@@ -226,7 +226,7 @@ export const asyncRouterMap = [{
         name: 'personalInfo',
         meta: {
             title: '个人信息',
-            icon: 'iconinfo',
+            icon: 'icon-gerenxinxi',
         },
         component: Layout,
         children: [{

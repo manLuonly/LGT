@@ -33,7 +33,7 @@
                         <el-submenu v-if="item.children  && item.children.length >= 1 && !item.hidden && !item.noDropdown"  :index="item.path" :key="index">
                             <template slot="title">
                                 <icon-svg v-if="item.meta.icon" :icon-class="item.meta.icon" />
-                                <span v-if="item.meta.title" slot="title">{{ $t(`commons.${item.name}`)}}</span>
+                                <span v-if="item.meta.title" slot="title" class="submenu-item_name">{{ $t(`commons.${item.name}`)}}</span>
                             </template>
                             <!--直接定位到子路由上，子路由也可以实现导航功能-->
                             <router-link v-for="(citem,cindex) in item.children" :to="getIindex(citem,item,cindex)"  :key="cindex">
@@ -119,13 +119,16 @@ export default {
             }
         }
     }
-  .menu_page_bottom {
-      width:100%;
-      overflow-y: scroll;
-      overflow-x: hidden;
-      flex:1;
-      margin-top:3px;
-      z-index: 10;
-      box-shadow: 0 0 10px 0 rgba(230, 224, 224, 0.5)
-  }
+    .menu_page_bottom {
+        width:100%;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        flex:1;
+        margin-top:3px;
+        z-index: 10;
+        box-shadow: 0 0 10px 0 rgba(230, 224, 224, 0.5);
+        .submenu-item_name {
+            margin-left: 10px;
+        }
+    }
 </style>
