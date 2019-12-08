@@ -17,6 +17,7 @@
     "element-ui": "^2.11.1",
     "express": "^4.17.1",
     "js-cookie": "^2.2.1",
+    "js-md5": "^0.7.3",
     "mockjs": "^1.0.1-beta3",
     "nprogress": "^0.2.0",
     "qrcodejs2": "0.0.2",

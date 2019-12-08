@@ -1,3 +1,15 @@
+let md5 = require('js-md5')
+
+/**
+ * 将md5加密方法挂在window上
+ * 
+ * @param 
+ * 
+ * @example _md5("lijiacheng")
+ * 
+ * @return {string} 加密后的字符串
+ */
+window._md5 = md5
 /**
  * 存储localStorage
  */
