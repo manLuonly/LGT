@@ -12,7 +12,7 @@
             </div>
             <img :src="avatar" class="avatar" alt />
             <el-tooltip class="item" effect="dark" content="退出登录" placement="bottom">
-              <i class="el-icon-switch-button loginout_icon"></i>
+              <i class="el-icon-switch-button loginout_icon" @click="logout"></i>
             </el-tooltip>
           </el-menu>
         </div>
@@ -24,9 +24,12 @@
 <script>
 import { mapGetters } from "vuex";
 import * as mUtils from "@/utils/mUtils";
-import { setToken, getToken } from "@/utils/auth";
+import { setToken, getToken,removeToken } from "@/utils/auth";
 import store from "@/store";
 import topMenu from "./topMenu";
+import { logout } from "@/api/user";
+import router from '../router'
+
 
 export default {
   name: "head-nav",
@@ -51,9 +54,15 @@ export default {
   mounted() {},
   methods: {
     logout() {
-      this.$store.dispatch("LogOut").then(() => {
-        location.reload();
-      });
+      // this.$store.dispatch("LogOut").then(() => {
+      //   location.reload();
+      // });
+      logout().then(res => {
+        if (res.success === 0) {
+          window.location.reload();
+          console.log('退出成功')
+        }
+      })
     }
   }
 };

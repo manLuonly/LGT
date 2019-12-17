@@ -1,36 +1,42 @@
 import request from '@/utils/axios'
+const url = "192.168.0.106:8080";
 
 
 export function login(params) {
-  return request({
-    url: '/user/login',
-    method: 'get',
-    data:params
-  })
+    return request({
+        url: '/management/login',
+        method: 'post',
+        data: params
+    })
 }
-export function logout(params) {
-  return request({
-    url: '/user/logout',
-    method: 'get',
-    data:params
-  })
+// export function login(params) {
+//     return request({
+//         url: '/user/login',
+//         method: 'get',
+//         data: params
+//     })
+// }
+
+export function logout() {
+    return request({
+        url: '/management/signout',
+        method: 'get'
+    })
 }
 
 
 export function getUserInfo(params) {
-  return request({
-    url: '/user/info/get',
-    method: 'get',
-    data:params
-  })
+    return request({
+        url: '/user/info/get',
+        method: 'get',
+        data: params
+    })
 }
 
 export function getUserList(reqData) {
-  return request({
-    url:'/user/list/get',
-    method: 'get',
-    data: reqData
-  })
+    return request({
+        url: '/user/list/get',
+        method: 'get',
+        data: reqData
+    })
 }
-
-

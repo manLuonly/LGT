@@ -34,7 +34,7 @@ export const constantRouterMap = [{
         hidden: true
     },
     {
-        path: '/login',
+        path: '/lgz/login',
         name: 'login',
         component: () =>
             import ('@/page/login'),
@@ -76,7 +76,7 @@ export const constantRouterMap = [{
 
 //注册路由
 export default new Router({
-    // mode: 'history', // 默认为'hash'模式
+    mode: 'history', // 默认为'hash'模式
     base: '/', // 添加跟目录,对应服务器部署子目录
     routes: constantRouterMap
 })
@@ -236,16 +236,11 @@ export const asyncRouterMap = [{
                     title: '修改信息',
                     icon: 'iconinfo',
                     routerType: 'leftmenu',
-                    titleList: [
-                        { "path": "infoShow1", "title": "个人信息子菜单1" },
-                        { "path": "infoShow2", "title": "个人信息子菜单2" },
-                        { "path": "infoShow3", "title": "个人信息子菜单3" },
-                        { "path": "infoShow4", "title": "个人信息子菜单4" },
-                        { "path": "infoShow5", "title": "个人信息子菜单5" }
-                    ]
+
                 },
-                component: Content,
-                children: filterTopRouterMap('infoShow')
+                component: () =>
+                    import ('@/page/info/updateInfo'),
+
             },
             // {
             //     path: 'loginOut',

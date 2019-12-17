@@ -1,5 +1,5 @@
 <template>
-		<section class="data_section" ref="data_section"> 
+		<!-- <section class="data_section" ref="data_section"> 
 			<el-row :gutter="10" class="row_list order_list">
 				<el-col :span="13">
 					<lineChart title="案例统计数量列表" />
@@ -9,12 +9,15 @@
 				</el-col>
 			</el-row>
 			
-		</section>
+		</section> -->
+		<div>
+			111
+		</div>
 </template>
 
 <script>
-	import pieChart from 'cps/echarts/pieChart' // 用户投资类型 饼状图
-	import lineChart from 'cps/echarts/lineChart' // 用户投资类型 折线图
+	// import pieChart from 'cps/echarts/pieChart' // 用户投资类型 饼状图
+	// import lineChart from 'cps/echarts/lineChart' // 用户投资类型 折线图
 
     export default {
     	data(){
@@ -22,8 +25,8 @@
     		}
     	},
     	components: {
-		   pieChart,
-		   lineChart
+		//    pieChart,
+		//    lineChart
 		},	
 		created(){
 		},
