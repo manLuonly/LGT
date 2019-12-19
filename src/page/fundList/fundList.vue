@@ -88,7 +88,18 @@ import { getMoneyIncomePay, removeMoney, batchremoveMoney } from "@/api/money";
 export default {
   data() {
     return {
-      tableData: [],
+      tableData: [
+        {
+            createTime: '2016-05-02',
+            username: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          },
+          {
+            createTime: '2016-05-02',
+            username: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          },
+      ],
       tableHeight: 0,
       loading: true,
       idFlag: false,
@@ -175,7 +186,9 @@ export default {
     ...mapGetters(["search"])
   },
   mounted() {
-    this.getMoneyList();
+    // this.getMoneyList();
+        this.loading = false;
+
   },
   methods: {
     setAddress(value) {},
@@ -185,14 +198,14 @@ export default {
       });
     },
     // 获取资金列表数据
-    getMoneyList() {
-      const para = Object.assign({}, this.incomePayData, this.search);
-      getMoneyIncomePay(para).then(res => {
-        this.loading = false;
-        this.pageTotal = res.data.total;
-        this.tableData = res.data.moneyList;
-      });
-    },
+    // getMoneyList() {
+    //   const para = Object.assign({}, this.incomePayData, this.search);
+    //   getMoneyIncomePay(para).then(res => {
+    //     this.loading = false;
+    //     this.pageTotal = res.data.total;
+    //     this.tableData = res.data.moneyList;
+    //   });
+    // },
     // 显示资金弹框
     showAddFundDialog(val) {
       this.$store.commit("SET_DIALOG_TITLE", val);

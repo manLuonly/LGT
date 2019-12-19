@@ -1,8 +1,19 @@
 <template>
   <div class="update-info">
     <div class="personal-info">
-      <div class="avatar">
-        <img src="../../assets/img/avatar-3.png" class="avatar-img" />
+      <div class="avatar-box">
+        <el-upload
+          class="avatar-uploader"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+        >
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+
+        <!-- <img src="../../assets/img/avatar-3.png" class="avatar-img" /> -->
         <el-button type="primary" class="upload">上传</el-button>
       </div>
       <div class="info">
@@ -57,6 +68,7 @@ export default {
   data() {
     return {
       isShowForm: false,
+      imageUrl: "",
       ruleForm: {
         name: "",
         sex: "",
@@ -78,6 +90,21 @@ export default {
   },
 
   methods: {
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -106,7 +133,7 @@ export default {
     height: 200px;
     margin: 20px;
     background-color: #fff;
-    .avatar {
+    .avatar-box {
       position: relative;
       display: inline-block;
       float: left;
@@ -114,15 +141,46 @@ export default {
       height: 90%;
       margin: 10px 15px;
       border: 1px solid #ccc;
-      .avatar-img {
+      .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      .avatar-uploader .el-upload:hover {
+        border-color: #409eff;
+      }
+      .avatar-uploader-icon {
+        position: absolute;
+        left: 50%;
+        top: 40%;
+        transform: translate(-50%, -50%);
+        font-size: 28px;
+        width: 70%;
+        height: 50%;
+        line-height: 84px;
+        text-align: center;
+      }
+      .avatar {
         position: absolute;
         left: 50%;
         top: 40%;
         transform: translate(-50%, -50%);
         width: 70%;
+        height: 50%;
         border-radius: 50%;
-        text-align: center;
+        display: block;
       }
+      // .avatar-img {
+      //   position: absolute;
+      //   left: 50%;
+      //   top: 40%;
+      //   transform: translate(-50%, -50%);
+      //   width: 70%;
+      //   border-radius: 50%;
+      //   text-align: center;
+      // }
       .upload {
         position: absolute;
         left: 25%;
@@ -163,10 +221,10 @@ export default {
         top: 5px;
         cursor: pointer;
       }
-      /deep/ .el-form-item:last-child{
-          .el-form-item__content {
-              margin-left: 150px !important;
-          }
+      /deep/ .el-form-item:last-child {
+        .el-form-item__content {
+          margin-left: 150px !important;
+        }
       }
     }
   }

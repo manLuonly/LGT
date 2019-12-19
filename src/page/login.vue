@@ -98,17 +98,20 @@ export default {
         if (valid) {
           this.loginForm.password = this.$md5(this.loginForm.password);
           let userinfo = this.loginForm;
-          login(userinfo).then(res => {
-            if (res.success === 0) {
-              setToken("Token", res.success);
-              this.$router.push({ path: "/" });
+
+           this.$router.push({ path: "/" });
               this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
-            } else{
-              this.loginForm.password = "";
-            }
-          }).catch((err) => {
-            if (err) this.loginForm.password = "";
-          })
+          // login(userinfo).then(res => {
+          //   if (res.success === 0) {
+          //     setToken("Token", res.success);
+          //     this.$router.push({ path: "/" });
+          //     this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
+          //   } else{
+          //     this.loginForm.password = "";
+          //   }
+          // }).catch((err) => {
+          //   if (err) this.loginForm.password = "";
+          // })
         }
       });
     }
