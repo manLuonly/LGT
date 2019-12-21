@@ -54,8 +54,6 @@
           </div>
         </li>
 
-
-
         <!-- <li>
           <div class="left">
             <span class="title">案</span>
@@ -110,7 +108,7 @@
               <span class="number">100</span>
             </div>
           </div>
-        </li> -->
+        </li>-->
       </ul>
     </div>
     <section class="data_section" ref="data_section">
@@ -155,7 +153,7 @@ export default {
           }
         },
         {
-          title: "客",
+          title: "言",
           right: {
             text: "客户留言",
             number: 10
@@ -176,7 +174,7 @@ export default {
           }
         },
         {
-          title: "户",
+          title: "客",
           right: {
             text: "客户总数",
             number: 17
@@ -200,7 +198,23 @@ export default {
   mounted() {},
   methods: {
     goDetails(title) {
-      console.log(title,'title')
+      console.log(title, "title");
+      switch (title) {
+        case "案":
+          this.$router.push({ path: "/projectManagement/lookCase" });
+          break;
+        case "点":
+          this.$router.push({ path: "/projectManagement/lookCase" });
+          break;
+        case "言":
+          this.$router.push({ path: "/clientManagement/userInfo" });
+          break;
+        case "客":
+          this.$router.push({ path: "/clientManagement/userInfo" });
+          break;
+        default:
+          break;
+      }
     }
   }
 };

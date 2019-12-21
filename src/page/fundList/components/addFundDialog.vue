@@ -15,16 +15,6 @@
         :label-width="dialog.formLabelWidth"
         style="margin:10px;width:auto;"
       >
-        <!-- <el-form-item prop='incomePayType' label="收支类型:" >
-                    <el-select v-model="form.incomePayType" placeholder="收支类型">
-                        <el-option
-                            v-for="item in payType"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
-        </el-form-item>-->
         <el-form-item prop="username" label="启停:">
               <el-switch
               v-model="value"
@@ -33,27 +23,17 @@
             </el-switch>
         </el-form-item>
 
-        <el-form-item prop="username" label="分类名称:">
-          <el-input type="text" v-model="form.username"></el-input>
+        <el-form-item prop="classificationName" label="分类名称:">
+          <el-input type="text" v-model="form.classificationName"></el-input>
         </el-form-item>
 
-        <!-- <el-form-item prop="address" label="籍贯:">
-                    <el-cascader
-                        v-model="form.address"
-                        placeholder="请选择地区"
-                        :props="{ expandTrigger: 'hover'}"
-                        :options="areaData"
-                        @change="handleChange"
-                        ref="cascaderAddr">
-                    </el-cascader>
-        </el-form-item>-->
-
-        <el-form-item prop="income" label="跳转地址:">
-          <el-input v-model.number="form.income"></el-input>
+  
+        <el-form-item prop="jumpAddress" label="跳转地址:">
+          <el-input v-model="form.jumpAddress"></el-input>
         </el-form-item>
 
-        <el-form-item prop="pay" label="更新时间:">
-          <el-input v-model.number="form.pay"></el-input>
+        <el-form-item prop="updateTime" label="更新时间:">
+          <el-input v-model="form.updateTime"></el-input>
         </el-form-item>
 
         <el-form-item prop="accoutCash" label="缩略图:">
@@ -69,7 +49,7 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="备注:">
+        <el-form-item prop="remarks" label="备注:">
           <el-input type="textarea" v-model="form.remarks"></el-input>
         </el-form-item>
 
@@ -114,15 +94,21 @@ export default {
       areaData: [],
       isVisible: this.isShow,
       form: {
-        incomePayType: "",
-        address: [],
-        tableAddress: "",
-        username: "",
-        income: "",
-        pay: "",
-        accoutCash: "",
+        classificationName: "",
+        jumpAddress: "",
+        updateTime: "",
         remarks: ""
       },
+      // form: {
+      //   incomePayType: "",
+      //   address: [],
+      //   tableAddress: "",
+      //   username: "",
+      //   income: "",
+      //   pay: "",
+      //   accoutCash: "",
+      //   remarks: ""
+      // },
       payType: [
         { label: "提现", value: "0" },
         { label: "提现手续费", value: "1" },
@@ -135,18 +121,18 @@ export default {
         { label: "转账", value: "8" }
       ],
       form_rules: {
-        username: [
-          { required: true, message: "用户名不能为空！", trigger: "blur" }
+        classificationName: [
+          { required: true, message: "分类名称不能为空", trigger: "blur" }
         ],
-        income: [{ required: true, validator: validateData, trigger: "blur" }],
-        pay: [{ required: true, validator: validateData, trigger: "blur" }],
-        accoutCash: [
-          { required: true, validator: validateData, trigger: "blur" }
+        jumpAddress: [
+          { required: true, message: "跳转地址不能为空", trigger: "blur" }
         ],
-        incomePayType: [
-          { required: true, message: "请选择收支类型", trigger: "change" }
+        updateTime: [
+          { required: true, message: "更新时间不能为空", trigger: "blur" }
         ],
-        address: [{ required: true, message: "请选择籍贯", trigger: "change" }]
+        remarks: [
+          { required: true, message: "备注不能为空", trigger: "blur" }
+        ]
       },
        value: true,
       imageUrl: "",

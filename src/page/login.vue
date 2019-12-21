@@ -4,7 +4,6 @@
       <section class="form_contianer">
         <div class="titleArea rflex">
           <img class="logo" :src="logo" alt="LGT后台管理" />
-          <!-- <span class='title'>小爱<i>Admin</i></span> -->
         </div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm" class="loginForm">
           <el-form-item prop="user" class="login-item">
@@ -98,6 +97,7 @@ export default {
         if (valid) {
           this.loginForm.password = this.$md5(this.loginForm.password);
           let userinfo = this.loginForm;
+
 
            this.$router.push({ path: "/" });
               this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态

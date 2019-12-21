@@ -5,7 +5,56 @@
       @searchList="getMoneyList"
       @onBatchDelMoney="onBatchDelMoney"
     ></search-item>-->
-    <el-button type="primary" class="addCase">添加案例分类</el-button>
+    <el-dialog title="提示" :visible.sync="addCaseDialog" :before-close="handleClose">
+      <div class="form">
+        <el-form
+          ref="form"
+          :model="form"
+          :rules="form_rules"
+          :label-width="dialog.formLabelWidth"
+          style="margin:10px;width:auto;"
+        >
+          <el-form-item prop="username" label="启停:">
+            <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          </el-form-item>
+
+          <el-form-item prop="classificationName" label="分类名称:">
+            <el-input type="text" v-model="form.classificationName"></el-input>
+          </el-form-item>
+
+          <el-form-item prop="jumpAddress" label="跳转地址:">
+            <el-input v-model="form.jumpAddress"></el-input>
+          </el-form-item>
+
+          <el-form-item prop="updateTime" label="更新时间:">
+            <el-input v-model="form.updateTime"></el-input>
+          </el-form-item>
+
+          <el-form-item prop="accoutCash" label="缩略图:">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+
+          <el-form-item prop="remarks" label="备注:">
+            <el-input type="textarea" v-model="form.remarks"></el-input>
+          </el-form-item>
+
+          <el-form-item class="text_right">
+            <el-button @click="addCaseDialog = false">取 消</el-button>
+            <el-button type="primary" @click='onSubmit("form")'>提 交</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
+    <el-button type="primary" class="addCase" @click="addCase">添加案例分类</el-button>
     <div class="table_container">
       <el-table
         v-loading="loading"
@@ -38,7 +87,7 @@
           </template>
         </el-table-column>
         <el-table-column v-if="idFlag" prop="address" label="分类名称" align="center"></el-table-column>
-        <el-table-column prop="address" label="跳转地址" align="center" >
+        <el-table-column prop="address" label="跳转地址" align="center">
           <template slot-scope="scope">
             <el-input placeholder="请输入内容" v-model="scope.row.address" :disabled="true"></el-input>
           </template>
@@ -90,16 +139,22 @@ export default {
     return {
       tableData: [
         {
-            createTime: '2016-05-02',
-            username: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          },
-          {
-            createTime: '2016-05-02',
-            username: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          },
+          createTime: "2016-05-02",
+          username: "logo设计",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          createTime: "2016-05-02",
+          username: "APP设计",
+          address: "上海市普陀区金沙江路 1518 弄"
+        }
       ],
+      form: {
+        classificationName: "",
+        jumpAddress: "",
+        updateTime: "",
+        remarks: ""
+      },
       tableHeight: 0,
       loading: true,
       idFlag: false,
@@ -174,7 +229,25 @@ export default {
           }
         }
       },
-      value: true
+      value: true,
+      addCaseDialog: false,
+      form_rules: {
+        classificationName: [
+          { required: true, message: "分类名称不能为空", trigger: "blur" }
+        ],
+        jumpAddress: [
+          { required: true, message: "跳转地址不能为空", trigger: "blur" }
+        ],
+        updateTime: [
+          { required: true, message: "更新时间不能为空", trigger: "blur" }
+        ],
+        remarks: [{ required: true, message: "备注不能为空", trigger: "blur" }]
+      },
+      imageUrl: "",
+      dialog: {
+        width: "400px",
+        formLabelWidth: "120px"
+      }
     };
   },
   components: {
@@ -187,8 +260,7 @@ export default {
   },
   mounted() {
     // this.getMoneyList();
-        this.loading = false;
-
+    this.loading = false;
   },
   methods: {
     setAddress(value) {},
@@ -307,9 +379,36 @@ export default {
         (this.incomePayData.page - 1) * this.incomePayData.limit + index + 1
       );
     },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
     // 改变 Switch状态
     changeSwitch(val) {
       console.log(val);
+    },
+    // 添加案例
+    addCase() {
+      this.addCaseDialog = true;
+    },
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
+    },
+    onSubmit(form) {},
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
     }
   }
 };

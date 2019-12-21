@@ -34,7 +34,7 @@ export const constantRouterMap = [{
         hidden: true
     },
     {
-        path: '/lgz/login',
+        path: '/login',
         name: 'login',
         component: () =>
             import ('@/page/login'),
@@ -140,15 +140,15 @@ export const asyncRouterMap = [{
                 component: () =>
                     import ('@/page/fundData/fundPosition')
             },
-            {
-                path: 'addCustomerProject',
-                name: 'addCustomerProject',
-                meta: {
-                    title: '添加项目'
-                },
-                component: () =>
-                    import ('@/page/fundData/addCustomerProject')
-            },
+            // {
+            //     path: 'addCustomerProject',
+            //     name: 'addCustomerProject',
+            //     meta: {
+            //         title: '添加项目'
+            //     },
+            //     component: () =>
+            //         import ('@/page/fundData/addCustomerProject')
+            // },
             {
                 path: 'userInfo',
                 name: 'userInfo',

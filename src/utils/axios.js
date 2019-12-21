@@ -28,7 +28,6 @@ service.interceptors.response.use(
         /**
          * code:200,接口正常返回;
          */
-        console.log(response, 'response')
         const res = response.data
             // res.success !== 0
             // res.code !== 200
@@ -56,7 +55,6 @@ service.interceptors.response.use(
         }
     },
     error => {
-        console.log(error, 'error')
         Message({
             message: error,
             type: 'error',
