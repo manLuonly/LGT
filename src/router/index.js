@@ -161,20 +161,20 @@ export const asyncRouterMap = [{
         ]
     },
     {
-        path: '/serviceProject',
+        path: '/orderManagement',
         component: Layout,
-        name: 'serviceProject',
+        name: 'orderManagement',
         meta: {
-            title: '服务项目',
+            title: '订单管理',
             icon: 'icon-fuwuxiangmu'
         },
         children: [{
-                path: 'addProject',
-                name: 'addProject',
+                path: 'orderDetails',
+                name: 'orderDetails',
                 component: () =>
-                    import ('@/page/errorPage/401'),
+                    import ('@/page/orderManagement/orderDetails'),
                 meta: {
-                    title: '添加项目',
+                    title: '订单详情',
                     noCache: true
                 }
             },
@@ -191,36 +191,36 @@ export const asyncRouterMap = [{
         ]
     },
 
-    {
-        path: '/permission',
-        name: 'permission',
-        meta: {
-            title: '权限设置',
-            icon: 'icon-quanxianguanli',
-            roles: ['admin', 'editor'] // you can set roles in root nav
-        },
-        component: Layout,
-        redirect: '/permission/page',
-        children: [{
-            path: 'page',
-            name: 'pagePer',
-            meta: {
-                title: '页面权限',
-                roles: ['admin'] // or you can only set roles in sub nav
-            },
-            component: () =>
-                import ('@/page/permission/page'),
-        }, {
-            path: 'directive',
-            name: 'directivePer',
-            meta: {
-                title: '按钮权限',
-                roles: ['editor']
-            },
-            component: () =>
-                import ('@/page/permission/directive'),
-        }]
-    },
+    // {
+    //     path: '/permission',
+    //     name: 'permission',
+    //     meta: {
+    //         title: '权限设置',
+    //         icon: 'icon-quanxianguanli',
+    //         roles: ['admin', 'editor'] // you can set roles in root nav
+    //     },
+    //     component: Layout,
+    //     redirect: '/permission/page',
+    //     children: [{
+    //         path: 'page',
+    //         name: 'pagePer',
+    //         meta: {
+    //             title: '页面权限',
+    //             roles: ['admin'] // or you can only set roles in sub nav
+    //         },
+    //         component: () =>
+    //             import ('@/page/permission/page'),
+    //     }, {
+    //         path: 'directive',
+    //         name: 'directivePer',
+    //         meta: {
+    //             title: '按钮权限',
+    //             roles: ['editor']
+    //         },
+    //         component: () =>
+    //             import ('@/page/permission/directive'),
+    //     }]
+    // },
     {
         path: '/personalInfo',
         name: 'personalInfo',
@@ -242,6 +242,20 @@ export const asyncRouterMap = [{
                     import ('@/page/info/updateInfo'),
 
             },
+            {
+                path: 'updatePassword',
+                name: 'updatePassword',
+                meta: {
+                    title: '修改密码',
+                    icon: 'iconinfo',
+                    routerType: 'leftmenu',
+
+                },
+                component: () =>
+                    import ('@/page/info/updatePassword'),
+
+            },
+
             // {
             //     path: 'loginOut',
             //     name: 'loginOut',

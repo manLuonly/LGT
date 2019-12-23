@@ -1,11 +1,11 @@
 <template>
   <div class="fillcontain">
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="name" label="联系电话" width="180"></el-table-column>
-      <el-table-column prop="name" label="邮箱/微信" width="180"></el-table-column>
-      <el-table-column prop="date" label="公司名称" width="180"></el-table-column>
-      <el-table-column prop="address" label="留言">
+    <el-table :data="tableData" height="450" border style="width: 100%">
+      <el-table-column prop="name" label="姓名" width="180" align="center"></el-table-column>
+      <el-table-column prop="name" label="联系电话" width="180" align="center"></el-table-column>
+      <el-table-column prop="name" label="邮箱/微信" width="180" align="center"></el-table-column>
+      <el-table-column prop="date" label="公司名称" width="180" align="center"></el-table-column>
+      <el-table-column prop="address" label="留言" align="center">
         <template slot-scope="scope">
           <el-popover
             placement="top-start"

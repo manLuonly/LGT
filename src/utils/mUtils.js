@@ -10,9 +10,9 @@ let md5 = require('js-md5')
  * @return {string} 加密后的字符串
  */
 window._md5 = md5
-/**
- * 存储localStorage
- */
+    /**
+     * 存储localStorage
+     */
 export const setStore = (name, content) => {
     if (!name) return;
     if (typeof content !== 'string') {
@@ -209,4 +209,19 @@ export const setContentHeight = (that, ele, height) => {
     that.$nextTick(() => {
         ele.style.height = (document.body.clientHeight - height) + 'px'
     })
+}
+
+
+export function deepCopy(obj) {
+    var result = Array.isArray(obj) ? [] : {};
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            if (typeof obj[key] === 'object' && obj[key] !== null) {
+                result[key] = deepCopy(obj[key]); //递归复制
+            } else {
+                result[key] = obj[key];
+            }
+        }
+    }
+    return result;
 }

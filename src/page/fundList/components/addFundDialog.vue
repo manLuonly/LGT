@@ -6,6 +6,7 @@
     :close-on-press-escape="false"
     :modal-append-to-body="false"
     @close="closeDialog"
+    center
   >
     <div class="form">
       <el-form
