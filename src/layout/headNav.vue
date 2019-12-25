@@ -30,7 +30,6 @@ import topMenu from "./topMenu";
 import { logout } from "@/api/user";
 import router from '../router'
 
-
 export default {
   name: "head-nav",
   data() {
@@ -59,9 +58,13 @@ export default {
       // });
       logout().then(res => {
         if (res.success === 0) {
+          removeToken('Token')
+          this.$router.push({ path: "/login" });
           window.location.reload();
           console.log('退出成功')
         }
+      }).catch(err => {
+        console.log(err,'err')
       })
     }
   }

@@ -50,7 +50,7 @@
       <el-table-column prop="starTime" label="开始时间" width="180" align="center"></el-table-column>
       <el-table-column prop="endTime" label="结束时间" width="180" align="center"></el-table-column>
       <el-table-column prop="transactionMoney" label="交易金额" width="180" align="center"></el-table-column>
-      <el-table-column prop="leaveMessage" label="留言" align="center"></el-table-column>
+      <el-table-column prop="leaveMessage" label="备注" align="center"></el-table-column>
     </el-table>
     <pagination
       :pageTotal="tableData.length"
@@ -251,6 +251,14 @@ export default {
 .order-details {
   .add-order-details {
     padding: 10px;
+  }
+  .demo-ruleForm {
+    /deep/ .el-select {
+      width: 100%;
+    }
+    /deep/ .el-input {
+      width: 100%;
+    }
   }
 }
 </style>

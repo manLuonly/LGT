@@ -40,7 +40,7 @@
               <span>(可用于切换权限)</span>
             </p>
             <p class="tip">密码为：123456</p>
-          </div> -->
+          </div>-->
           <div class="sanFangArea">
             <p class="title">第三方账号登录</p>
             <ul class="rflex">
@@ -97,21 +97,22 @@ export default {
         if (valid) {
           this.loginForm.password = this.$md5(this.loginForm.password);
           let userinfo = this.loginForm;
-
-
-           this.$router.push({ path: "/" });
-              this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
-          // login(userinfo).then(res => {
-          //   if (res.success === 0) {
-          //     setToken("Token", res.success);
-          //     this.$router.push({ path: "/" });
-          //     this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
-          //   } else{
-          //     this.loginForm.password = "";
-          //   }
-          // }).catch((err) => {
-          //   if (err) this.loginForm.password = "";
-          // })
+          login(userinfo)
+            .then(res => {
+              if (res.success === 0) {
+                setToken("Token", res.success);
+                setTimeout(() => {
+                  this.$router.push({ path: "/" });
+                  this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
+                }, 1500);
+              } else {
+                this.loginForm.password = "";
+              }
+            })
+            .catch(err => {
+              if (err) this.loginForm.password = "";
+              this.showMessage("error", "登录失败,请重新登录");
+            });
         }
       });
     }

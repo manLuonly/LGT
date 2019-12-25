@@ -43,13 +43,13 @@
             </el-upload>
           </el-form-item>
 
-          <el-form-item prop="remarks" label="备注:">
+          <el-form-item prop="remarks" label="图文:">
             <el-input type="textarea" v-model="form.remarks"></el-input>
           </el-form-item>
 
           <el-form-item class="text_right">
-            <el-button @click="addCaseDialog = false">取 消</el-button>
             <el-button type="primary" @click='onSubmit("form")'>提 交</el-button>
+            <el-button @click="addCaseDialog = false">取 消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -182,7 +182,7 @@ export default {
         limit: 20,
         name: ""
       },
-      pageTotal: 0,
+      pageTotal: 2,
       // 用于列表筛选
       fields: {
         incomePayType: {
@@ -270,14 +270,14 @@ export default {
       });
     },
     // 获取资金列表数据
-    // getMoneyList() {
-    //   const para = Object.assign({}, this.incomePayData, this.search);
-    //   getMoneyIncomePay(para).then(res => {
-    //     this.loading = false;
-    //     this.pageTotal = res.data.total;
-    //     this.tableData = res.data.moneyList;
-    //   });
-    // },
+    getMoneyList() {
+      // const para = Object.assign({}, this.incomePayData, this.search);
+      // getMoneyIncomePay(para).then(res => {
+      //   this.loading = false;
+      //   this.pageTotal = res.data.total;
+      //   this.tableData = res.data.moneyList;
+      // });
+    },
     // 显示资金弹框
     showAddFundDialog(val) {
       this.$store.commit("SET_DIALOG_TITLE", val);

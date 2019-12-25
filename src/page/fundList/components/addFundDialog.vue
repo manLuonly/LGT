@@ -6,7 +6,6 @@
     :close-on-press-escape="false"
     :modal-append-to-body="false"
     @close="closeDialog"
-    center
   >
     <div class="form">
       <el-form
@@ -50,13 +49,13 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item prop="remarks" label="备注:">
+        <el-form-item prop="remarks" label="图文:">
           <el-input type="textarea" v-model="form.remarks"></el-input>
         </el-form-item>
 
         <el-form-item class="text_right">
-          <el-button @click="isVisible = false">取 消</el-button>
           <el-button type="primary" @click='onSubmit("form")'>提 交</el-button>
+          <el-button @click="isVisible = false">取 消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -158,7 +157,7 @@ export default {
     if (this.addFundDialog.type === "edit") {
       this.form = this.dialogRow;
       console.log(this.form);
-      this.form.incomePayType = this.dialogRow.incomePayType.toString();
+      // this.form.incomePayType = this.dialogRow.incomePayType.toString();
       // this.form.address = ["120000", "120200", "120223"]
     } else {
       this.$nextTick(() => {

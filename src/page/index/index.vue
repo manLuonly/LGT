@@ -212,6 +212,9 @@ export default {
         case "客":
           this.$router.push({ path: "/clientManagement/userInfo" });
           break;
+        case "定":
+          this.$router.push({ path: "/orderManagement/orderDetails" });
+          break;
         default:
           break;
       }

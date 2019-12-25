@@ -1,5 +1,5 @@
 <template>
-  <div class="fillcontain">
+  <div class="classificationList">
     <el-dialog title="提示" :visible.sync="addCaseDialog" :before-close="handleClose">
       <div class="form">
         <el-form
@@ -38,12 +38,12 @@
             </el-upload>
           </el-form-item>
 
-          <el-form-item prop="remarks" label="备注:">
+          <el-form-item prop="remarks" label="图文:">
             <el-input type="textarea" v-model="form.remarks"></el-input>
           </el-form-item>
 
           <el-form-item class="text_right">
-            <el-button type="primary" @click="onSubmit("form")">提 交</el-button>
+            <el-button type="primary" @click='onSubmit("form")'>提 交</el-button>
             <el-button @click="addCaseDialog = false">取 消</el-button>
           </el-form-item>
         </el-form>
@@ -239,7 +239,7 @@ export default {
         limit: 20,
         name: ""
       },
-      pageTotal: 0,
+      pageTotal: 7,
       // 用于列表筛选
       fields: {
         incomePayType: {
@@ -514,41 +514,51 @@ export default {
   text-align: left;
   margin-top: 10px;
 }
-.addCase {
-  height: 40px;
-  margin-bottom: 15px;
-}
-.tag {
-  padding-bottom: 15px;
-  .tagCase {
-    cursor: pointer;
-  }
-}
-.button-group {
-  // display: inline-block;
-  display: flex;
-  flex-flow: row;
-  justify-content: space-between;
-}
-.search {
-  // display: inline-block;
-  // float: right;
-  .search-input {
-    display: inline-block;
-    width: 217px;
-    height: 40px;
-    line-height: 40px;
-    /deep/ .el-input__inner {
-      height: 36px !important;
-      line-height: 36px !important;
+
+.classificationList {
+  .form {
+    /deep/ .el-textarea {
+      height: 200px;
+    }
+  } 
+  .button-group {
+    // display: inline-block;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    .addCase {
+      height: 40px;
+      margin-bottom: 15px;
+    }
+    .search {
+      // display: inline-block;
+      // float: right;
+      .search-input {
+        display: inline-block;
+        width: 217px;
+        height: 40px;
+        line-height: 40px;
+        /deep/ .el-input__inner {
+          height: 36px !important;
+          line-height: 36px !important;
+        }
+      }
+      .search-button {
+        display: inline-block;
+        height: 40px;
+        line-height: 40px;
+      }
     }
   }
-  .search-button {
-    display: inline-block;
-    height: 40px;
-    line-height: 40px;
+.tag {
+  padding-bottom: 15px;
+    .tagCase {
+      cursor: pointer;
+    }
   }
 }
+
+
 
 .el-tag + .el-tag {
   margin-left: 10px;

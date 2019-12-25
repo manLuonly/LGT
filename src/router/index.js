@@ -101,24 +101,24 @@ export const asyncRouterMap = [{
                     import ('@/page/fundList/caseDataLook'),
             },
             {
-                path: 'lookCase',
-                name: 'lookCase',
+                path: 'caseClassification',
+                name: 'caseClassification',
                 meta: {
                     title: '案例分类',
                     routerType: 'leftmenu'
                 },
                 component: () =>
-                    import ('@/page/fundList/fundList'),
+                    import ('@/page/fundList/caseClassification'),
             },
             {
-                path: 'addCase',
-                name: 'addCase',
+                path: 'classificationList',
+                name: 'classificationList',
                 meta: {
                     title: '案例列表',
                     routerType: 'leftmenu'
                 },
                 component: () =>
-                    import ('@/page/fundList/chinaTabsList'),
+                    import ('@/page/fundList/classificationList'),
             }
         ]
     },
@@ -138,7 +138,7 @@ export const asyncRouterMap = [{
                     title: '项目统计'
                 },
                 component: () =>
-                    import ('@/page/fundData/fundPosition')
+                    import ('@/page/fundData/projectStatistics')
             },
             // {
             //     path: 'addCustomerProject',
@@ -156,7 +156,7 @@ export const asyncRouterMap = [{
                     title: '客户信息'
                 },
                 component: () =>
-                    import ('@/page/fundData/typePosition')
+                    import ('@/page/fundData/userInfo')
             }
         ]
     },
@@ -174,7 +174,7 @@ export const asyncRouterMap = [{
                 component: () =>
                     import ('@/page/orderManagement/orderDetails'),
                 meta: {
-                    title: '订单详情',
+                    title: '完成订单',
                     noCache: true
                 }
             },
