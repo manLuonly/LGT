@@ -249,8 +249,10 @@ export default {
 }
 
 .order-details {
+  padding: 20px;
   .add-order-details {
-    padding: 10px;
+    // padding: 10px;
+      padding-bottom: 15px;
   }
   .demo-ruleForm {
     /deep/ .el-select {

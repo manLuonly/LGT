@@ -16,18 +16,13 @@
         style="margin:10px;width:auto;"
       >
         <el-form-item prop="username" label="启停:">
-              <el-switch
-              v-model="value"
-              active-color="#13ce66"
-              inactive-color="#ff4949">
-            </el-switch>
+          <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
 
         <el-form-item prop="classificationName" label="分类名称:">
           <el-input type="text" v-model="form.classificationName"></el-input>
         </el-form-item>
 
-  
         <el-form-item prop="jumpAddress" label="跳转地址:">
           <el-input v-model="form.jumpAddress"></el-input>
         </el-form-item>
@@ -130,11 +125,9 @@ export default {
         updateTime: [
           { required: true, message: "更新时间不能为空", trigger: "blur" }
         ],
-        remarks: [
-          { required: true, message: "备注不能为空", trigger: "blur" }
-        ]
+        remarks: [{ required: true, message: "备注不能为空", trigger: "blur" }]
       },
-       value: true,
+      value: true,
       imageUrl: "",
       //详情弹框信息
       dialog: {
@@ -155,8 +148,14 @@ export default {
   },
   mounted() {
     if (this.addFundDialog.type === "edit") {
-      this.form = this.dialogRow;
-      console.log(this.form);
+      // this.form = this.dialogRow;
+      console.log(this.dialogRow,'000')
+      this.form = {
+        classificationName: this.dialogRow.type,
+        jumpAddress: this.dialogRow.address,
+        updateTime: this.dialogRow.createTime,
+        remarks: ""
+      };
       // this.form.incomePayType = this.dialogRow.incomePayType.toString();
       // this.form.address = ["120000", "120200", "120223"]
     } else {

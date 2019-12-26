@@ -10,7 +10,7 @@
           style="margin:10px;width:auto;"
         >
           <el-form-item prop="username" label="启停:">
-            <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+            <el-switch v-model="value"  active-color="#13ce66" inactive-color="#ff4949"></el-switch>
           </el-form-item>
 
           <el-form-item prop="classificationName" label="分类名称:">
@@ -95,6 +95,7 @@
         <el-table-column align="center" label="启停" width="60">
           <template slot-scope="scope">
             <el-switch
+              :disabled="true"
               v-model="value"
               active-color="#13ce66"
               inactive-color="#ff4949"
@@ -240,52 +241,6 @@ export default {
         name: ""
       },
       pageTotal: 7,
-      // 用于列表筛选
-      fields: {
-        incomePayType: {
-          filter: {
-            list: [
-              {
-                text: "提现",
-                value: 0
-              },
-              {
-                text: "提现手续费",
-                value: 1
-              },
-              {
-                text: "提现锁定",
-                value: 2
-              },
-              {
-                text: "理财服务退出",
-                value: 3
-              },
-              {
-                text: "购买宜定盈",
-                value: 4
-              },
-              {
-                text: "充值",
-                value: 5
-              },
-              {
-                text: "优惠券",
-                value: 6
-              },
-              {
-                text: "充值礼券",
-                value: 7
-              },
-              {
-                text: "转账",
-                value: 8
-              }
-            ],
-            multiple: true
-          }
-        }
-      },
       value: true,
       searchVal: "", // 搜索值
       addCaseDialog: false,
@@ -330,14 +285,14 @@ export default {
       });
     },
     // 获取资金列表数据
-    // getMoneyList() {
-    //   const para = Object.assign({}, this.incomePayData, this.search);
-    //   getMoneyIncomePay(para).then(res => {
-    //     this.loading = false;
-    //     this.pageTotal = res.data.total;
-    //     this.tableData = res.data.moneyList;
-    //   });
-    // },
+    getMoneyList() {
+      // const para = Object.assign({}, this.incomePayData, this.search);
+      // getMoneyIncomePay(para).then(res => {
+      //   this.loading = false;
+      //   this.pageTotal = res.data.total;
+      //   this.tableData = res.data.moneyList;
+      // });
+    },
     // 显示资金弹框
     showAddFundDialog(val) {
       this.$store.commit("SET_DIALOG_TITLE", val);
@@ -356,13 +311,13 @@ export default {
       this.incomePayData.limit = val;
       this.getMoneyList();
     },
-    getPay(val) {
-      if (mutils.isInteger(val)) {
-        return -val;
-      } else {
-        return val;
-      }
-    },
+    // getPay(val) {
+    //   if (mutils.isInteger(val)) {
+    //     return -val;
+    //   } else {
+    //     return val;
+    //   }
+    // },
     /**
      * 格式化状态
      */
@@ -375,7 +330,7 @@ export default {
       return this.format_type_list[value] == this.format_type_list[type];
     },
     // 编辑操作方法
-    onEditMoney(row) {
+    onEditMoney(row) {  
       this.addFundDialog.dialogRow = { ...row };
       this.showAddFundDialog();
     },
@@ -516,6 +471,7 @@ export default {
 }
 
 .classificationList {
+  padding: 20px;
   .form {
     /deep/ .el-textarea {
       height: 200px;

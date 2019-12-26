@@ -14,7 +14,7 @@
           :label-width="dialog.formLabelWidth"
           style="margin:10px;width:auto;"
         >
-          <el-form-item prop="username" label="启停:">
+          <el-form-item label="启停:">
             <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
           </el-form-item>
 
@@ -83,7 +83,7 @@
         </el-table-column>
         <el-table-column label="分类名称" align="center">
           <template slot-scope="scope">
-            <el-tag>{{ scope.row.username }}</el-tag>
+            <el-tag>{{ scope.row.type }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column v-if="idFlag" prop="address" label="分类名称" align="center"></el-table-column>
@@ -140,12 +140,12 @@ export default {
       tableData: [
         {
           createTime: "2016-05-02",
-          username: "logo设计",
+          type: "logo设计",
           address: "上海市普陀区金沙江路 1518 弄"
         },
         {
           createTime: "2016-05-02",
-          username: "APP设计",
+          type: "APP设计",
           address: "上海市普陀区金沙江路 1518 弄"
         }
       ],
@@ -183,52 +183,6 @@ export default {
         name: ""
       },
       pageTotal: 2,
-      // 用于列表筛选
-      fields: {
-        incomePayType: {
-          filter: {
-            list: [
-              {
-                text: "提现",
-                value: 0
-              },
-              {
-                text: "提现手续费",
-                value: 1
-              },
-              {
-                text: "提现锁定",
-                value: 2
-              },
-              {
-                text: "理财服务退出",
-                value: 3
-              },
-              {
-                text: "购买宜定盈",
-                value: 4
-              },
-              {
-                text: "充值",
-                value: 5
-              },
-              {
-                text: "优惠券",
-                value: 6
-              },
-              {
-                text: "充值礼券",
-                value: 7
-              },
-              {
-                text: "转账",
-                value: 8
-              }
-            ],
-            multiple: true
-          }
-        }
-      },
       value: true,
       addCaseDialog: false,
       form_rules: {
