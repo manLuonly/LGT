@@ -138,7 +138,7 @@ export const asyncRouterMap = [{
                     title: '项目统计'
                 },
                 component: () =>
-                    import ('@/page/fundData/projectStatistics')
+                    import ('@/page/clientManagement/projectStatistics')
             },
             // {
             //     path: 'addCustomerProject',
@@ -156,7 +156,7 @@ export const asyncRouterMap = [{
                     title: '客户信息'
                 },
                 component: () =>
-                    import ('@/page/fundData/userInfo')
+                    import ('@/page/clientManagement/userInfo')
             }
         ]
     },

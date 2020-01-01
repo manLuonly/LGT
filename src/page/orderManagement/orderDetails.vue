@@ -1,9 +1,5 @@
 <template>
   <div class="order-details">
-    <div class="add-order-details">
-      <el-button type="primary" size="medium" @click="addOderDetailsDialog = true">添加订单详情</el-button>
-    </div>
-
     <el-dialog
       title="添加订单详情"
       :visible.sync="addOderDetailsDialog"
@@ -43,111 +39,37 @@
         <el-button @click="resetForm('ruleForm')">重 置</el-button>
       </span>
     </el-dialog>
-
-    <el-table :data="tableData" height="410" border style="width: 100%">
-      <el-table-column prop="name" label="客户姓名" width="180" align="center"></el-table-column>
-      <el-table-column prop="project" label="服务项目" width="180" align="center"></el-table-column>
-      <el-table-column prop="starTime" label="开始时间" width="180" align="center"></el-table-column>
-      <el-table-column prop="endTime" label="结束时间" width="180" align="center"></el-table-column>
-      <el-table-column prop="transactionMoney" label="交易金额" width="180" align="center"></el-table-column>
-      <el-table-column prop="leaveMessage" label="备注" align="center"></el-table-column>
-    </el-table>
-    <pagination
-      :pageTotal="tableData.length"
-      @handleCurrentChange="handleCurrentChange"
-      @handleSizeChange="handleSizeChange"
-    ></pagination>
+    <div class="add-order-details">
+    <el-button type="primary" size="medium" @click="addOderDetailsDialog = true">添加订单详情</el-button>
+    </div>
+    <div class="table_container">
+      <el-table :data="tableData"  border style="width: 100%">
+        <el-table-column prop="name" label="客户姓名" width="180" align="center"></el-table-column>
+        <el-table-column prop="project" label="服务项目" width="180" align="center"></el-table-column>
+        <el-table-column prop="starTime" label="开始时间" width="180" align="center"></el-table-column>
+        <el-table-column prop="endTime" label="结束时间" width="180" align="center"></el-table-column>
+        <el-table-column prop="transactionMoney" label="交易金额" width="180" align="center"></el-table-column>
+        <el-table-column prop="leaveMessage" label="备注" align="center"></el-table-column>
+      </el-table>
+      <pagination
+        :pageTotal="pageTotal"
+        @handleCurrentChange="handleCurrentChange"
+        @handleSizeChange="handleSizeChange"
+      ></pagination>
+    </div>
   </div>
 </template>
 
 <script>
-import echarts from "echarts";
+import { mapGetters } from "vuex";
+import * as mutils from "@/utils/mUtils";
 import Pagination from "@/components/pagination";
+import { getMoneyIncomePay, removeMoney, batchremoveMoney } from "@/api/money";
 
 export default {
   data() {
     return {
       tableData: [
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
-        {
-          name: "王小虎",
-          project: "logo设计",
-          starTime: "2016-05-02",
-          endTime: "2016-05-02",
-          transactionMoney: "500",
-          leaveMessage: "已按时完成"
-        },
         {
           name: "王小虎",
           project: "logo设计",
@@ -165,6 +87,19 @@ export default {
         money: "",
         remark: ""
       },
+      tableHeight: 0,
+      incomePayData: {
+        page: 1,
+        limit: 20,
+        name: ""
+      },
+      pageTotal: 2,
+      addCaseDialog: false,
+      dialog: {
+        width: "400px",
+        formLabelWidth: "120px"
+      },
+      addOderDetailsDialog: false,
       rules: {
         userName: [
           { required: true, message: "请输入客户姓名", trigger: "blur" }
@@ -180,19 +115,18 @@ export default {
         ],
         money: [{ required: true, message: "请输入金额", trigger: "blur" }],
         remark: [{ required: true, message: "请输入备注", trigger: "blur" }]
-      },
-      pageFormInfo: {
-        page: 1,
-        limit: 50
-      },
-      pageTotal: 0,
-      addOderDetailsDialog: false
+      }
     };
   },
   components: {
     Pagination
   },
+  computed: {},
+  mounted() {
+    this.getDataList();
+  },
   methods: {
+    setAddress(value) {},
     setTableHeight() {
       this.$nextTick(() => {
         this.tableHeight = document.body.clientHeight - 300;
@@ -200,14 +134,17 @@ export default {
     },
     // 获取列表数据
     getDataList() {},
+    hideAddFundDialog() {
+      this.addFundDialog.show = false;
+    },
     // 上下分页
     handleCurrentChange(val) {
-      this.pageFormInfo.page = val;
+      this.incomePayData.page = val;
       this.getDataList();
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.pageFormInfo.limit = val;
+      this.incomePayData.limit = val;
       this.getDataList();
     },
     handleClose(done) {
@@ -235,17 +172,21 @@ export default {
 </script>
 
 <style lang="less" scoped>
-#typePosition,
-#typePosition2 {
-  position: relative;
-  width: 96%;
-  height: 530px;
+.table_container {
   padding: 10px;
-  border-radius: 10px;
+  background: #fff;
+  border-radius: 2px;
+}
+.el-dialog--small {
+  width: 600px !important;
 }
 .pagination {
   text-align: left;
   margin-top: 10px;
+}
+.addCase {
+  height: 40px;
+  margin-bottom: 15px;
 }
 
 .order-details {

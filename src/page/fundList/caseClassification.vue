@@ -61,8 +61,6 @@
         :data="tableData"
         style="width: 100%"
         align="center"
-        @select="selectTable"
-        @select-all="selectAll"
       >
         <el-table-column v-if="idFlag" prop="id" label="id" align="center" width="180"></el-table-column>
         <el-table-column align="center" label="启停" width="60">
@@ -129,7 +127,7 @@
 <script>
 import { mapGetters } from "vuex";
 import * as mutils from "@/utils/mUtils";
-import SearchItem from "./components/searchItem";
+// import SearchItem from "./components/searchItem";
 import AddFundDialog from "./components/addFundDialog";
 import Pagination from "@/components/pagination";
 import { getMoneyIncomePay, removeMoney, batchremoveMoney } from "@/api/money";
@@ -205,7 +203,7 @@ export default {
     };
   },
   components: {
-    SearchItem,
+    // SearchItem,
     AddFundDialog,
     Pagination
   },
@@ -250,24 +248,6 @@ export default {
       this.incomePayData.limit = val;
       this.getMoneyList();
     },
-    getPay(val) {
-      if (mutils.isInteger(val)) {
-        return -val;
-      } else {
-        return val;
-      }
-    },
-    /**
-     * 格式化状态
-     */
-    formatterType(item) {
-      const type = parseInt(item.incomePayType);
-      return this.format_type_list[type];
-    },
-    filterType(value, item) {
-      const type = parseInt(item.incomePayType);
-      return this.format_type_list[value] == this.format_type_list[type];
-    },
     // 编辑操作方法
     onEditMoney(row) {
       this.addFundDialog.dialogRow = { ...row };
@@ -289,43 +269,6 @@ export default {
           });
         })
         .catch(() => {});
-    },
-    onBatchDelMoney() {
-      this.$confirm("确认批量删除记录吗?", "提示", {
-        type: "warning"
-      })
-        .then(() => {
-          const ids = this.rowIds.map(item => item.id).toString();
-          const para = { ids: ids };
-          batchremoveMoney(para).then(res => {
-            this.$message({
-              message: "批量删除成功",
-              type: "success"
-            });
-            this.getMoneyList();
-          });
-        })
-        .catch(() => {});
-    },
-    // 当用户手动勾选数据行的 Checkbox 时触发的事件
-    selectTable(val, row) {
-      this.setSearchBtn(val);
-    },
-    // 用户全选checkbox时触发该事件
-    selectAll(val) {
-      val.forEach(item => {
-        this.rowIds.push(item.id);
-      });
-      this.setSearchBtn(val);
-    },
-    setSearchBtn(val) {
-      let isFlag = true;
-      if (val.length > 0) {
-        isFlag = false;
-      } else {
-        isFlag = true;
-      }
-      this.$store.commit("SET_SEARCHBTN_DISABLED", isFlag);
     },
     // 添加序号
     table_index(index) {
