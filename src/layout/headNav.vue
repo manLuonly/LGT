@@ -57,7 +57,7 @@ export default {
       //   location.reload();
       // });
       logout().then(res => {
-        if (res.success === 0) {
+        if (res.code === 0) {
           removeToken('Token')
           this.$router.push({ path: "/login" });
           window.location.reload();

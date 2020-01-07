@@ -4,17 +4,18 @@
       <div class="avatar-box">
         <el-upload
           class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
+          action="/caseupload"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
         >
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <el-button type="primary" class="upload">上传</el-button>
         </el-upload>
 
         <!-- <img src="../../assets/img/avatar-3.png" class="avatar-img" /> -->
-        <el-button type="primary" class="upload">上传</el-button>
+        <!-- <el-button type="primary" class="upload">上传</el-button> -->
       </div>
       <div class="info">
         <div class="name">
@@ -90,20 +91,48 @@ export default {
   },
 
   methods: {
+    showMessage(showClose, message, type) {
+      this.$message({
+        showClose: showClose,
+        message: message,
+        type: type
+      });
+    },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isJPG = file.type === "image/jpeg"|| file.type === "image/png";
+      const isLt5M = file.size / 1024 / 1024 < 5;
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
+        this.$message.error("上传头像图片必须是JPG/PNG 格式");
       }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+      if (!isLt5M) {
+        this.$message.error("上传头像图片大小不能超过 5MB!");
       }
-      return isJPG && isLt2M;
+
+      if (isJPG && isLt5M) {
+        //将文件转化为formdata数据上传
+        let fileFormData = new FormData();
+        fileFormData.append("file", file);
+        
+        // 请求头,可以携带token或cookie
+        let requestConfig = {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        };
+        this.$axios
+          .post(`/caseupload`, fileFormData, requestConfig)
+          .then(res => {
+            this.showMessage(true, "上传成功", "success");
+          })
+          .catch(err => {
+            this.showMessage(true, "上传失败", "error");
+          });
+      }
+      return isJPG && isLt5M;
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -184,7 +213,7 @@ export default {
       .upload {
         position: absolute;
         left: 25%;
-        top: 65%;
+        top: 70%;
       }
     }
     .info {

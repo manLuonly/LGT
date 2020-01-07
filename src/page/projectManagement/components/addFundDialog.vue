@@ -27,7 +27,7 @@
           <el-input v-model="form.jumpAddress"></el-input>
         </el-form-item>
 
-        <el-form-item prop="updateTime" label="更新时间:">
+        <el-form-item prop="updateTime" label="案例名称:">
           <el-input v-model="form.updateTime"></el-input>
         </el-form-item>
 

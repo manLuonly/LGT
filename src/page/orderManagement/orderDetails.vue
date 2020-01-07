@@ -30,7 +30,7 @@
         <el-form-item label="金额" prop="money">
           <el-input v-model.number="ruleForm.money"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
+        <el-form-item label="备注">
           <el-input v-model="ruleForm.remark"></el-input>
         </el-form-item>
       </el-form>
@@ -113,8 +113,7 @@ export default {
         endDate: [
           { required: true, message: "请选择结束日期", trigger: "blur" }
         ],
-        money: [{ required: true, message: "请输入金额", trigger: "blur" }],
-        remark: [{ required: true, message: "请输入备注", trigger: "blur" }]
+        money: [{ required: true, message: "请输入金额", trigger: "blur" }]
       }
     };
   },

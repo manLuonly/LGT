@@ -4,7 +4,7 @@ const url = "192.168.0.106:8080";
 
 export function login(params) {
     return request({
-        url: '/management/login',
+        url: '/login',
         method: 'post',
         data: params
     })
@@ -19,8 +19,8 @@ export function login(params) {
 
 export function logout() {
     return request({
-        url: '/management/signout',
-        method: 'get'
+        url: '/signout',
+        method: 'post'
     })
 }
 

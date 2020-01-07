@@ -1,5 +1,5 @@
 <template>
-  <div class="classificationList">
+  <div class="fillcontain">
     <el-dialog title="提示" :visible.sync="addCaseDialog" :before-close="handleClose">
       <div class="form">
         <el-form
@@ -9,8 +9,8 @@
           :label-width="dialog.formLabelWidth"
           style="margin:10px;width:auto;"
         >
-          <el-form-item prop="username" label="启停:">
-            <el-switch v-model="value"  active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-form-item label="启停:">
+            <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
           </el-form-item>
 
           <el-form-item prop="classificationName" label="分类名称:">
@@ -21,8 +21,8 @@
             <el-input v-model="form.jumpAddress"></el-input>
           </el-form-item>
 
-          <el-form-item prop="updateTime" label="更新时间:">
-            <el-input v-model="form.updateTime"></el-input>
+          <el-form-item prop="caseName" label="案例名称:">
+            <el-input v-model="form.caseName"></el-input>
           </el-form-item>
 
           <el-form-item prop="accoutCash" label="缩略图:">
@@ -39,7 +39,8 @@
           </el-form-item>
 
           <el-form-item prop="remarks" label="图文:">
-            <el-input type="textarea" v-model="form.remarks"></el-input>
+            <!-- <el-input type="textarea" v-model="form.remarks"></el-input> -->
+            <editor-bar v-model="form.remarks" :isClear="isClear"></editor-bar>
           </el-form-item>
 
           <el-form-item class="text_right">
@@ -49,47 +50,13 @@
         </el-form>
       </div>
     </el-dialog>
-    <div>
-      <div class="button-group">
-        <el-button type="primary" class="addCase" @click="addCaseDialog = true">添加案例</el-button>
-        <div class="search">
-          <el-input class="search-input" placeholder="请输入名称" v-model="searchVal" clearable></el-input>
-          <div class="search-button">
-            <el-button icon="el-icon-search" size="medium"></el-button>
-          </div>
-        </div>
-      </div>
-      <div class="tag">
-        <el-tag
-          class="tagCase"
-          size="medium"
-          :key="tag"
-          v-for="tag in dynamicTags"
-          closable
-          :disable-transitions="false"
-          @close="handleCloseServiceProject(tag)"
-          @click="getType(tag)"
-        >{{tag}}</el-tag>
-        <el-input
-          class="input-new-tag"
-          v-if="inputVisible"
-          v-model="inputValue"
-          ref="saveTagInput"
-          size="small"
-          @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm"
-        ></el-input>
-        <el-button v-else class="button-new-tag" size="mini" @click="showInput">+ New Tag</el-button>
-      </div>
-    </div>
+    <el-button type="primary" class="addCase" @click="addCase">添加案例分类</el-button>
     <div class="table_container">
       <el-table
         v-loading="loading"
         :data="tableData"
         style="width: 100%"
         align="center"
-        @select="selectTable"
-        @select-all="selectAll"
       >
         <el-table-column v-if="idFlag" prop="id" label="id" align="center" width="180"></el-table-column>
         <el-table-column align="center" label="启停" width="60">
@@ -142,22 +109,22 @@
         @handleCurrentChange="handleCurrentChange"
         @handleSizeChange="handleSizeChange"
       ></pagination>
-      <addFundDialog
+      <!-- <addFundDialog
         v-if="addFundDialog.show"
         :isShow="addFundDialog.show"
         :dialogRow="addFundDialog.dialogRow"
         @getFundList="getMoneyList"
         @closeDialog="hideAddFundDialog"
-      ></addFundDialog>
+      ></addFundDialog> -->
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import { deepCopy } from "@/utils/mUtils";
-import SearchItem from "./components/searchItem";
-import AddFundDialog from "./components/addFundDialog";
+import * as mutils from "@/utils/mUtils";
+import editorBar from "./components/wangEditor";
+// import AddFundDialog from "./components/addFundDialog";
 import Pagination from "@/components/pagination";
 import { getMoneyIncomePay, removeMoney, batchremoveMoney } from "@/api/money";
 
@@ -172,45 +139,14 @@ export default {
         },
         {
           createTime: "2016-05-02",
-          type: "画册设计",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          createTime: "2016-05-02",
-          type: "海报设计",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          createTime: "2016-05-02",
-          type: "网页设计",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          createTime: "2016-05-02",
           type: "APP设计",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          createTime: "2016-05-02",
-          type: "小程序",
           address: "上海市普陀区金沙江路 1518 弄"
         }
       ],
-      dynamicTags: [
-        "全部",
-        "logo设计",
-        "画册设计",
-        "海报设计",
-        "网页设计",
-        "APP设计",
-        "小程序"
-      ],
-      inputVisible: false,
-      inputValue: "",
       form: {
         classificationName: "",
         jumpAddress: "",
-        updateTime: "",
+        caseName: "",
         remarks: ""
       },
       tableHeight: 0,
@@ -220,17 +156,6 @@ export default {
       editid: "",
       rowIds: [],
       sortnum: 0,
-      format_type_list: {
-        0: "提现",
-        1: "提现手续费",
-        2: "提现锁定",
-        3: "理财服务退出",
-        4: "购买宜定盈",
-        5: "充值",
-        6: "优惠券",
-        7: "充值礼券",
-        8: "转账"
-      },
       addFundDialog: {
         show: false,
         dialogRow: {}
@@ -240,9 +165,8 @@ export default {
         limit: 20,
         name: ""
       },
-      pageTotal: 7,
+      pageTotal: 2,
       value: true,
-      searchVal: "", // 搜索值
       addCaseDialog: false,
       form_rules: {
         classificationName: [
@@ -251,8 +175,8 @@ export default {
         jumpAddress: [
           { required: true, message: "跳转地址不能为空", trigger: "blur" }
         ],
-        updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
+        caseName: [
+          { required: true, message: "案例名称不能为空", trigger: "blur" }
         ],
         remarks: [{ required: true, message: "备注不能为空", trigger: "blur" }]
       },
@@ -261,13 +185,16 @@ export default {
         width: "400px",
         formLabelWidth: "120px"
       },
-      copyData: []
+      // editor: {
+      //   info: ''
+      // },
+      isClear: false
     };
   },
   components: {
-    SearchItem,
-    AddFundDialog,
-    Pagination
+    // AddFundDialog,
+    Pagination,
+    editorBar
   },
   computed: {
     ...mapGetters(["search"])
@@ -275,7 +202,6 @@ export default {
   mounted() {
     // this.getMoneyList();
     this.loading = false;
-    this.copyData = deepCopy(this.tableData);
   },
   methods: {
     setAddress(value) {},
@@ -311,26 +237,8 @@ export default {
       this.incomePayData.limit = val;
       this.getMoneyList();
     },
-    // getPay(val) {
-    //   if (mutils.isInteger(val)) {
-    //     return -val;
-    //   } else {
-    //     return val;
-    //   }
-    // },
-    /**
-     * 格式化状态
-     */
-    formatterType(item) {
-      const type = parseInt(item.incomePayType);
-      return this.format_type_list[type];
-    },
-    filterType(value, item) {
-      const type = parseInt(item.incomePayType);
-      return this.format_type_list[value] == this.format_type_list[type];
-    },
     // 编辑操作方法
-    onEditMoney(row) {  
+    onEditMoney(row) {
       this.addFundDialog.dialogRow = { ...row };
       this.showAddFundDialog();
     },
@@ -350,43 +258,6 @@ export default {
           });
         })
         .catch(() => {});
-    },
-    onBatchDelMoney() {
-      this.$confirm("确认批量删除记录吗?", "提示", {
-        type: "warning"
-      })
-        .then(() => {
-          const ids = this.rowIds.map(item => item.id).toString();
-          const para = { ids: ids };
-          batchremoveMoney(para).then(res => {
-            this.$message({
-              message: "批量删除成功",
-              type: "success"
-            });
-            this.getMoneyList();
-          });
-        })
-        .catch(() => {});
-    },
-    // 当用户手动勾选数据行的 Checkbox 时触发的事件
-    selectTable(val, row) {
-      this.setSearchBtn(val);
-    },
-    // 用户全选checkbox时触发该事件
-    selectAll(val) {
-      val.forEach(item => {
-        this.rowIds.push(item.id);
-      });
-      this.setSearchBtn(val);
-    },
-    setSearchBtn(val) {
-      let isFlag = true;
-      if (val.length > 0) {
-        isFlag = false;
-      } else {
-        isFlag = true;
-      }
-      this.$store.commit("SET_SEARCHBTN_DISABLED", isFlag);
     },
     // 添加序号
     table_index(index) {
@@ -410,19 +281,9 @@ export default {
     changeSwitch(val) {
       console.log(val);
     },
-    // 获取数据类型
-    getType(val) {
-      const filterData = [];
-      this.copyData.filter(item => {
-        if (val == "全部") {
-          this.tableData = this.copyData;
-        } else {
-          if (item.type == val) {
-            filterData.push(item);
-            this.tableData = filterData;
-          }
-        }
-      });
+    // 添加案例
+    addCase() {
+      this.addCaseDialog = true;
     },
     handleClose(done) {
       this.$confirm("确认关闭？")
@@ -430,23 +291,6 @@ export default {
           done();
         })
         .catch(_ => {});
-    },
-    handleCloseServiceProject(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-    },
-    showInput() {
-      this.inputVisible = true;
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
-    },
-    handleInputConfirm() {
-      let inputValue = this.inputValue;
-      if (inputValue) {
-        this.dynamicTags.push(inputValue);
-      }
-      this.inputVisible = false;
-      this.inputValue = "";
     },
     onSubmit(form) {},
     handleAvatarSuccess(res, file) {
@@ -469,67 +313,31 @@ export default {
   text-align: left;
   margin-top: 10px;
 }
-
-.classificationList {
-  padding: 20px;
-  .form {
-    /deep/ .el-textarea {
-      height: 200px;
-    }
-  } 
-  .button-group {
-    // display: inline-block;
-    display: flex;
-    flex-flow: row;
-    justify-content: space-between;
-    .addCase {
-      height: 40px;
-      margin-bottom: 15px;
-    }
-    .search {
-      // display: inline-block;
-      // float: right;
-      .search-input {
-        display: inline-block;
-        width: 217px;
-        height: 40px;
-        line-height: 40px;
-        /deep/ .el-input__inner {
-          height: 36px !important;
-          line-height: 36px !important;
-        }
-      }
-      .search-button {
-        display: inline-block;
-        height: 40px;
-        line-height: 40px;
-      }
-    }
-  }
-.tag {
-  padding-bottom: 15px;
-    .tagCase {
-      cursor: pointer;
-    }
-  }
+.addCase {
+  height: 40px;
+  margin-bottom: 15px;
 }
 
-
-
-.el-tag + .el-tag {
-  margin-left: 10px;
+.avatar-uploader .el-upload {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
-.button-new-tag {
-  margin-left: 10px;
-  height: 32px;
-  line-height: 30px;
-  padding-top: 0;
-  padding-bottom: 0;
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
 }
-.input-new-tag {
-  width: 90px;
-  margin-left: 10px;
-  vertical-align: bottom;
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>
 

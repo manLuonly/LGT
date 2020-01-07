@@ -77,7 +77,7 @@ export const constantRouterMap = [{
 //注册路由
 export default new Router({
     mode: 'history', // 默认为'hash'模式
-    base: '/', // 添加跟目录,对应服务器部署子目录
+    base: '/dist', // 添加跟目录,对应服务器部署子目录
     routes: constantRouterMap
 })
 
@@ -98,7 +98,7 @@ export const asyncRouterMap = [{
                     routerType: 'leftmenu'
                 },
                 component: () =>
-                    import ('@/page/fundList/caseDataLook'),
+                    import ('@/page/projectManagement/caseDataLook'),
             },
             {
                 path: 'caseClassification',
@@ -108,7 +108,7 @@ export const asyncRouterMap = [{
                     routerType: 'leftmenu'
                 },
                 component: () =>
-                    import ('@/page/fundList/caseClassification'),
+                    import ('@/page/projectManagement/caseClassification'),
             },
             {
                 path: 'classificationList',
@@ -118,7 +118,7 @@ export const asyncRouterMap = [{
                     routerType: 'leftmenu'
                 },
                 component: () =>
-                    import ('@/page/fundList/classificationList'),
+                    import ('@/page/projectManagement/classificationList'),
             }
         ]
     },

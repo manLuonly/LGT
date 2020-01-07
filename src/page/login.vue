@@ -71,8 +71,8 @@ export default {
     return {
       logo: logoImg,
       loginForm: {
-        user: "lgz",
-        password: "12345"
+        user: "",
+        password: ""
       },
       rules: {
         user: [
@@ -99,7 +99,7 @@ export default {
           let userinfo = this.loginForm;
           login(userinfo)
             .then(res => {
-              if (res.success === 0) {
+              if (res.code === 0) {
                 setToken("Token", res.success);
                 setTimeout(() => {
                   this.$router.push({ path: "/" });

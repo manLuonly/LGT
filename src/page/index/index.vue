@@ -111,7 +111,7 @@
         </li>-->
       </ul>
     </div>
-    <section class="data_section" ref="data_section">
+    <!-- <section class="data_section" ref="data_section">
       <el-row :gutter="10" class="row_list order_list">
         <el-col :span="13">
           <lineChart title="案例统计数量列表" />
@@ -133,7 +133,7 @@
           />
         </el-col>
       </el-row>
-    </section>
+    </section> -->
   </div>
 </template>
 
@@ -201,10 +201,10 @@ export default {
       console.log(title, "title");
       switch (title) {
         case "案":
-          this.$router.push({ path: "/projectManagement/lookCase" });
+          this.$router.push({ path: "/projectManagement/classificationList" });
           break;
         case "点":
-          this.$router.push({ path: "/projectManagement/lookCase" });
+          this.$router.push({ path: "/projectManagement/classificationList" });
           break;
         case "言":
           this.$router.push({ path: "/clientManagement/userInfo" });
@@ -310,7 +310,7 @@ export default {
             left: 50%;
             transform: translate(-50%, -50%);
             .text {
-              margin-right: 3px;
+              margin-right: 2px;
               font-size: 18px;
             }
             .number {
