@@ -16,7 +16,8 @@
         <el-form-item label="客户姓名" prop="userName">
           <el-input v-model="ruleForm.userName"></el-input>
         </el-form-item>
-        <el-form-item label="服务项目" prop="serviceProject">
+        <!-- prop="serviceProject" -->
+        <el-form-item label="服务项目" >
           <el-select v-model="ruleForm.serviceProject" placeholder="请选择活动区域">
             <el-option label="区域一" value="shanghai"></el-option>
           </el-select>
@@ -40,7 +41,7 @@
       </span>
     </el-dialog>
     <div class="add-order-details">
-    <el-button type="primary" size="medium" @click="addOderDetailsDialog = true">添加订单详情</el-button>
+    <el-button type="primary" size="medium" class="add-order-details-btn" @click="addOderDetailsDialog = true">添加订单详情</el-button>
     </div>
     <div class="table_container">
       <el-table :data="tableData"  border style="width: 100%">
@@ -193,6 +194,9 @@ export default {
   .add-order-details {
     // padding: 10px;
       padding-bottom: 15px;
+      .add-order-details-btn {
+        height: 40px;
+      }
   }
   .demo-ruleForm {
     /deep/ .el-select {

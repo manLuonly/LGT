@@ -50,12 +50,12 @@ module.exports = {
         host: '0.0.0.0',
         port: 8080,
         // 由于本项目数据通过easy-mock和mockjs模拟，不存在跨域问题，无需配置代理;
-        proxy: {
-            '/': {
-                target: "http://192.168.0.100:8080",
-                changeOrigin: true
-            }
-        }
+        // proxy: {
+        //     '/': {
+        //         target: "http://192.168.0.100:8080",
+        //         changeOrigin: true
+        //     }
+        // }
     },
     // webpack相关配置
     chainWebpack: (config) => {

@@ -1,5 +1,5 @@
 <template>
-  <div class="fillcontain">
+  <div class="case-classification">
     <el-dialog title="提示" :visible.sync="addCaseDialog" :before-close="handleClose">
       <div class="form">
         <el-form
@@ -20,8 +20,8 @@
           <el-form-item prop="jumpAddress" label="跳转地址:">
             <el-input v-model="form.jumpAddress"></el-input>
           </el-form-item>
-
-          <el-form-item prop="caseName" label="案例名称:">
+          <!-- prop="caseName" -->
+          <el-form-item  label="案例名称:">
             <el-input v-model="form.caseName"></el-input>
           </el-form-item>
 
@@ -301,43 +301,46 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.table_container {
-  padding: 10px;
-  background: #fff;
-  border-radius: 2px;
-}
-.el-dialog--small {
-  width: 600px !important;
-}
-.pagination {
-  text-align: left;
-  margin-top: 10px;
-}
-.addCase {
-  height: 40px;
-  margin-bottom: 15px;
-}
+.case-classification {
+   padding: 20px;
+  .table_container {
+    padding: 10px;
+    background: #fff;
+    border-radius: 2px;
+  }
+  .el-dialog--small {
+    width: 600px !important;
+  }
+  .pagination {
+    text-align: left;
+    margin-top: 10px;
+  }
+  .addCase {
+    height: 40px;
+    margin-bottom: 15px;
+  }
 
-.avatar-uploader .el-upload {
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409EFF;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+  .avatar-uploader .el-upload {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 }
 </style>
 

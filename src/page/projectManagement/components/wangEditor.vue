@@ -51,8 +51,10 @@ export default {
     seteditor() {
       this.editor = new E(this.$refs.toolbar, this.$refs.editor);
 
-      this.editor.customConfig.uploadImgShowBase64 = true; // base 64 存储地址
+      // 下面两个配置，使用其中一个即可显示“上传图片”的tab。但是两者不要同时使用！！！
+      // this.editor.customConfig.uploadImgShowBase64 = true; // base 64 存储地址
       this.editor.customConfig.uploadImgServer = "/caseupload"; // 配置服务器地址
+
       this.editor.customConfig.uploadImgHeaders = {}; // 配置请求头
       this.editor.customConfig.uploadFileName = "file"; // 配置后端接受上传文件的参数名
       this.editor.customConfig.uploadImgMaxSize = 100 * 1024 * 1024; // 配置图片大小限制
