@@ -1,6 +1,6 @@
 <template>
   <div class="classificationList">
-    <el-dialog title="提示" :visible.sync="addCaseDialog" :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="addCaseDialog" :before-close="handleClose" @close="resetForm('form')">
       <div class="form">
         <el-form
           ref="form"
@@ -45,8 +45,8 @@
           </el-form-item>
 
           <el-form-item class="text_right">
-            <el-button type="primary" @click='onSubmit("form")'>提 交</el-button>
-            <el-button @click="addCaseDialog = false">取 消</el-button>
+            <el-button type="primary" @click='submitForm("form")'>提 交</el-button>
+            <el-button @click="resetForm('form')">重 置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -288,12 +288,6 @@ export default {
           this.tableData = res.data;
         }
       })
-      // const para = Object.assign({}, this.incomePayData, this.search);
-      // getMoneyIncomePay(para).then(res => {
-      //   this.loading = false;
-      //   this.pageTotal = res.data.total;
-      //   this.tableData = res.data.moneyList;
-      // });
     },
     // 显示资金弹框
     showAddFundDialog(val) {
@@ -395,8 +389,18 @@ export default {
       this.inputVisible = false;
       this.inputValue = "";
     },
-    onSubmit(form) {
-      console.log(form,'form')
+    submitForm(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm(form) {
+      this.$refs[form].resetFields();
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
@@ -452,6 +456,7 @@ export default {
         display: inline-block;
         height: 40px;
         line-height: 40px;
+        margin-left: -1px;
       }
     }
   }

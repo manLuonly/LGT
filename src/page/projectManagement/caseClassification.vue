@@ -1,6 +1,11 @@
 <template>
   <div class="case-classification">
-    <el-dialog title="提示" :visible.sync="addCaseDialog" :before-close="handleClose">
+    <el-dialog
+      title="提示"
+      :visible.sync="addCaseDialog"
+      :before-close="handleClose"
+      @close="resetForm('form')"
+    >
       <div class="form">
         <el-form
           ref="form"
@@ -21,7 +26,7 @@
             <el-input v-model="form.jumpAddress"></el-input>
           </el-form-item>
           <!-- prop="caseName" -->
-          <el-form-item  label="案例名称:">
+          <el-form-item label="案例名称:">
             <el-input v-model="form.caseName"></el-input>
           </el-form-item>
 
@@ -44,20 +49,15 @@
           </el-form-item>
 
           <el-form-item class="text_right">
-            <el-button type="primary" @click='onSubmit("form")'>提 交</el-button>
-            <el-button @click="addCaseDialog = false">取 消</el-button>
+            <el-button type="primary" @click="submitForm('form')">提 交</el-button>
+            <el-button @click="resetForm('form')">重 置</el-button>
           </el-form-item>
         </el-form>
       </div>
     </el-dialog>
     <el-button type="primary" class="addCase" @click="addCase">添加案例分类</el-button>
     <div class="table_container">
-      <el-table
-        v-loading="loading"
-        :data="tableData"
-        style="width: 100%"
-        align="center"
-      >
+      <el-table v-loading="loading" :data="tableData" style="width: 100%" align="center">
         <el-table-column v-if="idFlag" prop="id" label="id" align="center" width="180"></el-table-column>
         <el-table-column align="center" label="启停" width="60">
           <template slot-scope="scope">
@@ -115,7 +115,7 @@
         :dialogRow="addFundDialog.dialogRow"
         @getFundList="getMoneyList"
         @closeDialog="hideAddFundDialog"
-      ></addFundDialog> -->
+      ></addFundDialog>-->
     </div>
   </div>
 </template>
@@ -292,7 +292,19 @@ export default {
         })
         .catch(_ => {});
     },
-    onSubmit(form) {},
+    submitForm(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
     }
@@ -302,7 +314,7 @@ export default {
 
 <style lang="less" scoped>
 .case-classification {
-   padding: 20px;
+  padding: 20px;
   .table_container {
     padding: 10px;
     background: #fff;
@@ -326,7 +338,7 @@ export default {
     overflow: hidden;
   }
   .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
+    border-color: #409eff;
   }
   .avatar-uploader-icon {
     font-size: 28px;
