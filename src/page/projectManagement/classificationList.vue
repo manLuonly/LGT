@@ -1,6 +1,6 @@
 <template>
   <div class="classificationList">
-    <el-dialog title="提示" :visible.sync="addCaseDialog" :before-close="handleClose" @close="resetForm('form')">
+    <el-dialog title="添加案例" :visible.sync="addCaseDialog" @close="resetForm('form')" width="30%" center>
       <div class="form">
         <el-form
           ref="form"
@@ -9,51 +9,79 @@
           :label-width="dialog.formLabelWidth"
           style="margin:10px;width:auto;"
         >
-          <el-form-item prop="username" label="启停:">
-            <el-switch v-model="value"  active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-form-item prop="username" label="启停">
+            <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
           </el-form-item>
 
-          <el-form-item prop="classificationName" label="分类名称:">
-            <el-input type="text" v-model="form.classificationName"></el-input>
+          <el-form-item label="排序">
+            <el-input-number
+              v-model="form.caseSortNum"
+              @change="handleCaseSortNumChange"
+              :min="0"
+              :max="99999"
+              label="描述文字"
+            ></el-input-number>
           </el-form-item>
 
-          <el-form-item prop="jumpAddress" label="跳转地址:">
-            <el-input v-model="form.jumpAddress"></el-input>
+          <el-form-item prop="classificationName" label="上级分类">
+            <el-select v-model="form.classificationName" placeholder="请选择分类级别">
+              <el-option
+                v-for="item in caseOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
           </el-form-item>
 
-          <el-form-item prop="caseName" label="案例名称:">
+          <el-form-item prop="jumpAddress" label="上级分类">
+            <span
+              v-for="(item,index) in ClassificationStatusItems"
+              :key="index"
+              @click="getClassificationStatus(index)"
+              :class="{active:index===staticNumber}"
+            >{{ item.name }}</span>
+            <el-input v-model="form.jumpAddress" :disabled="isCanSelectAddress"></el-input>
+          </el-form-item>
+
+          <el-form-item prop="caseName" label="案例名称">
             <el-input v-model="form.caseName"></el-input>
           </el-form-item>
 
-          <el-form-item prop="accoutCash" label="缩略图:">
+          <el-form-item prop="accoutCash" label="缩略图">
             <el-upload
               class="avatar-uploader"
               action="/caseupload"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
-              :auto-upload='false'
+              :auto-upload="false"
             >
               <img v-if="imageUrl" :src="imageUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
 
-          <el-form-item prop="remarks" label="图文:">
-            <!-- <el-input type="textarea" v-model="form.remarks"></el-input> -->
+          <el-form-item prop="remarks" label="图文">
             <editor-bar v-model="form.remarks" :isClear="isClear"></editor-bar>
-          </el-form-item>
-
-          <el-form-item class="text_right">
-            <el-button type="primary" @click='submitForm("form")'>提 交</el-button>
-            <el-button @click="resetForm('form')">重 置</el-button>
           </el-form-item>
         </el-form>
       </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="resetForm('form')">重 置</el-button>
+        <el-button type="primary" @click='submitForm("form")'>确 定</el-button>
+      </span>
     </el-dialog>
     <div>
       <div class="button-group">
         <el-button type="primary" class="addCase" @click="addCaseDialog = true">添加案例</el-button>
+        <el-button @click="getList()">LOGO设置</el-button>
+        <el-button @click="getList()">小程序开发</el-button>
+        <el-button @click="getList()">APP开发</el-button>
+        <el-button @click="getList()">包装设计</el-button>
+        <el-button @click="getList()">画册设计</el-button>
+        <el-button @click="getList()">网站开发</el-button>
+        <el-button @click="getList()">品牌VI设计</el-button>
         <div class="search">
           <el-input class="search-input" placeholder="请输入名称" v-model="searchVal" clearable></el-input>
           <div class="search-button">
@@ -61,36 +89,9 @@
           </div>
         </div>
       </div>
-      <div class="tag">
-        <el-tag
-          class="tagCase"
-          size="medium"
-          :key="tag"
-          v-for="tag in dynamicTags"
-          closable
-          :disable-transitions="false"
-          @close="handleCloseServiceProject(tag)"
-          @click="getType(tag)"
-        >{{tag}}</el-tag>
-        <el-input
-          class="input-new-tag"
-          v-if="inputVisible"
-          v-model="inputValue"
-          ref="saveTagInput"
-          size="small"
-          @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm"
-        ></el-input>
-        <el-button v-else class="button-new-tag" size="mini" @click="showInput">+ New Tag</el-button>
-      </div>
     </div>
     <div class="table_container">
-      <el-table
-        v-loading="loading"
-        :data="tableData"
-        style="width: 100%"
-        align="center"
-      >
+      <el-table v-loading="loading" :data="tableData" style="width: 100%" align="center">
         <el-table-column v-if="idFlag" prop="id" label="id" align="center" width="180"></el-table-column>
         <el-table-column align="center" label="启停" width="60">
           <template slot-scope="scope">
@@ -105,7 +106,6 @@
         </el-table-column>
         <el-table-column label="排序" align="center" width="80">
           <template slot-scope="scope">
-            <!-- <span>{{ table_index(scope.$index) }}</span> -->
             <span>{{ scope.row.id }}</span>
           </template>
         </el-table-column>
@@ -116,7 +116,7 @@
         </el-table-column>
         <el-table-column prop="name" label="名称" align="center"></el-table-column>
         <el-table-column v-if="idFlag" prop="address" label="分类名称" align="center"></el-table-column>
-        <el-table-column  label="跳转地址" align="center">
+        <el-table-column label="跳转地址" align="center">
           <template slot-scope="scope">
             <el-input placeholder="请输入内容" v-model="scope.row.jump_url" :disabled="true"></el-input>
           </template>
@@ -144,13 +144,13 @@
         @handleCurrentChange="handleCurrentChange"
         @handleSizeChange="handleSizeChange"
       ></pagination>
-      <!-- <addFundDialog
+      <caseListDialog
         v-if="addFundDialog.show"
         :isShow="addFundDialog.show"
         :dialogRow="addFundDialog.dialogRow"
         @getFundList="getDataList"
         @closeDialog="hideAddFundDialog"
-      ></addFundDialog> -->
+      ></caseListDialog>
     </div>
   </div>
 </template>
@@ -159,62 +159,50 @@
 import { mapGetters } from "vuex";
 import { deepCopy } from "@/utils/mUtils";
 import editorBar from "./components/wangEditor";
-// import AddFundDialog from "./components/addFundDialog";
+import caseListDialog from "./components/caseListDialog";
 import Pagination from "@/components/pagination";
 import { getMoneyIncomePay, removeMoney, batchremoveMoney } from "@/api/money";
 import { caseList } from "@/api/projectManagement";
-
-
 
 export default {
   data() {
     return {
       tableData: [
-        // {
-        //   createTime: "2016-05-02",
-        //   type: "logo设计",
-        //   address: "上海市普陀区金沙江路 1518 弄"
-        // },
-        // {
-        //   createTime: "2016-05-02",
-        //   type: "画册设计",
-        //   address: "上海市普陀区金沙江路 1518 弄"
-        // },
-        // {
-        //   createTime: "2016-05-02",
-        //   type: "海报设计",
-        //   address: "上海市普陀区金沙江路 1518 弄"
-        // },
-        // {
-        //   createTime: "2016-05-02",
-        //   type: "网页设计",
-        //   address: "上海市普陀区金沙江路 1518 弄"
-        // },
-        // {
-        //   createTime: "2016-05-02",
-        //   type: "APP设计",
-        //   address: "上海市普陀区金沙江路 1518 弄"
-        // },
-        // {
-        //   createTime: "2016-05-02",
-        //   type: "小程序",
-        //   address: "上海市普陀区金沙江路 1518 弄"
-        // }
+        {
+          createTime: "2016-05-02",
+          type: "logo设计",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          createTime: "2016-05-02",
+          type: "画册设计",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          createTime: "2016-05-02",
+          type: "海报设计",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          createTime: "2016-05-02",
+          type: "网页设计",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          createTime: "2016-05-02",
+          type: "APP设计",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          createTime: "2016-05-02",
+          type: "小程序",
+          address: "上海市普陀区金沙江路 1518 弄"
+        }
       ],
-      dynamicTags: [
-        "全部",
-        "logo设计",
-        "画册设计",
-        "海报设计",
-        "网页设计",
-        "APP设计",
-        "小程序"
-      ],
-      inputVisible: false,
-      inputValue: "",
       form: {
+        caseSortNum: 0,
         classificationName: "",
-        jumpAddress: "",
+        jumpAddress: "www.baidu.com",
         caseName: "",
         remarks: ""
       },
@@ -232,7 +220,7 @@ export default {
       PaginationData: {
         pageNum: 1,
         pageSize: 20,
-        type: "",
+        type: ""
       },
       pageTotal: 7,
       value: true,
@@ -248,7 +236,7 @@ export default {
         caseName: [
           { required: true, message: "案例名称不能为空", trigger: "blur" }
         ],
-        remarks: [{ required: true, message: "备注不能为空", trigger: "blur" }]
+        remarks: [{ required: true, message: "图文不能为空", trigger: "blur" }]
       },
       imageUrl: "",
       dialog: {
@@ -256,11 +244,51 @@ export default {
         formLabelWidth: "120px"
       },
       copyData: [],
-       isClear: false
+      isClear: false,
+      caseOptions: [
+        {
+          value: "LOGO设计",
+          label: "LOGO设计"
+        },
+        {
+          value: "小程序开发",
+          label: "小程序开发"
+        },
+        {
+          value: "APP开发",
+          label: "APP开发"
+        },
+        {
+          value: "包装设计",
+          label: "包装设计"
+        },
+        {
+          value: "画册设计",
+          label: "画册设计"
+        },
+        {
+          value: "网站开发",
+          label: "网站开发"
+        },
+        {
+          value: "品牌VI设计",
+          label: "网站开发"
+        }
+      ],
+      staticNumber: 0,
+      ClassificationStatusItems: [
+        {
+          name: "默认"
+        },
+        {
+          name: "自定义"
+        }
+      ],
+      isCanSelectAddress: true
     };
   },
   components: {
-    // AddFundDialog,
+    caseListDialog,
     Pagination,
     editorBar
   },
@@ -268,7 +296,7 @@ export default {
     ...mapGetters(["search"])
   },
   mounted() {
-    this.getDataList();
+    // this.getDataList();
     this.loading = false;
     this.copyData = deepCopy(this.tableData);
   },
@@ -281,13 +309,13 @@ export default {
     },
     // 获取列表数据
     getDataList() {
-      this.PaginationData.type = 'all';
+      this.PaginationData.type = "all";
       const para = Object.assign({}, this.PaginationData);
       caseList(para).then(res => {
         if (res.code === 0) {
           this.tableData = res.data;
         }
-      })
+      });
     },
     // 显示资金弹框
     showAddFundDialog(val) {
@@ -308,7 +336,7 @@ export default {
       this.getDataList();
     },
     // 编辑操作方法
-    onEditMoney(row) {  
+    onEditMoney(row) {
       this.addFundDialog.dialogRow = { ...row };
       this.showAddFundDialog();
     },
@@ -329,12 +357,6 @@ export default {
         })
         .catch(() => {});
     },
-    // 添加序号
-    table_index(index) {
-      return (
-        (this.PaginationData.pageNum - 1) * this.PaginationData.pageSize + index + 1
-      );
-    },
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -351,44 +373,6 @@ export default {
     changeSwitch(val) {
       console.log(val);
     },
-    // 获取数据类型
-    getType(val) {
-      const filterData = [];
-      this.copyData.filter(item => {
-        if (val == "全部") {
-          this.tableData = this.copyData;
-        } else {
-          if (item.type == val) {
-            filterData.push(item);
-            this.tableData = filterData;
-          }
-        }
-      });
-    },
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
-    },
-    handleCloseServiceProject(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-    },
-    showInput() {
-      this.inputVisible = true;
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
-    },
-    handleInputConfirm() {
-      let inputValue = this.inputValue;
-      if (inputValue) {
-        this.dynamicTags.push(inputValue);
-      }
-      this.inputVisible = false;
-      this.inputValue = "";
-    },
     submitForm(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
@@ -404,6 +388,21 @@ export default {
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    // 筛选案例列表数据
+    getList(val) {},
+    // 案例排序
+    handleCaseSortNumChange(val) {
+      console.log("案例排序发生了变化" + val);
+    },
+    // 地址是否自定义
+    getClassificationStatus(index) {
+      this.staticNumber = index;
+      if (index === 1) {
+        this.isCanSelectAddress = false;
+      } else {
+        this.isCanSelectAddress = true;
+      }
     }
   }
 };
@@ -429,27 +428,22 @@ export default {
     /deep/ .el-textarea {
       height: 200px;
     }
-  } 
+  }
   .button-group {
-    // display: inline-block;
-    display: flex;
-    flex-flow: row;
-    justify-content: space-between;
-    .addCase {
+    /deep/ .el-button {
       height: 40px;
       margin-bottom: 15px;
     }
     .search {
-      // display: inline-block;
-      // float: right;
+      float: right;
       .search-input {
         display: inline-block;
         width: 217px;
         height: 40px;
         line-height: 40px;
         /deep/ .el-input__inner {
-          height: 36px !important;
-          line-height: 36px !important;
+          height: 40px !important;
+          line-height: 40px !important;
         }
       }
       .search-button {
@@ -460,31 +454,14 @@ export default {
       }
     }
   }
-.tag {
-  padding-bottom: 15px;
-    .tagCase {
-      cursor: pointer;
-    }
+  .active {
+    border-radius: 3px;
+    margin: 5px;
+    color: #fff;
+    background-color: rgb(102, 177, 255);
   }
 }
 
-
-
-.el-tag + .el-tag {
-  margin-left: 10px;
-}
-.button-new-tag {
-  margin-left: 10px;
-  height: 32px;
-  line-height: 30px;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-.input-new-tag {
-  width: 90px;
-  margin-left: 10px;
-  vertical-align: bottom;
-}
 
 
 .avatar-uploader .el-upload {
@@ -493,7 +470,7 @@ export default {
   overflow: hidden;
 }
 .avatar-uploader .el-upload:hover {
-  border-color: #409EFF;
+  border-color: #409eff;
 }
 .avatar-uploader-icon {
   font-size: 28px;

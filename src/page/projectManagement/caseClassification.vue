@@ -1,36 +1,41 @@
 <template>
   <div class="case-classification">
-    <el-dialog
-      title="提示"
-      :visible.sync="addCaseDialog"
-      :before-close="handleClose"
-      @close="resetForm('form')"
-    >
+    <el-dialog title="添加案例分类" :visible.sync="addCaseDialog" @close="resetForm('form')" center>
       <div class="form">
         <el-form
           ref="form"
-          :model="form"
+          :model="addForm"
           :rules="form_rules"
           :label-width="dialog.formLabelWidth"
           style="margin:10px;width:auto;"
         >
-          <el-form-item label="启停:">
+          <el-form-item label="启停">
             <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
           </el-form-item>
-
-          <el-form-item prop="classificationName" label="分类名称:">
-            <el-input type="text" v-model="form.classificationName"></el-input>
+          <el-form-item label="排序">
+            <el-input-number
+              v-model="addForm.caseSortNum"
+              @change="handleCaseSortNumChange"
+              :min="0"
+              :max="99999"
+              label="描述文字"
+            ></el-input-number>
           </el-form-item>
-
-          <el-form-item prop="jumpAddress" label="跳转地址:">
-            <el-input v-model="form.jumpAddress"></el-input>
+          <el-form-item prop="jumpAddress" label="上级分类">
+            <span
+              v-for="(item,index) in ClassificationStatusItems"
+              :key="index"
+              @click="getClassificationStatus(index)"
+              :class="{active:index===staticNumber}"
+            >{{ item.name }}</span>
+            <el-input v-model="addForm.jumpAddress" :disabled="isCanSelectAddress"></el-input>
           </el-form-item>
           <!-- prop="caseName" -->
-          <el-form-item label="案例名称:">
-            <el-input v-model="form.caseName"></el-input>
+          <el-form-item label="案例名称">
+            <el-input v-model="addForm.caseName"></el-input>
           </el-form-item>
 
-          <el-form-item prop="accoutCash" label="缩略图:">
+          <el-form-item prop="accoutCash" label="缩略图">
             <el-upload
               class="avatar-uploader"
               action="https://jsonplaceholder.typicode.com/posts/"
@@ -43,17 +48,15 @@
             </el-upload>
           </el-form-item>
 
-          <el-form-item prop="remarks" label="图文:">
-            <!-- <el-input type="textarea" v-model="form.remarks"></el-input> -->
-            <editor-bar v-model="form.remarks" :isClear="isClear"></editor-bar>
-          </el-form-item>
-
-          <el-form-item class="text_right">
-            <el-button type="primary" @click="submitForm('form')">提 交</el-button>
-            <el-button @click="resetForm('form')">重 置</el-button>
+          <el-form-item prop="remarks" label="图文">
+            <editor-bar v-model="addForm.remarks" :isClear="isClear"></editor-bar>
           </el-form-item>
         </el-form>
       </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="resetForm('form')">重 置</el-button>
+        <el-button type="primary" @click="submitForm('form')">确 定</el-button>
+      </span>
     </el-dialog>
     <el-button type="primary" class="addCase" @click="addCase">添加案例分类</el-button>
     <div class="table_container">
@@ -109,13 +112,13 @@
         @handleCurrentChange="handleCurrentChange"
         @handleSizeChange="handleSizeChange"
       ></pagination>
-      <!-- <addFundDialog
+      <caseClassificationDialog
         v-if="addFundDialog.show"
         :isShow="addFundDialog.show"
         :dialogRow="addFundDialog.dialogRow"
         @getFundList="getMoneyList"
         @closeDialog="hideAddFundDialog"
-      ></addFundDialog>-->
+      ></caseClassificationDialog>
     </div>
   </div>
 </template>
@@ -124,7 +127,7 @@
 import { mapGetters } from "vuex";
 import * as mutils from "@/utils/mUtils";
 import editorBar from "./components/wangEditor";
-// import AddFundDialog from "./components/addFundDialog";
+import caseClassificationDialog from "./components/caseClassificationDialog";
 import Pagination from "@/components/pagination";
 import { getMoneyIncomePay, removeMoney, batchremoveMoney } from "@/api/money";
 
@@ -143,9 +146,9 @@ export default {
           address: "上海市普陀区金沙江路 1518 弄"
         }
       ],
-      form: {
-        classificationName: "",
-        jumpAddress: "",
+      addForm: {
+        caseSortNum: 0,
+        jumpAddress: "www.baidu.com",
         caseName: "",
         remarks: ""
       },
@@ -169,9 +172,6 @@ export default {
       value: true,
       addCaseDialog: false,
       form_rules: {
-        classificationName: [
-          { required: true, message: "分类名称不能为空", trigger: "blur" }
-        ],
         jumpAddress: [
           { required: true, message: "跳转地址不能为空", trigger: "blur" }
         ],
@@ -185,14 +185,21 @@ export default {
         width: "400px",
         formLabelWidth: "120px"
       },
-      // editor: {
-      //   info: ''
-      // },
-      isClear: false
+      isClear: false,
+      staticNumber: 0,
+      ClassificationStatusItems: [
+        {
+          name: "默认"
+        },
+        {
+          name: "自定义"
+        }
+      ],
+      isCanSelectAddress: true
     };
   },
   components: {
-    // AddFundDialog,
+    caseClassificationDialog,
     Pagination,
     editorBar
   },
@@ -285,13 +292,6 @@ export default {
     addCase() {
       this.addCaseDialog = true;
     },
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
-    },
     submitForm(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
@@ -307,6 +307,18 @@ export default {
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    handleCaseSortNumChange(val) {
+      console.log("案例排序发生了变化" + val);
+    },
+    // 地址是否自定义
+    getClassificationStatus(index) {
+      this.staticNumber = index;
+      if (index === 1) {
+        this.isCanSelectAddress = false;
+      } else {
+        this.isCanSelectAddress = true;
+      }
     }
   }
 };
@@ -352,6 +364,12 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
+  }
+  .active {
+    border-radius: 3px;
+    margin: 5px;
+    color: #fff;
+    background-color: rgb(102, 177, 255);
   }
 }
 </style>

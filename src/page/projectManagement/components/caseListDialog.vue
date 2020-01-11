@@ -6,6 +6,7 @@
     :close-on-press-escape="false"
     :modal-append-to-body="false"
     @close="closeDialog"
+    center
   >
     <div class="form">
       <el-form
@@ -15,23 +16,46 @@
         :label-width="dialog.formLabelWidth"
         style="margin:10px;width:auto;"
       >
-        <el-form-item prop="username" label="启停:">
+        <el-form-item prop="username" label="启停">
           <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
 
-        <el-form-item prop="classificationName" label="分类名称:">
-          <el-input type="text" v-model="form.classificationName"></el-input>
+        <el-form-item label="排序">
+          <el-input-number
+            v-model="form.caseSortNum"
+            @change="handleCaseSortNumChange"
+            :min="0"
+            :max="99999"
+            label="描述文字"
+          ></el-input-number>
         </el-form-item>
 
-        <el-form-item prop="jumpAddress" label="跳转地址:">
-          <el-input v-model="form.jumpAddress"></el-input>
+        <el-form-item prop="classificationName" label="上级分类">
+          <el-select v-model="form.classificationName" placeholder="请选择分类级别">
+            <el-option
+              v-for="item in caseOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
 
-        <el-form-item prop="updateTime" label="案例名称:">
+        <el-form-item prop="jumpAddress" label="上级分类">
+          <span
+            v-for="(item,index) in ClassificationStatusItems"
+            :key="index"
+            @click="getClassificationStatus(index)"
+            :class="{active:index===staticNumber}"
+          >{{ item.name }}</span>
+          <el-input v-model="form.jumpAddress" :disabled="isCanSelectAddress"></el-input>
+        </el-form-item>
+
+        <el-form-item prop="updateTime" label="案例名称">
           <el-input v-model="form.updateTime"></el-input>
         </el-form-item>
 
-        <el-form-item prop="accoutCash" label="缩略图:">
+        <el-form-item prop="accoutCash" label="缩略图">
           <el-upload
             class="avatar-uploader"
             action="https://jsonplaceholder.typicode.com/posts/"
@@ -44,16 +68,15 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item prop="remarks" label="图文:">
-          <el-input type="textarea" v-model="form.remarks"></el-input>
-        </el-form-item>
-
-        <el-form-item class="text_right">
-          <el-button type="primary" @click='onSubmit("form")'>提 交</el-button>
-          <el-button @click="isVisible = false">取 消</el-button>
+        <el-form-item prop="remarks" label="图文">
+          <editor-bar v-model="form.remarks" :isClear="isClear"></editor-bar>
         </el-form-item>
       </el-form>
     </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="isVisible = false">取 消</el-button>
+      <el-button type="primary" @click='onSubmit("form")'>确 定</el-button>
+    </span>
   </el-dialog>
 </template>
 
@@ -61,64 +84,22 @@
 import { mapState, mapGetters } from "vuex";
 import { addMoney, updateMoney } from "@/api/money";
 import AreaJson from "@/assets/datas/area.json";
+import editorBar from "./wangEditor";
 
 export default {
   name: "addFundDialogs",
   data() {
-    let validateData = (rule, value, callback) => {
-      if (value === "") {
-        let text;
-        if (rule.field == "income") {
-          text = "收入";
-        } else if (rule.field == "pay") {
-          text = "支出";
-        } else if (rule.field == "accoutCash") {
-          text = "账户现金";
-        }
-        callback(new Error(text + "不能为空~"));
-      } else {
-        let numReg = /^[0-9]+.?[0-9]*$/;
-        if (!numReg.test(value)) {
-          callback(new Error("请输入正数值"));
-        } else {
-          callback();
-        }
-      }
-    };
     return {
       areaData: [],
       isVisible: this.isShow,
       form: {
+        caseSortNum: 0,
         classificationName: "",
-        jumpAddress: "",
+        jumpAddress: "www.baidu.com",
         updateTime: "",
         remarks: ""
       },
-      // form: {
-      //   incomePayType: "",
-      //   address: [],
-      //   tableAddress: "",
-      //   username: "",
-      //   income: "",
-      //   pay: "",
-      //   accoutCash: "",
-      //   remarks: ""
-      // },
-      payType: [
-        { label: "提现", value: "0" },
-        { label: "提现手续费", value: "1" },
-        { label: "提现锁定", value: "2" },
-        { label: "理财服务退出", value: "3" },
-        { label: "购买宜定盈", value: "4" },
-        { label: "充值", value: "5" },
-        { label: "优惠券", value: "6" },
-        { label: "充值礼券", value: "7" },
-        { label: "转账", value: "8" }
-      ],
       form_rules: {
-        classificationName: [
-          { required: true, message: "分类名称不能为空", trigger: "blur" }
-        ],
         jumpAddress: [
           { required: true, message: "跳转地址不能为空", trigger: "blur" }
         ],
@@ -133,12 +114,56 @@ export default {
       dialog: {
         width: "400px",
         formLabelWidth: "120px"
-      }
+      },
+      isClear: false,
+      caseOptions: [
+        {
+          value: "LOGO设计",
+          label: "LOGO设计"
+        },
+        {
+          value: "小程序开发",
+          label: "小程序开发"
+        },
+        {
+          value: "APP开发",
+          label: "APP开发"
+        },
+        {
+          value: "包装设计",
+          label: "包装设计"
+        },
+        {
+          value: "画册设计",
+          label: "画册设计"
+        },
+        {
+          value: "网站开发",
+          label: "网站开发"
+        },
+        {
+          value: "品牌VI设计",
+          label: "网站开发"
+        }
+      ],
+      staticNumber: 0,
+      ClassificationStatusItems: [
+        {
+          name: "默认"
+        },
+        {
+          name: "自定义"
+        }
+      ],
+      isCanSelectAddress: true
     };
   },
   props: {
     isShow: Boolean,
     dialogRow: Object
+  },
+  components: {
+    editorBar
   },
   computed: {
     ...mapGetters(["addFundDialog"])
@@ -149,7 +174,7 @@ export default {
   mounted() {
     if (this.addFundDialog.type === "edit") {
       // this.form = this.dialogRow;
-      console.log(this.dialogRow,'000')
+      console.log(this.dialogRow, "000");
       this.form = {
         classificationName: this.dialogRow.type,
         jumpAddress: this.dialogRow.address,
@@ -233,25 +258,24 @@ export default {
           }
         }
       });
+    },
+    handleCaseSortNumChange(val) {
+      console.log("案例排序发生了变化" + val);
+    },
+    // 地址是否自定义
+    getClassificationStatus(index) {
+      this.staticNumber = index;
+      if (index === 1) {
+        this.isCanSelectAddress = false;
+      } else {
+        this.isCanSelectAddress = true;
+      }
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.search_container {
-  margin-bottom: 20px;
-}
-.btnRight {
-  float: right;
-  margin-right: 0px !important;
-}
-.searchArea {
-  background: rgba(255, 255, 255, 1);
-  border-radius: 2px;
-  padding: 18px 18px 0;
-}
-
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
@@ -274,5 +298,13 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.form {
+  .active {
+    border-radius: 3px;
+    margin: 5px;
+    color: #fff;
+    background-color: rgb(102, 177, 255);
+  }
 }
 </style>

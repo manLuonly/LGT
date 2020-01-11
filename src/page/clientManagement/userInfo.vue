@@ -3,7 +3,7 @@
     <div class="add-user">
       <el-button type="primary" size="small" class="add-user-btn" @click="addUserDialog = true">添加客户</el-button>
     </div>
-    <el-dialog title="添加客户" :visible.sync="addUserDialog" :before-close="handleClose" @close="resetForm('ruleForm')" center>
+    <el-dialog title="添加客户" :visible.sync="addUserDialog" @close="resetForm('ruleForm')" center>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
         <el-form-item label="姓名" prop="name">
           <el-input v-model="ruleForm.name"></el-input>
@@ -22,8 +22,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('ruleForm')">提 交</el-button>
         <el-button @click="resetForm('ruleForm')">重 置</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">提 交</el-button>
       </span>
     </el-dialog>
     <div class="table_container">
@@ -128,13 +128,6 @@ export default {
       this.incomePayData.limit = val;
       this.getDataList();
     },
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
-    },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -161,10 +154,17 @@ export default {
       margin-bottom: 15px;
     }
   }
+  // /deep/ .el-dialog {
+  //   width: 40%;
+  // }
   .ruleForm {
+    .el-form-item {
+      width: 300px;
+    }
     .leave-message {
       /deep/ .el-textarea__inner {
-        height: 200px;
+        width: 300px;
+        height: 100px;
       }
     }
   }
