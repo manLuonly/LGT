@@ -20,16 +20,6 @@
           <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
 
-        <el-form-item label="排序">
-          <el-input-number
-            v-model="form.caseSortNum"
-            @change="handleCaseSortNumChange"
-            :min="0"
-            :max="99999"
-            label="描述文字"
-          ></el-input-number>
-        </el-form-item>
-
         <el-form-item prop="classificationName" label="上级分类">
           <el-select v-model="form.classificationName" placeholder="请选择分类级别">
             <el-option
@@ -93,7 +83,6 @@ export default {
       areaData: [],
       isVisible: this.isShow,
       form: {
-        caseSortNum: 0,
         classificationName: "",
         jumpAddress: "www.baidu.com",
         updateTime: "",
@@ -258,9 +247,6 @@ export default {
           }
         }
       });
-    },
-    handleCaseSortNumChange(val) {
-      console.log("案例排序发生了变化" + val);
     },
     // 地址是否自定义
     getClassificationStatus(index) {

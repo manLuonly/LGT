@@ -3,7 +3,6 @@
     <el-dialog
       title="添加订单详情"
       :visible.sync="addOderDetailsDialog"
-      :before-close="handleClose"
       center
     >
       <el-form
@@ -146,13 +145,6 @@ export default {
     handleSizeChange(val) {
       this.incomePayData.limit = val;
       this.getDataList();
-    },
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {

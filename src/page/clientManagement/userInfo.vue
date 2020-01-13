@@ -6,7 +6,7 @@
     <el-dialog title="添加客户" :visible.sync="addUserDialog" @close="resetForm('ruleForm')" center>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
         <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name"></el-input>``
+          <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="tel">
           <el-input v-model="ruleForm.tel"></el-input>

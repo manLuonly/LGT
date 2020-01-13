@@ -50,12 +50,12 @@ module.exports = {
         host: '0.0.0.0',
         port: 8080,
         // 由于本项目数据通过easy-mock和mockjs模拟，不存在跨域问题，无需配置代理;
-        // proxy: {
-        //     '/': {
-        //         target: "http://192.168.0.100:8080",
-        //         changeOrigin: true
-        //     }
-        // }
+        proxy: {
+            '/': {
+                target: "http://192.168.0.105:8000",
+                changeOrigin: true
+            }
+        }
     },
     // webpack相关配置
     chainWebpack: (config) => {
@@ -91,7 +91,7 @@ module.exports = {
         config.plugin('webpack-bundle-analyzer')
             .use(new BundleAnalyzerPlugin({
                 openAnalyzer: false, // 是否打开默认浏览器
-                analyzerPort: 8778
+                analyzerPort: 8777
             }))
 
         // 对vue-cli内部的 webpack 配置进行更细粒度的修改。

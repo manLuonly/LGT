@@ -9,3 +9,10 @@ export function caseList(params) {
         params: params
     })
 }
+
+export function caseType() {
+    return request({
+        url: '/casetype',
+        method: 'get',
+    })
+}

@@ -1,6 +1,6 @@
 <template>
   <div class="classificationList">
-    <el-dialog title="添加案例" :visible.sync="addCaseDialog" @close="resetForm('form')" width="30%" center>
+    <el-dialog title="添加案例" :visible.sync="addCaseDialog" @close="resetForm('form')" center>
       <div class="form">
         <el-form
           ref="form"
@@ -11,16 +11,6 @@
         >
           <el-form-item prop="username" label="启停">
             <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-          </el-form-item>
-
-          <el-form-item label="排序">
-            <el-input-number
-              v-model="form.caseSortNum"
-              @change="handleCaseSortNumChange"
-              :min="0"
-              :max="99999"
-              label="描述文字"
-            ></el-input-number>
           </el-form-item>
 
           <el-form-item prop="classificationName" label="上级分类">
@@ -75,17 +65,22 @@
     <div>
       <div class="button-group">
         <el-button type="primary" class="addCase" @click="addCaseDialog = true">添加案例</el-button>
-        <el-button @click="getList()">LOGO设置</el-button>
+        <!-- <el-button @click="getList()">LOGO设置</el-button>
         <el-button @click="getList()">小程序开发</el-button>
         <el-button @click="getList()">APP开发</el-button>
         <el-button @click="getList()">包装设计</el-button>
         <el-button @click="getList()">画册设计</el-button>
         <el-button @click="getList()">网站开发</el-button>
-        <el-button @click="getList()">品牌VI设计</el-button>
+        <el-button @click="getList()">品牌VI设计</el-button>-->
+        <el-button
+          v-for="(item) in buttonGroup"
+          :key="item.type_name"
+          @click="getList(item.type)"
+        >{{ item.type_name }}</el-button>
         <div class="search">
           <el-input class="search-input" placeholder="请输入名称" v-model="searchVal" clearable></el-input>
           <div class="search-button">
-            <el-button icon="el-icon-search" size="medium"></el-button>
+            <el-button icon="el-icon-search" size="medium" @click="searchCaseList"></el-button>
           </div>
         </div>
       </div>
@@ -162,45 +157,44 @@ import editorBar from "./components/wangEditor";
 import caseListDialog from "./components/caseListDialog";
 import Pagination from "@/components/pagination";
 import { getMoneyIncomePay, removeMoney, batchremoveMoney } from "@/api/money";
-import { caseList } from "@/api/projectManagement";
+import { caseList, caseType } from "@/api/projectManagement";
 
 export default {
   data() {
     return {
       tableData: [
-        {
-          createTime: "2016-05-02",
-          type: "logo设计",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          createTime: "2016-05-02",
-          type: "画册设计",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          createTime: "2016-05-02",
-          type: "海报设计",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          createTime: "2016-05-02",
-          type: "网页设计",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          createTime: "2016-05-02",
-          type: "APP设计",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          createTime: "2016-05-02",
-          type: "小程序",
-          address: "上海市普陀区金沙江路 1518 弄"
-        }
+        // {
+        //   createTime: "2016-05-02",
+        //   type: "logo设计",
+        //   address: "上海市普陀区金沙江路 1518 弄"
+        // },
+        // {
+        //   createTime: "2016-05-02",
+        //   type: "画册设计",
+        //   address: "上海市普陀区金沙江路 1518 弄"
+        // },
+        // {
+        //   createTime: "2016-05-02",
+        //   type: "海报设计",
+        //   address: "上海市普陀区金沙江路 1518 弄"
+        // },
+        // {
+        //   createTime: "2016-05-02",
+        //   type: "网页设计",
+        //   address: "上海市普陀区金沙江路 1518 弄"
+        // },
+        // {
+        //   createTime: "2016-05-02",
+        //   type: "APP设计",
+        //   address: "上海市普陀区金沙江路 1518 弄"
+        // },
+        // {
+        //   createTime: "2016-05-02",
+        //   type: "小程序",
+        //   address: "上海市普陀区金沙江路 1518 弄"
+        // }
       ],
       form: {
-        caseSortNum: 0,
         classificationName: "",
         jumpAddress: "www.baidu.com",
         caseName: "",
@@ -220,7 +214,8 @@ export default {
       PaginationData: {
         pageNum: 1,
         pageSize: 20,
-        type: ""
+        type: "",
+        name: ""
       },
       pageTotal: 7,
       value: true,
@@ -284,7 +279,8 @@ export default {
           name: "自定义"
         }
       ],
-      isCanSelectAddress: true
+      isCanSelectAddress: true,
+      buttonGroup: []
     };
   },
   components: {
@@ -296,7 +292,7 @@ export default {
     ...mapGetters(["search"])
   },
   mounted() {
-    // this.getDataList();
+    this.getDataList();
     this.loading = false;
     this.copyData = deepCopy(this.tableData);
   },
@@ -316,6 +312,11 @@ export default {
           this.tableData = res.data;
         }
       });
+      caseType().then(res => {
+        if (res.code === 0) {
+          this.buttonGroup = res.data;
+        }
+      });
     },
     // 显示资金弹框
     showAddFundDialog(val) {
@@ -327,12 +328,12 @@ export default {
     },
     // 上下分页
     handleCurrentChange(val) {
-      this.incomePayData.page = val;
+      this.PaginationData.pageNum = val;
       this.getDataList();
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.incomePayData.limit = val;
+      this.PaginationData.pageSize = val;
       this.getDataList();
     },
     // 编辑操作方法
@@ -390,10 +391,13 @@ export default {
       this.imageUrl = URL.createObjectURL(file.raw);
     },
     // 筛选案例列表数据
-    getList(val) {},
-    // 案例排序
-    handleCaseSortNumChange(val) {
-      console.log("案例排序发生了变化" + val);
+    getList(val) {
+      let form = { pageNum: 1, pageSize: 20, type: val,name: "" };
+      caseList(form).then(res => {
+        if (res.code === 0) {
+          this.tableData = res.data;
+        }
+      });
     },
     // 地址是否自定义
     getClassificationStatus(index) {
@@ -403,6 +407,15 @@ export default {
       } else {
         this.isCanSelectAddress = true;
       }
+    },
+    // 搜索案例列表数据  
+    searchCaseList() {
+      let form = { pageNum: 1, pageSize: 20, type: "",name: this.searchVal };
+      caseList(form).then(res => {
+        if (res.code === 0) {
+          this.tableData = res.data;
+        }
+      })
     }
   }
 };
@@ -461,8 +474,6 @@ export default {
     background-color: rgb(102, 177, 255);
   }
 }
-
-
 
 .avatar-uploader .el-upload {
   cursor: pointer;
