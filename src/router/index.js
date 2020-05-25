@@ -140,15 +140,6 @@ export const asyncRouterMap = [{
                 component: () =>
                     import ('@/page/clientManagement/projectStatistics')
             },
-            // {
-            //     path: 'addCustomerProject',
-            //     name: 'addCustomerProject',
-            //     meta: {
-            //         title: '添加项目'
-            //     },
-            //     component: () =>
-            //         import ('@/page/fundData/addCustomerProject')
-            // },
             {
                 path: 'userInfo',
                 name: 'userInfo',
@@ -190,37 +181,6 @@ export const asyncRouterMap = [{
             // }
         ]
     },
-
-    // {
-    //     path: '/permission',
-    //     name: 'permission',
-    //     meta: {
-    //         title: '权限设置',
-    //         icon: 'icon-quanxianguanli',
-    //         roles: ['admin', 'editor'] // you can set roles in root nav
-    //     },
-    //     component: Layout,
-    //     redirect: '/permission/page',
-    //     children: [{
-    //         path: 'page',
-    //         name: 'pagePer',
-    //         meta: {
-    //             title: '页面权限',
-    //             roles: ['admin'] // or you can only set roles in sub nav
-    //         },
-    //         component: () =>
-    //             import ('@/page/permission/page'),
-    //     }, {
-    //         path: 'directive',
-    //         name: 'directivePer',
-    //         meta: {
-    //             title: '按钮权限',
-    //             roles: ['editor']
-    //         },
-    //         component: () =>
-    //             import ('@/page/permission/directive'),
-    //     }]
-    // },
     {
         path: '/personalInfo',
         name: 'personalInfo',
@@ -254,24 +214,7 @@ export const asyncRouterMap = [{
                 component: () =>
                     import ('@/page/info/updatePassword'),
 
-            },
-
-            // {
-            //     path: 'loginOut',
-            //     name: 'loginOut',
-            //     meta: {
-            //         title: '退出',
-            //         icon: 'iconinfo',
-            //         routerType: 'leftmenu',
-            //         titleList: [
-            //             { "path": "infoModify1", "title": "修改信息子菜单1" },
-            //             { "path": "infoModify2", "title": "修改信息子菜单2" },
-            //             { "path": "infoModify3", "title": "修改信息子菜单3" }
-            //         ]
-            //     },
-            //     component: Content,
-            //     children: filterTopRouterMap('infoModify')
-            // }
+            }
         ]
     },
 

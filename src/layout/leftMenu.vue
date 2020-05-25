@@ -4,7 +4,7 @@
             <div class="logo">
                 <img  src="~@/assets/img/LGTlogo.png">
             </div>
-            <span class='title' v-show="sidebar.opened">LGT后台管理</span>
+            <span class='title' v-show="sidebar.opened">智能桂联后台管理</span>
         </div>
         <div class="menu_page_bottom is-scroll-left">
             <el-menu 
@@ -113,7 +113,7 @@ export default {
             }
         }
         .title{
-            font-size: 21px;
+            font-size: 16px;
             i{
                 color:#FF6C60;
             }

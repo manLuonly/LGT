@@ -91,13 +91,6 @@ export default {
   },
 
   methods: {
-    showMessage(showClose, message, type) {
-      this.$message({
-        showClose: showClose,
-        message: message,
-        type: type
-      });
-    },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
     },
@@ -126,10 +119,10 @@ export default {
         this.$axios
           .post(`/caseupload`, fileFormData, requestConfig)
           .then(res => {
-            this.showMessage(true, "上传成功", "success");
+            this.message('上传成功');
           })
           .catch(err => {
-            this.showMessage(true, "上传失败", "error");
+            this.message("上传失败", "error");
           });
       }
       return isJPG && isLt5M;

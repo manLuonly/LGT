@@ -45,18 +45,17 @@ module.exports = {
     lintOnSave: false, // 关闭eslint
     // 打包时不生成.map文件
     productionSourceMap: false,
-    devServer: {
-        open: true,
-        host: '0.0.0.0',
-        port: 8080,
-        // 由于本项目数据通过easy-mock和mockjs模拟，不存在跨域问题，无需配置代理;
-        proxy: {
-            '/': {
-                target: "http://192.168.0.105:8000",
-                changeOrigin: true
-            }
-        }
-    },
+    // devServer: {
+    //     open: true,
+    //     host: '0.0.0.0',
+    //     port: 8081,
+    //     proxy: {
+    //         '/': {
+    //             target: "http://192.168.31.50:8000",
+    //             changeOrigin: true
+    //         }
+    //     }
+    // },
     // webpack相关配置
     chainWebpack: (config) => {
         config.entry.app = ['./src/main.js']

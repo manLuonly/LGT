@@ -23,8 +23,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import * as mUtils from "@/utils/mUtils";
-import { setToken, getToken,removeToken } from "@/utils/auth";
+import { removeToken,removeName,removeAvatar,getName,getAvatar } from "@/utils/auth";
 import store from "@/store";
 import topMenu from "./topMenu";
 import { logout } from "@/api/user";
@@ -37,31 +36,33 @@ export default {
       menu: {
         userBgcolor: "#f0f2f5"
       },
-      trueName: "卢广宗"
+      trueName: "卢广宗",
+      avatar: ""
     };
   },
   components: {
     topMenu
   },
   computed: {
-    ...mapGetters([ "avatar", "sidebar"]),
+    ...mapGetters([ "sidebar"]),
     headNavWidth() {
       return document.body.clientWidth - this.sidebar.width;
     }
   },
   created() {},
-  mounted() {},
+  mounted() {
+   this.trueName = getName('name');
+   this.avatar = getAvatar('Avatar');
+  },
   methods: {
     logout() {
-      // this.$store.dispatch("LogOut").then(() => {
-      //   location.reload();
-      // });
       logout().then(res => {
         if (res.code === 0) {
-          removeToken('Token')
+          removeToken()
+          removeName()
+          removeAvatar()
           this.$router.push({ path: "/login" });
           window.location.reload();
-          console.log('退出成功')
         }
       }).catch(err => {
         console.log(err,'err')

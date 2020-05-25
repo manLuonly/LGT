@@ -23,10 +23,15 @@ import '@/mockjs'; // mock数据
 // i18n国际化
 import i18n from "@/lang";
 
-// 分享功能集合
-import { shareConfig } from './utils/share';
-Vue.prototype.shareConfig = shareConfig;
 
+
+Vue.prototype.message = function(message, type, showClose) {
+    this.$message({
+        message: message || '成功',
+        type: type || "success",
+        showClose: showClose || true
+    });
+}
 
 Vue.config.productionTip = false;
 

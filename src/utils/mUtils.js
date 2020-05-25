@@ -187,7 +187,7 @@ export const loadStyle = url => {
      * 设置浏览器头部标题
      */
 export const setTitle = (title) => {
-    title = title ? `${title}` : 'LGT后台管理'
+    title = title ? `${title}` : '智能桂联后台管理'
     window.document.title = title
 }
 

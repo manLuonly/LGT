@@ -44,12 +44,12 @@
     </div>
     <div class="table_container">
       <el-table :data="tableData"  border style="width: 100%">
-        <el-table-column prop="name" label="客户姓名" width="180" align="center"></el-table-column>
-        <el-table-column prop="project" label="服务项目" width="180" align="center"></el-table-column>
+        <el-table-column :prop="item.prop" :label="item.label"  align="center" v-for="(item,index) in test" :key="index"></el-table-column>
+        <!-- <el-table-column prop="project" label="服务项目" width="180" align="center"></el-table-column>
         <el-table-column prop="starTime" label="开始时间" width="180" align="center"></el-table-column>
         <el-table-column prop="endTime" label="结束时间" width="180" align="center"></el-table-column>
         <el-table-column prop="transactionMoney" label="交易金额" width="180" align="center"></el-table-column>
-        <el-table-column prop="leaveMessage" label="备注" align="center"></el-table-column>
+        <el-table-column prop="leaveMessage" label="备注" align="center"></el-table-column> -->
       </el-table>
       <pagination
         :pageTotal="pageTotal"
@@ -114,7 +114,33 @@ export default {
           { required: true, message: "请选择结束日期", trigger: "blur" }
         ],
         money: [{ required: true, message: "请输入金额", trigger: "blur" }]
-      }
+      },
+      test: [
+        {
+          prop: 'name',
+          label: '客户姓名'
+        },
+        {
+          prop: 'project',
+          label: '服务项目'
+        },
+        {
+          prop: 'starTime',
+          label: '开始时间'
+        },
+        {
+          prop: 'endTime',
+          label: '结束时间'
+        },
+        {
+          prop: 'transactionMoney',
+          label: '交易金额'
+        },
+        {
+          prop: 'leaveMessage',
+          label: '备注'
+        }
+      ]
     };
   },
   components: {

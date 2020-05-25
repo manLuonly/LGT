@@ -1,45 +1,5 @@
 <template>
   <div class="index">
-    <!-- <div class="show_info_box">
-      <ul>
-        <li class="leave_msg">
-          <div>
-            <img src="../../assets/img/leave_msg.png" />
-          </div>
-          <div>
-            <span>留言消息</span>
-            <span class="number">39</span>
-          </div>
-        </li>
-        <li class="add_msg">
-          <div>
-            <img src="../../assets/img/add_msg.png" />
-          </div>
-          <div>
-            <span>新增留言</span>
-            <span class="number">39</span>
-          </div>
-        </li>
-        <li class="total_user_num">
-          <div>
-            <img src="../../assets/img/user_num.png" />
-          </div>
-          <div>
-            <span>总用户数</span>
-            <span class="number">1000</span>
-          </div>
-        </li>
-        <li class="case_total_num">
-          <div>
-            <img src="../../assets/img/case_total_num.png" />
-          </div>
-          <div>
-            <span>案例总数</span>
-            <span class="number">1260</span>
-          </div>
-        </li>
-      </ul>
-    </div>-->
     <div class="show_info_box">
       <ul>
         <li v-for="(item) in infoForm" :key="item.tiele">
@@ -53,87 +13,8 @@
             </div>
           </div>
         </li>
-
-        <!-- <li>
-          <div class="left">
-            <span class="title">案</span>
-          </div>
-          <div class="right">
-            <div class="right_text_box">
-              <span class="text">案例总数:</span>
-              <span class="number">100</span>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="left">
-            <span class="title">案</span>
-          </div>
-          <div class="right">
-            <div class="right_text_box">
-              <span class="text">案例总数:</span>
-              <span class="number">100</span>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="left">
-            <span class="title">案</span>
-          </div>
-          <div class="right">
-            <div class="right_text_box">
-              <span class="text">案例总数:</span>
-              <span class="number">100</span>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="left">
-            <span class="title">案</span>
-          </div>
-          <div class="right">
-            <div class="right_text_box">
-              <span class="text">案例总数:</span>
-              <span class="number">100</span>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="left">
-            <span class="title">案</span>
-          </div>
-          <div class="right">
-            <div class="right_text_box">
-              <span class="text">案例总数:</span>
-              <span class="number">100</span>
-            </div>
-          </div>
-        </li>-->
       </ul>
     </div>
-    <!-- <section class="data_section" ref="data_section">
-      <el-row :gutter="10" class="row_list order_list">
-        <el-col :span="13">
-          <lineChart title="案例统计数量列表" />
-        </el-col>
-        <el-col :span="11">
-          <pie-chart />
-        </el-col>
-      </el-row>
-      <el-row :gutter="10" class="row_list order_list">
-        <el-col :span="13">
-          <line-chart title="客户点击项目数量统计" />
-        </el-col>
-
-        <el-col :span="11">
-          <lineChart
-            title="客户月份数量统计"
-            :xData="[1,2,3,4,5,6,7,8,9,10,11,12]"
-            :yData="[10,20,30,40,50,60,70,80,90,100,110,120]"
-          />
-        </el-col>
-      </el-row>
-    </section> -->
   </div>
 </template>
 

@@ -3,7 +3,7 @@
     <transition name="form-fade" mode="in-out">
       <section class="form_contianer">
         <div class="titleArea rflex">
-          <img class="logo" :src="logo" alt="LGT后台管理" />
+          <img class="logo" src="../assets/img/logo.png" alt="智能桂联后台管理" />
         </div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm" class="loginForm">
           <el-form-item prop="user" class="login-item">
@@ -62,14 +62,13 @@
 </template>
 
 <script>
-import logoImg from "@/assets/img/logo.png";
+
 import { login } from "@/api/user";
-import { setToken } from "@/utils/auth";
+import { setToken,setName,setAvatar } from "@/utils/auth";
 
 export default {
   data() {
     return {
-      logo: logoImg,
       loginForm: {
         user: "",
         password: ""
@@ -101,6 +100,8 @@ export default {
             .then(res => {
               if (res.code === 0) {
                 setToken("Token", res.success);
+                setName('name',res.user_name);
+                setAvatar('Avatar',res.head);
                 setTimeout(() => {
                   this.$router.push({ path: "/" });
                   this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态

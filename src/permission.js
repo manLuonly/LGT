@@ -5,7 +5,6 @@ process.env.NODE_ENV === "development" &&
     import ('nprogress/nprogress.css')
 import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth' // 验权(从cookie中获取)
-import { getUserInfo } from "@/api/user";
 import {
     setTitle
 } from '@/utils/mUtils' // 设置浏览器头部标题
@@ -54,12 +53,6 @@ router.beforeEach((to, from, next) => {
                         next({ path: '/' })
                     })
                 }
-                // getUserInfo({ "token": token }).then().then(res => { // 根据token拉取用户信息
-
-
-                // }).catch((err) => {
-
-                // })
             } else {
                 // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
                 if (hasPermission(store.getters.roles, to.meta.roles)) {

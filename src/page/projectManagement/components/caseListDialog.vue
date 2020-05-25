@@ -73,7 +73,6 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import { addMoney, updateMoney } from "@/api/money";
-import AreaJson from "@/assets/datas/area.json";
 import editorBar from "./wangEditor";
 
 export default {
@@ -158,7 +157,7 @@ export default {
     ...mapGetters(["addFundDialog"])
   },
   created() {
-    this.areaData = AreaJson;
+   
   },
   mounted() {
     if (this.addFundDialog.type === "edit") {

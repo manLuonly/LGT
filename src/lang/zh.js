@@ -38,16 +38,7 @@ const zh = {
         infoModify3: '修改信息子菜单3',
         // wechatNumber: '微信号'
     },
-    index: {
-        yearLoss: '年度总盈亏',
-        yearProfit: '年度收益率',
-        potentialInvestor: '潜在投资人',
-        intentionInvestor: '意向投资人',
-        waitExamineInvestor: '待审投资人',
-        examiningInvestor: '审核中投资人',
-        tenMillion: '千万元',
-        person: '人'
-    }
+
 }
 
 export default zh;
