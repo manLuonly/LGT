@@ -5,12 +5,21 @@
       <div class="userinfo-right rflex">
         <div class="notify-row"></div>
         <div class="userinfo">
-          <el-menu  mode="horizontal" >
+          <el-menu mode="horizontal">
             <div class="welcome">
               <span class="name">你好,</span>
               <span class="name avatarname">{{ trueName }}</span>
             </div>
-            <img :src="avatar" class="avatar" alt />
+            <el-dropdown>
+              <img
+                src="https://wx.qlogo.cn/mmopen/vi_32/un2HbJJc6eiaviaibvMgiasFNlVDlNOb9E6WCpCrsO4wMMhHIbsvTkAbIehLwROVFlu8dLMcg00t3ZtOcgCCdcxlZA/132"
+                class="avatar"
+              />
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="updatePwd('updatePwd')">修改密码</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+
             <el-tooltip class="item" effect="dark" content="退出登录" placement="bottom">
               <i class="el-icon-switch-button loginout_icon" @click="logout"></i>
             </el-tooltip>
@@ -18,55 +27,166 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      title="修改密码"
+      :visible.sync="updatepwd"
+      width="60%"
+      append-to-body
+      :before-close="handleClose"
+    >
+      <el-form
+        :model="ruleForm"
+        status-icon
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="密码" prop="pass">
+          <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPass">
+          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+          <el-button @click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <!-- <my-dialog
+      :title="diaLogInfo.tittle"
+      :isShow="diaLogInfo.isShow"
+      :width="diaLogInfo.width"
+      :height="diaLogInfo.height"
+    ></my-dialog>-->
   </header>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import { removeToken,removeName,removeAvatar,getName,getAvatar } from "@/utils/auth";
+import {
+  removeToken,
+  removeName,
+  removeAvatar,
+  getName,
+  getAvatar
+} from "@/utils/auth";
 import store from "@/store";
 import topMenu from "./topMenu";
 import { logout } from "@/api/user";
-import router from '../router'
+import router from "../router";
+// import myDialog from "../components/diaLog";
 
 export default {
   name: "head-nav",
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入密码"));
+      } else {
+        if (this.ruleForm.checkPass !== "") {
+          this.$refs.ruleForm.validateField("checkPass");
+        }
+        callback();
+      }
+    };
+    var validatePass2 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请再次输入密码"));
+      } else if (value !== this.ruleForm.pass) {
+        callback(new Error("两次输入密码不一致!"));
+      } else {
+        callback();
+      }
+    };
     return {
       menu: {
         userBgcolor: "#f0f2f5"
       },
       trueName: "卢广宗",
-      avatar: ""
+      avatar: "",
+      updatepwd: false,
+      // diaLogInfo: {
+      //   title: "修改密码",
+      //   isShow: false,
+      //   width: "60%",
+      //   height: "1000px"
+      // }
+      ruleForm: {
+        pass: "",
+        checkPass: ""
+      },
+      rules: {
+        pass: [
+          { required: true },
+          { validator: validatePass, trigger: "blur" }
+        ],
+        checkPass: [{ validator: validatePass2, trigger: "blur" }]
+      }
     };
   },
   components: {
     topMenu
+    // myDialog
   },
   computed: {
-    ...mapGetters([ "sidebar"]),
+    ...mapGetters(["sidebar"]),
     headNavWidth() {
       return document.body.clientWidth - this.sidebar.width;
     }
   },
   created() {},
   mounted() {
-   this.trueName = getName('name');
-   this.avatar = getAvatar('Avatar');
+    this.trueName = getName("name");
+    this.avatar = getAvatar("Avatar");
   },
   methods: {
+    // 退出登录
     logout() {
-      logout().then(res => {
-        if (res.code === 0) {
-          removeToken()
-          removeName()
-          removeAvatar()
-          this.$router.push({ path: "/login" });
-          window.location.reload();
+      logout()
+        .then(res => {
+          if (res.code === 0) {
+            removeToken();
+            removeName();
+            removeAvatar();
+            this.$router.push({ path: "/login" });
+            window.location.reload();
+          }
+        })
+        .catch(err => {
+          console.log(err, "err");
+        });
+    },
+    // 修改密码
+    updatePwd(val) {
+      switch (val) {
+        case "updatePwd":
+          this.updatepwd = true;
+          break;
+        default:
+          break;
+      }
+    },
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
         }
-      }).catch(err => {
-        console.log(err,'err')
-      })
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     }
   }
 };

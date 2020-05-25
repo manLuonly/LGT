@@ -2,7 +2,7 @@
    <div class="menu_left cflex" :style="{width:sidebar.width+'px'}">
         <div class="menu_page_top rflex">
             <div class="logo">
-                <img  src="~@/assets/img/LGTlogo.png">
+                <img  src="~@/assets/img/logo.png">
             </div>
             <span class='title' v-show="sidebar.opened">智能桂联后台管理</span>
         </div>

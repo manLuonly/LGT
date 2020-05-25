@@ -181,42 +181,43 @@ export const asyncRouterMap = [{
             // }
         ]
     },
-    {
-        path: '/personalInfo',
-        name: 'personalInfo',
-        meta: {
-            title: '个人信息',
-            icon: 'icon-gerenxinxi',
-        },
-        component: Layout,
-        children: [{
-                path: 'updateInfo',
-                name: 'updateInfo',
-                meta: {
-                    title: '修改信息',
-                    icon: 'iconinfo',
-                    routerType: 'leftmenu',
+    // {
+    //     path: '/personalInfo',
+    //     name: 'personalInfo',
+    //     meta: {
+    //         title: '个人信息',
+    //         icon: 'icon-gerenxinxi',
+    //     },
+    //     component: Layout,
+    //     children: [
+    // {
+    //     path: 'updateInfo',
+    //     name: 'updateInfo',
+    //     meta: {
+    //         title: '修改信息',
+    //         icon: 'iconinfo',
+    //         routerType: 'leftmenu',
 
-                },
-                component: () =>
-                    import ('@/page/info/updateInfo'),
+    //     },
+    //     component: () =>
+    //         import ('@/page/personalInfo/updateInfo'),
 
-            },
-            {
-                path: 'updatePassword',
-                name: 'updatePassword',
-                meta: {
-                    title: '修改密码',
-                    icon: 'iconinfo',
-                    routerType: 'leftmenu',
+    // },
+    // {
+    //     path: 'updatePassword',
+    //     name: 'updatePassword',
+    //     meta: {
+    //         title: '修改密码',
+    //         icon: 'iconinfo',
+    //         routerType: 'leftmenu',
 
-                },
-                component: () =>
-                    import ('@/page/info/updatePassword'),
+    //     },
+    //     component: () =>
+    //         import ('@/page/personalInfo/updatePassword'),
 
-            }
-        ]
-    },
+    // }
+    // ]
+    // },
 
     { path: '*', redirect: '/404', hidden: true }
 ];
