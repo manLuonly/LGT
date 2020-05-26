@@ -30,8 +30,8 @@
             >{{ item.name }}</span>
             <el-input v-model="addForm.jumpAddress" :disabled="isCanSelectAddress"></el-input>
           </el-form-item>
-          <!-- prop="caseName" -->
-          <el-form-item label="案例名称">
+          
+          <el-form-item label="案例名称" prop="caseName">
             <el-input v-model="addForm.caseName"></el-input>
           </el-form-item>
 
@@ -116,7 +116,7 @@
         v-if="addFundDialog.show"
         :isShow="addFundDialog.show"
         :dialogRow="addFundDialog.dialogRow"
-        @getFundList="getMoneyList"
+        @getFundList="getDataList"
         @closeDialog="hideAddFundDialog"
       ></caseClassificationDialog>
     </div>
@@ -172,12 +172,8 @@ export default {
       value: true,
       addCaseDialog: false,
       form_rules: {
-        jumpAddress: [
-          { required: true, message: "跳转地址不能为空", trigger: "blur" }
-        ],
-        caseName: [
-          { required: true, message: "案例名称不能为空", trigger: "blur" }
-        ],
+        jumpAddress: [{ required: true, message: "跳转地址不能为空", trigger: "blur" }],
+        caseName: [{ message: "案例名称不能为空", trigger: "blur" }],
         remarks: [{ required: true, message: "备注不能为空", trigger: "blur" }]
       },
       imageUrl: "",
@@ -207,7 +203,7 @@ export default {
     ...mapGetters(["search"])
   },
   mounted() {
-    // this.getMoneyList();
+    // this.getDataList();
     this.loading = false;
   },
   methods: {
@@ -217,8 +213,8 @@ export default {
         this.tableHeight = document.body.clientHeight - 300;
       });
     },
-    // 获取资金列表数据
-    getMoneyList() {
+    // 获取列表数据
+    getDataList() {
       // const para = Object.assign({}, this.incomePayData, this.search);
       // getMoneyIncomePay(para).then(res => {
       //   this.loading = false;
@@ -237,12 +233,12 @@ export default {
     // 上下分页
     handleCurrentChange(val) {
       this.incomePayData.page = val;
-      this.getMoneyList();
+      this.getDataList();
     },
     // 每页显示多少条
     handleSizeChange(val) {
       this.incomePayData.limit = val;
-      this.getMoneyList();
+      this.getDataList();
     },
     // 编辑操作方法
     onEditMoney(row) {
@@ -261,7 +257,7 @@ export default {
               message: "删除成功",
               type: "success"
             });
-            this.getMoneyList();
+            this.getDataList();
           });
         })
         .catch(() => {});
@@ -303,6 +299,7 @@ export default {
       });
     },
     resetForm(formName) {
+      this.addForm.caseSortNum = 0;
       this.$refs[formName].resetFields();
     },
     handleAvatarSuccess(res, file) {

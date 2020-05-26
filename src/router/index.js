@@ -86,20 +86,21 @@ export const asyncRouterMap = [{
         path: '/projectManagement',
         name: 'projectManagement',
         meta: {
-            title: '项目管理',
+            title: '案例管理',
             icon: 'icon-xiangmu',
         },
         component: Layout,
-        children: [{
-                path: 'caseDataLook',
-                name: 'caseDataLook',
-                meta: {
-                    title: '案例数据查看',
-                    routerType: 'leftmenu'
-                },
-                component: () =>
-                    import ('@/page/projectManagement/caseDataLook'),
-            },
+        children: [
+            // {
+            //     path: 'caseDataLook',
+            //     name: 'caseDataLook',
+            //     meta: {
+            //         title: '案例数据查看',
+            //         routerType: 'leftmenu'
+            //     },
+            //     component: () =>
+            //         import ('@/page/projectManagement/caseDataLook'),
+            // },
             {
                 path: 'caseClassification',
                 name: 'caseClassification',
@@ -131,15 +132,16 @@ export const asyncRouterMap = [{
         },
         component: Layout,
         redirect: '/clientManagement/projectStatistics',
-        children: [{
-                path: 'projectStatistics',
-                name: 'projectStatistics',
-                meta: {
-                    title: '项目统计'
-                },
-                component: () =>
-                    import ('@/page/clientManagement/projectStatistics')
-            },
+        children: [
+            // {
+            //     path: 'projectStatistics',
+            //     name: 'projectStatistics',
+            //     meta: {
+            //         title: '项目统计'
+            //     },
+            //     component: () =>
+            //         import ('@/page/clientManagement/projectStatistics')
+            // },
             {
                 path: 'userInfo',
                 name: 'userInfo',
@@ -165,7 +167,7 @@ export const asyncRouterMap = [{
                 component: () =>
                     import ('@/page/orderManagement/orderDetails'),
                 meta: {
-                    title: '完成订单',
+                    title: '订单详情',
                     noCache: true
                 }
             },

@@ -147,7 +147,7 @@ export default {
     width: 100%;
     padding-bottom: 20px;
     .logo {
-      width: 40px;
+      width: 60px;
       margin-right: 10px;
     }
     .title {

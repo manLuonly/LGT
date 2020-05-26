@@ -16,7 +16,7 @@
                 class="avatar"
               />
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="updatePwd('updatePwd')">修改密码</el-dropdown-item>
+                <el-dropdown-item @click.native="getParameter('updatePwd')">修改密码</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
 
@@ -27,39 +27,43 @@
         </div>
       </div>
     </div>
+
     <el-dialog
       title="修改密码"
-      :visible.sync="updatepwd"
-      width="60%"
+      :visible.sync="updatePwd"
+      @close="resetForm('ruleForm')"
+      width="40%"
       append-to-body
-      :before-close="handleClose"
+      center
     >
       <el-form
         :model="ruleForm"
         status-icon
         :rules="rules"
         ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
+        label-width='auto'
+        class="updatePwd-ruleForm"
       >
         <el-form-item label="密码" prop="pass">
-          <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+          <el-row type="flex" class="row-bg" justify="center">
+          <el-col>
+            <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+          </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item label="确认密码" prop="checkPass">
-          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-row type="flex" class="row-bg" justify="center">
+          <el-col>
+            <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+          </el-col>
+          </el-row>
         </el-form-item>
       </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+        <el-button @click="resetForm('ruleForm')">重置</el-button>
+      </span>
     </el-dialog>
-    <!-- <my-dialog
-      :title="diaLogInfo.tittle"
-      :isShow="diaLogInfo.isShow"
-      :width="diaLogInfo.width"
-      :height="diaLogInfo.height"
-    ></my-dialog>-->
   </header>
 </template>
 
@@ -76,7 +80,6 @@ import store from "@/store";
 import topMenu from "./topMenu";
 import { logout } from "@/api/user";
 import router from "../router";
-// import myDialog from "../components/diaLog";
 
 export default {
   name: "head-nav",
@@ -106,29 +109,21 @@ export default {
       },
       trueName: "卢广宗",
       avatar: "",
-      updatepwd: false,
-      // diaLogInfo: {
-      //   title: "修改密码",
-      //   isShow: false,
-      //   width: "60%",
-      //   height: "1000px"
-      // }
+      updatePwd: false,
       ruleForm: {
         pass: "",
         checkPass: ""
       },
       rules: {
-        pass: [
-          { required: true },
-          { validator: validatePass, trigger: "blur" }
-        ],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }]
+        pass: [{ required: true, validator: validatePass, trigger: "blur" }],
+        checkPass: [
+          { required: true, validator: validatePass2, trigger: "blur" }
+        ]
       }
     };
   },
   components: {
     topMenu
-    // myDialog
   },
   computed: {
     ...mapGetters(["sidebar"]),
@@ -159,21 +154,14 @@ export default {
         });
     },
     // 修改密码
-    updatePwd(val) {
+    getParameter(val) {
       switch (val) {
         case "updatePwd":
-          this.updatepwd = true;
+          this.updatePwd = true;
           break;
         default:
           break;
       }
-    },
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {

@@ -9,7 +9,7 @@
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="tel">
-          <el-input v-model="ruleForm.tel"></el-input>
+          <el-input v-model.number="ruleForm.tel"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="mailbox">
           <el-input v-model="ruleForm.mailbox"></el-input>
@@ -27,7 +27,7 @@
       </span>
     </el-dialog>
     <div class="table_container">
-      <el-table :data="tableData" border style="width: 100%" align="center">
+      <el-table :data="tableData" style="width: 100%" align="center">
         <el-table-column prop="name" label="姓名" width="180" align="center"></el-table-column>
         <el-table-column prop="tel" label="联系电话" width="180" align="center"></el-table-column>
         <el-table-column prop="mailbox" label="邮箱/微信" width="180" align="center"></el-table-column>
@@ -62,6 +62,37 @@ import { getMoneyIncomePay, removeMoney, batchremoveMoney } from "@/api/money";
 
 export default {
   data() {
+    // 手机号验证
+    var checkTel = (rule, value, callback) => {
+      const phoneReg = /^1[3|4|5|6|7|8][0-9]{9}$/;
+      if (!value) {
+        return callback(new Error("电话号码不能为空"));
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(+value)) {
+          callback(new Error("请输入数字值"));
+        } else {
+          if (phoneReg.test(value)) {
+            callback();
+          } else {
+            callback(new Error("电话号码格式不正确"));
+          }
+        }
+      }, 100);
+    };
+    var checkMailbox = (rule, value, callback) => {
+      if (!value) {
+        callback();
+      } else {
+        const reg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
+        const email = reg.test(value);
+        if (!email) {
+          callback(new Error("邮箱格式如:admin@163.com"));
+        } else {
+          callback();
+        }
+      }
+    };
     return {
       tableData: [
         {
@@ -85,12 +116,13 @@ export default {
           { required: true, message: "请输入姓名", trigger: "blur" },
           { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" }
         ],
-        tel: [{ required: true, message: "请填写联系方式", trigger: "blur" }],
+        tel: [{ required: true, validator: checkTel, trigger: "blur" }],
         mailbox: [
-          { required: true, message: "请填写联系方式", trigger: "blur" }
+          { required: true, message: "请填写邮箱", trigger: "blur" },
+          { validator: checkMailbox, trigger: "blur" }
         ]
       },
-      incomePayData: {
+      form: {
         page: 1,
         limit: 20,
         name: ""
@@ -120,12 +152,12 @@ export default {
     },
     // 上下分页
     handleCurrentChange(val) {
-      this.incomePayData.page = val;
+      this.form.page = val;
       this.getDataList();
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.incomePayData.limit = val;
+      this.form.limit = val;
       this.getDataList();
     },
     submitForm(formName) {
@@ -152,20 +184,6 @@ export default {
     .add-user-btn {
       height: 40px;
       margin-bottom: 15px;
-    }
-  }
-  // /deep/ .el-dialog {
-  //   width: 40%;
-  // }
-  .ruleForm {
-    .el-form-item {
-      width: 300px;
-    }
-    .leave-message {
-      /deep/ .el-textarea__inner {
-        width: 300px;
-        height: 100px;
-      }
     }
   }
   .table_container {

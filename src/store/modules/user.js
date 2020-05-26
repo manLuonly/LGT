@@ -9,7 +9,7 @@ const user = {
         avatar: '',
         token: getToken('Token'),
         roles: [],
-        browserHeaderTitle: mUtils.getStore('browserHeaderTitle') || 'LGT后台管理'
+        browserHeaderTitle: mUtils.getStore('browserHeaderTitle') || 'LGT后台管理',
     },
     getters: {
         token: state => state.token,
@@ -44,19 +44,19 @@ const user = {
             })
         },
         // 动态修改权限;本实例中,role和token是相同的;
-        ChangeRoles({ commit }, role) {
-            return new Promise(resolve => {
-                const token = role;
-                setToken("Token", token)
-                getUserInfo({ "token": token }).then(res => {
-                    let data = res.data.userList;
-                    commit('SET_ROLES', data.roles)
-                    commit('SET_NAME', data.name)
-                    commit('SET_AVATAR', data.avatar)
-                    resolve()
-                })
-            })
-        },
+        // ChangeRoles({ commit }, role) {
+        //     return new Promise(resolve => {
+        //         const token = role;
+        //         setToken("Token", token)
+        //         getUserInfo({ "token": token }).then(res => {
+        //             let data = res.data.userList;
+        //             commit('SET_ROLES', data.roles)
+        //             commit('SET_NAME', data.name)
+        //             commit('SET_AVATAR', data.avatar)
+        //             resolve()
+        //         })
+        //     })
+        // },
 
     }
 }
