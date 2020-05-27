@@ -11,10 +11,10 @@
     >
       <el-form
         :model="ruleForm"
-        :rules="rules"
+        :rules="form_rules"
         ref="ruleForm"
         label-width="100px"
-        class="demo-ruleForm"
+        class="order-ruleForm"
       >
         <el-form-item label="客户姓名" prop="userName">
           <el-input v-model="ruleForm.userName"></el-input>
@@ -44,12 +44,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="金额" prop="money">
-          <el-input v-model.number="ruleForm.money"></el-input>
+          <el-input v-model.number="ruleForm.money" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm('ruleForm')">提 交</el-button>
-        <el-button @click="resetForm('ruleForm')">重 置</el-button>
+        <el-button @click="closeDialog">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -57,9 +57,25 @@
 
 <script>
 export default {
-  name: "",
-
+  name: "orderDialog",
   data() {
+    var checkTel = (rule, value, callback) => {
+      const phoneReg = /^1[3|4|5|6|7|8][0-9]{9}$/;
+      if (!value) {
+        return callback(new Error("电话号码不能为空"));
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(+value)) {
+          callback(new Error("请输入数字值"));
+        } else {
+          if (phoneReg.test(value)) {
+            callback();
+          } else {
+            callback(new Error("电话号码格式不正确"));
+          }
+        }
+      }, 100);
+    };
     return {
       ruleForm: {
         userName: "",
@@ -70,11 +86,14 @@ export default {
         orderStatus: "",
         money: ""
       },
-      rules: {
+      form_rules: {
         userName: [
           { required: true, message: "请输入客户姓名", trigger: "blur" }
         ],
-        tel: [{ required: true, message: "请输入联系电话", trigger: "blur" }],
+        tel: [
+          { required: true, message: "请输入联系电话", trigger: "blur" },
+          { validator: checkTel, trigger: "blur" }
+        ],
         serviceProject: [
           { required: true, message: "请选择服务项目", trigger: "change" }
         ],
@@ -89,7 +108,7 @@ export default {
         ],
         money: [{ required: true, message: "请输入金额", trigger: "blur" }]
       },
-      orderStatus: "进行中",
+      orderStatus: "",
       orderStatusOptions: [
         {
           value: "0",
@@ -112,12 +131,13 @@ export default {
     dialogRow: Object
   },
   mounted() {
-    // if (this.dialogRow.title = '添加订单详情') {
-
-    // } else {
-
-    //   }
-    this.ruleForm = this.dialogRow;
+    if (this.dialogRow.type === "添加订单详情") {
+      this.$nextTick(() => {
+        this.$refs["ruleForm"].resetFields();
+      });
+    } else {
+      this.ruleForm = this.dialogRow;
+    }
   },
   methods: {
     // 发送表单
@@ -131,10 +151,7 @@ export default {
         }
       });
     },
-    // 重置表单
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
+    // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
     }

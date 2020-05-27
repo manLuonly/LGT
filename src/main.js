@@ -18,11 +18,35 @@ import './components/iconSvg' // iconSvg
 
 import '@/permission' // permission control
 
-import '@/mockjs'; // mock数据
+// import '@/mockjs'; // mock数据
 
 // i18n国际化
 import i18n from "@/lang";
 
+
+Vue.prototype.alertMsgBox = function alert(msg, title, settings = {}) {
+    Object.assign(settings, { //合并对象
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        dangerouslyUseHTMLString: true, //允许确认框内容为html格式
+        beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+                instance.confirmButtonLoading = true;
+                instance.confirmButtonText = '执行中...';
+                setTimeout(() => {
+                    done();
+                    setTimeout(() => {
+                        instance.confirmButtonLoading = false;
+                    }, 300);
+                }, 1000);
+            } else {
+                done();
+            }
+        }
+    })
+    return this.$confirm(`<p style="font-weight:bold;">${msg || '此操作将永久删除该数据, 是否继续?' }</p>`, title || '提示', settings)
+}
 
 
 Vue.prototype.message = function(message, type, showClose) {

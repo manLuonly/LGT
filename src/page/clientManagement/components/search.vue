@@ -1,6 +1,6 @@
 <template>
   <div>
-    添加项目
+    搜索
   </div>
 </template>
 

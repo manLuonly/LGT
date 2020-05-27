@@ -12,7 +12,7 @@ const zh = {
         projectManagement: '案例管理',
         // caseDataLook: '案例数据查看',
         caseClassification: '案例分类',
-        classificationList: '案例列表',
+        caseList: '案例列表',
         clientManagement: '客户管理',
         // projectStatistics: '项目统计',
         addCustomerProject: '添加项目',

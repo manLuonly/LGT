@@ -1,19 +1,19 @@
 <template>
   <div class="order-details">
-    <myDialog
+    <order-Dialog
       v-if="updateOrderDialog.show"
       :isShow="updateOrderDialog.show"
       :dialogRow="updateOrderDialog.dialogRow"
-      @getFundList="getDataList"
-      @closeDialog="hideUpdateDialog"
-    ></myDialog>
+      @getOrderList="getOrderList"
+      @closeDialog="hideOrderDialog"
+    ></order-Dialog>
 
     <div class="add-order-details">
       <el-button
         type="primary"
         size="medium"
         class="add-order-details-btn"
-        @click="LookorderStatus(dialogTitle = '添加订单详情');"
+        @click="lookorderStatus(dialogTitle = '添加订单详情');"
       >添加订单详情</el-button>
     </div>
 
@@ -31,7 +31,7 @@
             <el-button
               icon="edit"
               size="mini"
-              @click="LookorderStatus(scope.row,dialogTitle = '编辑订单详情')"
+              @click="lookorderStatus(scope.row,dialogTitle = '编辑订单详情')"
             >编辑</el-button>
             <el-button type="danger" icon="delete" size="mini" @click="deleteOrder(scope.row)">删除</el-button>
           </template>
@@ -47,9 +47,8 @@
 </template>
 
 <script>
-import * as mutils from "@/utils/mUtils";
 import Pagination from "@/components/pagination";
-import myDialog from "./Dialog";
+import orderDialog from "./Dialog/orderDialog";
 
 export default {
   data() {
@@ -61,7 +60,7 @@ export default {
           serviceProject: "logo设计",
           startDate: "2016-05-02",
           endDate: "2016-05-02",
-          orderStatus: "进行中",
+          orderStatus: "0",
           money: "500"
         }
       ],
@@ -75,21 +74,17 @@ export default {
         money: ""
       },
       tableHeight: 0,
-      form: {
+      paginationForm: {
         page: 1,
         limit: 20,
         name: ""
       },
       pageTotal: 2,
-   
       dialog: {
         width: "400px",
         formLabelWidth: "120px"
       },
       dialogTitle: "",
-
-     
-     
       updateOrderDialog: {
         show: false,
         dialogRow: {}
@@ -98,7 +93,7 @@ export default {
   },
   components: {
     Pagination,
-    myDialog
+    orderDialog
   },
   computed: {},
   mounted() {
@@ -114,35 +109,43 @@ export default {
     getDataList() {},
     // 上下分页
     handleCurrentChange(val) {
-      this.form.page = val;
+      this.paginationForm.page = val;
       this.getDataList();
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.form.limit = val;
+      this.paginationForm.limit = val;
       this.getDataList();
     },
     // 订单
-    LookorderStatus(row) {
+    lookorderStatus(row) {
       if (this.dialogTitle == "添加订单详情") {
         this.ruleForm.title = "添加订单详情";
         this.updateOrderDialog.dialogRow = { ...this.ruleForm };
-        this.showUpdateDialog();
-        // });
       } else {
         row.title = "编辑订单详情";
         this.updateOrderDialog.dialogRow = { ...row };
-        this.showUpdateDialog();
       }
+      this.showOrderDialog();
     },
+    // 获取订单列表
+    getOrderList() {},
     // 删除订单详情
-    deleteOrder() {},
+    deleteOrder() {
+      this.alertMsgBox()
+        .then(() => {
+          this.message("删除订单成功");
+        })
+        .catch(err => {
+          this.message("已取消", "info");
+        });
+    },
     // 隐藏订单详情dialog
-    hideUpdateDialog() {
+    hideOrderDialog() {
       this.updateOrderDialog.show = false;
     },
     // 展示订单详情dialog
-    showUpdateDialog() {
+    showOrderDialog() {
       this.updateOrderDialog.show = true;
     }
   }
@@ -174,14 +177,6 @@ export default {
     padding-bottom: 15px;
     .add-order-details-btn {
       height: 40px;
-    }
-  }
-  .demo-ruleForm {
-    /deep/ .el-select {
-      width: 100%;
-    }
-    /deep/ .el-input {
-      width: 100%;
     }
   }
 }

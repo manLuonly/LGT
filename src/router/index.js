@@ -112,14 +112,14 @@ export const asyncRouterMap = [{
                     import ('@/page/projectManagement/caseClassification'),
             },
             {
-                path: 'classificationList',
-                name: 'classificationList',
+                path: 'caseList',
+                name: 'caseList',
                 meta: {
                     title: '案例列表',
                     routerType: 'leftmenu'
                 },
                 component: () =>
-                    import ('@/page/projectManagement/classificationList'),
+                    import ('@/page/projectManagement/caseList'),
             }
         ]
     },

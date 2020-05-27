@@ -19,8 +19,7 @@
 </template>
 
 <script>
-import pieChart from "cps/echarts/pieChart"; // 用户投资类型 饼状图
-import lineChart from "cps/echarts/lineChart"; // 用户投资类型 折线图
+
 
 export default {
   data() {
@@ -34,7 +33,7 @@ export default {
           }
         },
         {
-          title: "言",
+          title: "客",
           right: {
             text: "客户留言",
             number: 10
@@ -48,32 +47,31 @@ export default {
           }
         },
         {
-          title: "点",
+          title: "额",
           right: {
-            text: "点击案例",
+            text: "交易总额",
             number: 80
           }
         },
         {
-          title: "客",
+          title: "户",
           right: {
             text: "客户总数",
             number: 17
           }
         },
         {
-          title: "文",
+          title: "录",
           right: {
-            text: "文件总数",
-            number: 88
+            text: "历史记录",
+            number: 0
           }
         }
       ]
     };
   },
   components: {
-    pieChart,
-    lineChart
+    
   },
   created() {},
   mounted() {},

@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :visible.sync="isVisible"
-    :title="addFundDialog.title"
+    :title="dialogRow.title"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :modal-append-to-body="false"
@@ -11,17 +11,17 @@
     <div class="form">
       <el-form
         ref="form"
-        :model="form"
+        :model="ruleForm"
         :rules="form_rules"
         :label-width="dialog.formLabelWidth"
         style="margin:10px;width:auto;"
       >
         <el-form-item prop="username" label="启停">
-          <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-switch v-model="startStop" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
 
         <el-form-item prop="classificationName" label="上级分类">
-          <el-select v-model="form.classificationName" placeholder="请选择分类级别">
+          <el-select v-model="ruleForm.classificationName" placeholder="请选择分类级别">
             <el-option
               v-for="item in caseOptions"
               :key="item.value"
@@ -38,11 +38,11 @@
             @click="getClassificationStatus(index)"
             :class="{active:index===staticNumber}"
           >{{ item.name }}</span>
-          <el-input v-model="form.jumpAddress" :disabled="isCanSelectAddress"></el-input>
+          <el-input v-model="ruleForm.jumpAddress" :disabled="isCanSelectAddress"></el-input>
         </el-form-item>
 
         <el-form-item prop="updateTime" label="案例名称">
-          <el-input v-model="form.updateTime"></el-input>
+          <el-input v-model="ruleForm.updateTime"></el-input>
         </el-form-item>
 
         <el-form-item prop="accoutCash" label="缩略图">
@@ -59,13 +59,13 @@
         </el-form-item>
 
         <el-form-item prop="remarks" label="图文">
-          <editor-bar v-model="form.remarks" :isClear="isClear"></editor-bar>
+          <editor-bar v-model="ruleForm.remarks" :isClear="isClear"></editor-bar>
         </el-form-item>
       </el-form>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="isVisible = false">取 消</el-button>
       <el-button type="primary" @click='onSubmit("form")'>确 定</el-button>
+      <el-button @click="closeDialog">取 消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -73,15 +73,14 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import { addMoney, updateMoney } from "@/api/money";
-import editorBar from "./wangEditor";
+import editorBar from "../components/wangEditor";
 
 export default {
   name: "addFundDialogs",
   data() {
     return {
-      areaData: [],
       isVisible: this.isShow,
-      form: {
+      ruleForm: {
         classificationName: "",
         jumpAddress: "www.baidu.com",
         updateTime: "",
@@ -96,7 +95,7 @@ export default {
         ],
         remarks: [{ required: true, message: "备注不能为空", trigger: "blur" }]
       },
-      value: true,
+      startStop: true,
       imageUrl: "",
       //详情弹框信息
       dialog: {
@@ -153,28 +152,15 @@ export default {
   components: {
     editorBar
   },
-  computed: {
-    ...mapGetters(["addFundDialog"])
-  },
-  created() {
-   
-  },
+  computed: {},
+  created() {},
   mounted() {
-    if (this.addFundDialog.type === "edit") {
-      // this.form = this.dialogRow;
-      console.log(this.dialogRow, "000");
-      this.form = {
-        classificationName: this.dialogRow.type,
-        jumpAddress: this.dialogRow.address,
-        updateTime: this.dialogRow.createTime,
-        remarks: ""
-      };
-      // this.form.incomePayType = this.dialogRow.incomePayType.toString();
-      // this.form.address = ["120000", "120200", "120223"]
-    } else {
+    if (this.dialogRow.type === "添加案例列表") {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
       });
+    } else {
+      this.ruleForm = this.dialogRow;
     }
   },
   methods: {
@@ -193,23 +179,7 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    getCascaderObj(val, opt) {
-      return val.map(function(value, index, array) {
-        for (var item of opt) {
-          if (item.value == value) {
-            opt = item.children;
-            return item.label;
-          }
-        }
-        return null;
-      });
-    },
-    handleChange(value) {
-      console.log([...value]); // ["120000", "120200", "120223"]
-      this.form.address = [...value];
-      let vals = this.getCascaderObj([...value], this.areaData); // arr
-      this.form.tableAddress = vals.join(",").replace(/,/g, "");
-    },
+    // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
     },

@@ -23,7 +23,7 @@
             paginations: {
                 pageIndex: 1,  // 当前位于哪页
                 pageSize: 20,   // 1页显示多少条
-                pageSizes: [5, 10, 15, 20],  //每页显示多少条
+                pageSizes: [20, 50, 200, 500],  //每页显示多少条
                 layout: "total, sizes, prev, pager, next, jumper"   // 翻页属性
             },
           }

@@ -1,37 +1,32 @@
 <template>
   <div class="user-info">
+    <userInfoDialog
+      v-if="updateUserInfoDialog.show"
+      :isShow="updateUserInfoDialog.show"
+      :dialogRow="updateUserInfoDialog.dialogRow"
+      @getUserInfoList="getUserInfoList"
+      @closeDialog="hideUserInfoDialog"
+    ></userInfoDialog>
+
     <div class="add-user">
-      <el-button type="primary" size="small" class="add-user-btn" @click="addUserDialog = true">添加客户</el-button>
+      <el-button
+        type="primary"
+        size="small"
+        class="add-user-btn"
+        @click="lookUserStatus(dialogTitle = '新增客户信息')"
+      >添加客户</el-button>
     </div>
-    <el-dialog title="添加客户" :visible.sync="addUserDialog" @close="resetForm('ruleForm')" center>
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name"></el-input>
-        </el-form-item>
-        <el-form-item label="联系电话" prop="tel">
-          <el-input v-model.number="ruleForm.tel"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="mailbox">
-          <el-input v-model="ruleForm.mailbox"></el-input>
-        </el-form-item>
-        <el-form-item label="公司名称" prop="companyName">
-          <el-input v-model="ruleForm.companyName"></el-input>
-        </el-form-item>
-        <el-form-item label="留言" prop="leaveMessage">
-          <el-input class="leave-message" type="textarea" v-model="ruleForm.leaveMessage"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="resetForm('ruleForm')">重 置</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">提 交</el-button>
-      </span>
-    </el-dialog>
+
+    <date-picker></date-picker>
+    <search></search>
+
+
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%" align="center">
-        <el-table-column prop="name" label="姓名" width="180" align="center"></el-table-column>
-        <el-table-column prop="tel" label="联系电话" width="180" align="center"></el-table-column>
-        <el-table-column prop="mailbox" label="邮箱/微信" width="180" align="center"></el-table-column>
-        <el-table-column prop="companyName" label="公司名称" width="180" align="center"></el-table-column>
+        <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+        <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
+        <el-table-column prop="mailbox" label="邮箱/微信" align="center"></el-table-column>
+        <el-table-column prop="vip" label="vip" align="center"></el-table-column>
         <el-table-column prop="leavingMessage" label="留言" align="center">
           <template slot-scope="scope">
             <el-popover
@@ -42,6 +37,21 @@
             >
               <span slot="reference">{{ scope.row.leavingMessage }}</span>
             </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column prop="operation" align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              icon="edit"
+              size="mini"
+              @click="lookUserStatus(scope.row,dialogTitle = '编辑客户信息');"
+            >编辑</el-button>
+            <el-button
+              type="danger"
+              icon="delete"
+              size="mini"
+              @click="deleteUser(scope.row)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,51 +65,21 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import * as mutils from "@/utils/mUtils";
+import userInfoDialog from "./Dialog/userInfoDialog";
+import datePicker from "./components/datePicker";
+import search from "./components/search";
 import Pagination from "@/components/pagination";
-import { getMoneyIncomePay, removeMoney, batchremoveMoney } from "@/api/money";
+
 
 export default {
   data() {
-    // 手机号验证
-    var checkTel = (rule, value, callback) => {
-      const phoneReg = /^1[3|4|5|6|7|8][0-9]{9}$/;
-      if (!value) {
-        return callback(new Error("电话号码不能为空"));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(+value)) {
-          callback(new Error("请输入数字值"));
-        } else {
-          if (phoneReg.test(value)) {
-            callback();
-          } else {
-            callback(new Error("电话号码格式不正确"));
-          }
-        }
-      }, 100);
-    };
-    var checkMailbox = (rule, value, callback) => {
-      if (!value) {
-        callback();
-      } else {
-        const reg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
-        const email = reg.test(value);
-        if (!email) {
-          callback(new Error("邮箱格式如:admin@163.com"));
-        } else {
-          callback();
-        }
-      }
-    };
     return {
       tableData: [
         {
           name: "王小虎",
           tel: "13978810644",
           mailbox: "wx10086",
-          companyName: "OPPO深圳分公司",
+          vip: "0",
           leavingMessage: "很Nice"
         }
       ],
@@ -108,30 +88,24 @@ export default {
         name: "",
         tel: "",
         mailbox: "",
-        companyName: "",
         leaveMessage: ""
       },
-      rules: {
-        name: [
-          { required: true, message: "请输入姓名", trigger: "blur" },
-          { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" }
-        ],
-        tel: [{ required: true, validator: checkTel, trigger: "blur" }],
-        mailbox: [
-          { required: true, message: "请填写邮箱", trigger: "blur" },
-          { validator: checkMailbox, trigger: "blur" }
-        ]
-      },
-      form: {
+      paginationForm: {
         page: 1,
         limit: 20,
         name: ""
       },
       pageTotal: 2,
-      addUserDialog: false
+      updateUserInfoDialog: {
+        show: false,
+        dialogRow: {}
+      }
     };
   },
   components: {
+    userInfoDialog,
+    datePicker,
+    search,
     Pagination
   },
   computed: {},
@@ -139,7 +113,6 @@ export default {
     this.getDataList();
   },
   methods: {
-    setAddress(value) {},
     setTableHeight() {
       this.$nextTick(() => {
         this.tableHeight = document.body.clientHeight - 300;
@@ -147,31 +120,48 @@ export default {
     },
     // 获取列表数据
     getDataList() {},
-    hideAddFundDialog() {
-      this.addFundDialog.show = false;
-    },
+
     // 上下分页
     handleCurrentChange(val) {
-      this.form.page = val;
+      this.paginationForm.page = val;
       this.getDataList();
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.form.limit = val;
+      this.paginationForm.limit = val;
       this.getDataList();
     },
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    // 显示客户信息dialog
+    showUserInfoDialog() {
+      this.updateUserInfoDialog.show = true;
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    // 隐藏客户信息dialog
+    hideUserInfoDialog() {
+      this.updateUserInfoDialog.show = false;
+    },
+
+    // 获取客户信息
+    getUserInfoList() {},
+    // 删除客户
+    deleteUser(row) {
+      this.alertMsgBox()
+        .then(() => {
+          this.message("删除客户成功");
+        })
+        .catch(err => {
+          this.message("已取消", "info");
+        });
+    },
+    // 客户信息
+    lookUserStatus(row) {
+      if (this.dialogTitle == "新增客户信息") {
+        this.ruleForm.title = "新增客户信息";
+        this.updateUserInfoDialog.dialogRow = { ...this.ruleForm };
+      } else {
+        row.title = "编辑客户信息";
+        this.updateUserInfoDialog.dialogRow = { ...row };
+      }
+      this.showUserInfoDialog();
     }
   }
 };
@@ -181,6 +171,7 @@ export default {
 .user-info {
   padding: 20px;
   .add-user {
+    display: inline-block;
     .add-user-btn {
       height: 40px;
       margin-bottom: 15px;
