@@ -15,6 +15,7 @@
         :rules="form_rules"
         :label-width="dialog.formLabelWidth"
         style="margin:10px;width:auto;"
+        class="case-list-dialog"
       >
         <el-form-item prop="username" label="启停">
           <el-switch v-model="startStop" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
@@ -31,7 +32,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item prop="jumpAddress" label="上级分类">
+        <!-- <el-form-item prop="jumpAddress" label="上级分类">
           <span
             v-for="(item,index) in ClassificationStatusItems"
             :key="index"
@@ -39,10 +40,10 @@
             :class="{active:index===staticNumber}"
           >{{ item.name }}</span>
           <el-input v-model="ruleForm.jumpAddress" :disabled="isCanSelectAddress"></el-input>
-        </el-form-item>
+        </el-form-item>-->
 
-        <el-form-item prop="updateTime" label="案例名称">
-          <el-input v-model="ruleForm.updateTime"></el-input>
+        <el-form-item prop="caseName" label="案例名称">
+          <el-input v-model="ruleForm.caseName"></el-input>
         </el-form-item>
 
         <el-form-item prop="accoutCash" label="缩略图">
@@ -58,42 +59,64 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item prop="remarks" label="图文">
-          <editor-bar v-model="ruleForm.remarks" :isClear="isClear"></editor-bar>
+        <el-form-item label="文本对齐">
+          <el-select v-model="ruleForm.alignment" placeholder="请选择对齐方式">
+            <el-option
+              v-for="item in alignmentOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="文本">
+          <el-input type="textarea" v-model="ruleForm.text"></el-input>
+        </el-form-item>
+
+        <el-form-item label="图文详情">
+          <el-upload
+            action="https://jsonplaceholder.typicode.com/posts/"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt />
+          </el-dialog>
         </el-form-item>
       </el-form>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click='onSubmit("form")'>确 定</el-button>
+      <el-button type="primary" @click="onSubmit('form')">确 定</el-button>
       <el-button @click="closeDialog">取 消</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
 import { addMoney, updateMoney } from "@/api/money";
-import editorBar from "../components/wangEditor";
 
 export default {
-  name: "addFundDialogs",
+  name: "caseListDialog",
   data() {
     return {
       isVisible: this.isShow,
       ruleForm: {
         classificationName: "",
-        jumpAddress: "www.baidu.com",
-        updateTime: "",
-        remarks: ""
+        caseName: "",
+        alignment: "",
+        text: ""
       },
       form_rules: {
-        jumpAddress: [
-          { required: true, message: "跳转地址不能为空", trigger: "blur" }
+        classificationName: [
+          { required: true, message: "上级分类不能为空", trigger: "change" }
         ],
-        updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
-        ],
-        remarks: [{ required: true, message: "备注不能为空", trigger: "blur" }]
+        caseName: [
+          { required: true, message: "案例名称不能为空", trigger: "blur" }
+        ]
       },
       startStop: true,
       imageUrl: "",
@@ -142,16 +165,30 @@ export default {
           name: "自定义"
         }
       ],
-      isCanSelectAddress: true
+      isCanSelectAddress: true,
+      alignmentOptions: [
+        {
+          value: "0",
+          label: "文本左对齐"
+        },
+        {
+          value: "1",
+          label: "文本居中对齐"
+        },
+        {
+          value: "2",
+          label: "文本右对齐"
+        }
+      ],
+      dialogImageUrl: "",
+      dialogVisible: false
     };
   },
   props: {
     isShow: Boolean,
     dialogRow: Object
   },
-  components: {
-    editorBar
-  },
+  components: {},
   computed: {},
   created() {},
   mounted() {
@@ -225,6 +262,13 @@ export default {
       } else {
         this.isCanSelectAddress = true;
       }
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     }
   }
 };
@@ -244,22 +288,30 @@ export default {
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
+  width: 148px;
+  height: 148px;
+  line-height: 148px;
   text-align: center;
 }
 .avatar {
-  width: 178px;
-  height: 178px;
+  width: 148px;
+  height: 148px;
   display: block;
 }
+
 .form {
   .active {
     border-radius: 3px;
     margin: 5px;
     color: #fff;
     background-color: rgb(102, 177, 255);
+  }
+  .case-list-dialog {
+    /deep/ .case-list-dialog {
+      .el-textarea__inner {
+        height: 150px;
+      }
+    }
   }
 }
 </style>

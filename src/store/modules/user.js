@@ -10,6 +10,7 @@ const user = {
         token: getToken('Token'),
         roles: [],
         browserHeaderTitle: mUtils.getStore('browserHeaderTitle') || 'LGT后台管理',
+        systemType: '',
     },
     getters: {
         token: state => state.token,
@@ -17,6 +18,7 @@ const user = {
         avatar: state => state.avatar,
         name: state => state.name,
         browserHeaderTitle: state => state.browserHeaderTitle,
+        systemType: state => state.systemType,
     },
     mutations: {
         SET_ROLES: (state, roles) => {
@@ -30,6 +32,9 @@ const user = {
         },
         SET_AVATAR: (state, avatar) => {
             state.avatar = avatar
+        },
+        SET_SYSTEMTYPE: (state, systemType) => {
+            state.systemType = systemType
         }
     },
     actions: {

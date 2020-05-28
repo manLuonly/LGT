@@ -16,13 +16,23 @@
           class="addCase"
           @click="lookCaseListStatus(dialogTitle = '添加案例列表')"
         >添加案例</el-button>
-        <el-button
+        <!-- <el-button
           v-for="(item) in buttonGroup"
           :key="item.type_name"
           @click="getList(item.type)"
-        >{{ item.type_name }}</el-button>
+        >{{ item.type_name }}</el-button>-->
+
+        <select-system></select-system>
+        <selectCaseType></selectCaseType>
+
         <div class="search">
-          <el-input class="search-input" size="large" placeholder="请输入名称" v-model="searchVal" clearable></el-input>
+          <el-input
+            class="search-input"
+            size="large"
+            placeholder="请输入名称"
+            v-model="searchVal"
+            clearable
+          ></el-input>
           <div class="search-button">
             <el-button icon="el-icon-search" size="large" @click="searchCaseList"></el-button>
           </div>
@@ -73,12 +83,7 @@
               size="mini"
               @click="lookCaseListStatus(scope.row,dialogTitle = '编辑案例列表')"
             >编辑</el-button>
-            <el-button
-              type="danger"
-              icon="delete"
-              size="mini"
-              @click="deleteCaeList(scope.row)"
-            >删除</el-button>
+            <el-button type="danger" icon="delete" size="mini" @click="deleteCaeList(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -94,6 +99,8 @@
 <script>
 import { deepCopy } from "@/utils/mUtils";
 import caseListDialog from "./Dialog/caseListDialog";
+import selectSystem from "@/components/selectSystem";
+import selectCaseType from "./components/selectCaseType";
 import Pagination from "@/components/pagination";
 import { caseList, caseType } from "@/api/projectManagement";
 
@@ -130,12 +137,14 @@ export default {
       },
       copyData: [],
       isCanSelectAddress: true,
-      buttonGroup: [],
+      // buttonGroup: [],
       dialogTitle: ""
     };
   },
   components: {
     caseListDialog,
+    selectSystem,
+    selectCaseType,
     Pagination
   },
   computed: {},
@@ -159,11 +168,11 @@ export default {
           this.tableData = res.data;
         }
       });
-      caseType().then(res => {
-        if (res.code === 0) {
-          this.buttonGroup = res.data;
-        }
-      });
+      // caseType().then(res => {
+      //   if (res.code === 0) {
+      //     // this.buttonGroup = res.data;
+      //   }
+      // });
     },
     // 上下分页
     handleCurrentChange(val) {
@@ -225,27 +234,26 @@ export default {
           this.tableData = res.data;
         }
       });
-    }
+    },
   }
 };
 </script>
 
 <style lang="less" scoped>
-.table_container {
-  padding: 10px;
-  background: #fff;
-  border-radius: 2px;
-}
-
-
-
 .classificationList {
   padding: 20px;
-  .form {
-    /deep/ .el-textarea {
-      height: 200px;
-    }
+  // .form {
+  //   /deep/ .el-textarea {
+  //     height: 200px;
+  //   }
+  // }
+
+  .table_container {
+    padding: 10px;
+    background: #fff;
+    border-radius: 2px;
   }
+
   .button-group {
     /deep/ .el-button {
       margin-bottom: 15px;
@@ -262,6 +270,7 @@ export default {
       }
     }
   }
+
   .active {
     border-radius: 3px;
     margin: 5px;
@@ -269,7 +278,6 @@ export default {
     background-color: rgb(102, 177, 255);
   }
 }
-
 </style>
 
 

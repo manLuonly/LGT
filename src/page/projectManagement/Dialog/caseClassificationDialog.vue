@@ -30,6 +30,11 @@
           ></el-input-number>
         </el-form-item>
 
+        <el-form-item prop="caseName" label="分类名称">
+          <el-input v-model="ruleForm.caseName"></el-input>
+        </el-form-item>
+        
+        <!-- 
         <el-form-item prop="jumpAddress" label="上级分类">
           <span
             v-for="(item,index) in ClassificationStatusItems"
@@ -38,28 +43,11 @@
             :class="{active:index===staticNumber}"
           >{{ item.name }}</span>
           <el-input v-model="ruleForm.jumpAddress" :disabled="isCanSelectAddress"></el-input>
-        </el-form-item>
-
-        <el-form-item prop="caseName" label="案例名称">
-          <el-input v-model="ruleForm.caseName"></el-input>
-        </el-form-item>
-
-        <el-form-item prop="accoutCash" label="缩略图">
-          <el-upload
-            class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
-          >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-        </el-form-item>
+        </el-form-item>-->
       </el-form>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click='onSubmit("form")'>确 定</el-button>
+      <el-button type="primary" @click="onSubmit('form')">确 定</el-button>
       <el-button @click="closeDialog">取 消</el-button>
     </span>
   </el-dialog>
@@ -72,30 +60,21 @@ export default {
   name: "addFundDialogs",
   data() {
     return {
-      areaData: [],
       isVisible: this.isShow,
       ruleForm: {
         caseSortNum: 0,
-        jumpAddress: "www.baidu.com",
-        updateTime: "",
-        remarks: ""
+        caseName: "",
+        jumpAddress: "www.baidu.com"
       },
       form_rules: {
-        jumpAddress: [
-          { required: true, message: "跳转地址不能为空", trigger: "blur" }
-        ],
-        updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
-        ]
+        caseName: [{ required: true, message: "分类不能为空", trigger: "blur" }]
       },
       startStop: true,
-      imageUrl: "",
       //详情弹框信息
       dialog: {
         width: "400px",
         formLabelWidth: "120px"
       },
-      isClear: false,
       staticNumber: 0,
       ClassificationStatusItems: [
         {
@@ -112,14 +91,9 @@ export default {
     isShow: Boolean,
     dialogRow: Object
   },
-   components: {
-  
-  },
-  computed: {
-   
-  },
-  created() {
-  },
+  components: {},
+  computed: {},
+  created() {},
   mounted() {
     if (this.dialogRow.type === "添加案例分类") {
       this.$nextTick(() => {
@@ -130,22 +104,6 @@ export default {
     }
   },
   methods: {
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
-  
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
@@ -201,29 +159,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
 .form {
   .active {
     border-radius: 3px;

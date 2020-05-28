@@ -13,7 +13,37 @@
     </div>
 
     <div class="table_container">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" align="center" v-show="systemType == '0' ">
+        <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+        <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
+        <el-table-column prop="mailbox" label="邮箱/微信" align="center"></el-table-column>
+        <el-table-column prop="vip" label="vip" align="center"></el-table-column>
+        <el-table-column prop="leavingMessage" label="留言" align="center">
+          <template slot-scope="scope">
+            <el-popover
+              placement="top-start"
+              width="200"
+              trigger="hover"
+              :content="scope.row.leavingMessage"
+            >
+              <span slot="reference">{{ scope.row.leavingMessage }}</span>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column prop="operation" align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button icon="edit" size="mini" @click="restoreRecording(scope.row)">恢复</el-button>
+            <el-button
+              type="danger"
+              icon="delete"
+              size="mini"
+              @click="deleteRecording(scope.row)"
+            >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-table :data="tableData" style="width: 100%" v-show="systemType == '1' ">
         <el-table-column prop="userName" label="客户姓名" align="center"></el-table-column>
         <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
         <el-table-column prop="serviceProject" label="服务项目" align="center"></el-table-column>
@@ -39,6 +69,7 @@
         @handleSizeChange="handleSizeChange"
       ></pagination>
     </div>
+    {{ show }}
   </div>
 </template>
 
@@ -46,23 +77,30 @@
 import Pagination from "@/components/pagination";
 
 export default {
-  name: "",
+  name: "historyRecord",
 
   data() {
     return {
       tableData: [
         {
-          userName: "王小虎",
+          name: "王小虎",
           tel: "13978810644",
-          serviceProject: "logo设计",
-          startDate: "2016-05-02",
-          endDate: "2016-05-02",
-          orderStatus: "0",
-          money: "500"
+          mailbox: "wx10086",
+          vip: "0",
+          leavingMessage: "很Nice"
         }
+        // {
+        //   userName: "王小虎",
+        //   tel: "13978810644",
+        //   serviceProject: "logo设计",
+        //   startDate: "2016-05-02",
+        //   endDate: "2016-05-02",
+        //   orderStatus: "0",
+        //   money: "500"
+        // }
       ],
       pageTotal: 1,
-      systemType: "1",
+      systemType: "0",
       systemTypeOptions: [
         {
           value: "0",
@@ -78,12 +116,25 @@ export default {
   components: {
     Pagination
   },
+  computed: {
+    show() {
+      this.systemType && this.getDataList();
+    }
+  },
   mounted() {
     //   this.getDataList();
   },
   methods: {
     // 获取数据
-    getDataList() {},
+    getDataList() {
+      // 请求客户信息列表
+      if (this.systemType == "0") {
+        console.log("0");
+      } else {
+        // 请求订单详情列表
+        console.log("1");
+      }
+    },
     // 上下分页
     handleCurrentChange(val) {
       this.paginationForm.page = val;
@@ -95,9 +146,27 @@ export default {
       this.getDataList();
     },
     // 恢复历史记录
-    restoreRecording() {},
+    restoreRecording(row) {
+      console.log(row, "row");
+      this.alertMsgBox("此操作将恢复该数据,是否继续?")
+        .then(() => {
+          this.message("恢复成功");
+        })
+        .catch(err => {
+          this.message("已取消", "info");
+        });
+    },
     // 删除历史记录
-    deleteRecording() {}
+    deleteRecording(row) {
+      console.log(row, "row");
+      this.alertMsgBox("此操作将永久删除该数据,是否继续?")
+        .then(() => {
+          this.message("删除成功");
+        })
+        .catch(err => {
+          this.message("已取消", "info");
+        });
+    }
   }
 };
 </script>

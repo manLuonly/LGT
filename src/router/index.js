@@ -167,6 +167,7 @@ export const asyncRouterMap = [{
         name: 'historyRecord',
         meta: {
             title: '历史记录',
+            // icon: 'icon-history_record'
             icon: 'icon-fuwuxiangmu'
         },
         noDropdown: true, // 不开启下拉列表

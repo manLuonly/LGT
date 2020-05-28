@@ -45,7 +45,7 @@ Vue.prototype.alertMsgBox = function alert(msg, title, settings = {}) {
             }
         }
     })
-    return this.$confirm(`<p style="font-weight:bold;">${msg || '此操作将永久删除该数据, 是否继续?' }</p>`, title || '提示', settings)
+    return this.$confirm(`<p style="font-weight:bold;">${msg || '此操作将删除该数据,30天内可恢复,是否继续?' }</p>`, title || '提示', settings)
 }
 
 

@@ -33,14 +33,6 @@
           <el-form-item>
             <el-button type="primary" @click="submitForm('loginForm')" class="submit_btn">登录</el-button>
           </el-form-item>
-          <!-- <div class="tiparea">
-            <p class="wxtip">温馨提示：</p>
-            <p class="tip">
-              用户名为：admin/editor
-              <span>(可用于切换权限)</span>
-            </p>
-            <p class="tip">密码为：123456</p>
-          </div>-->
           <div class="sanFangArea">
             <p class="title">第三方账号登录</p>
             <ul class="rflex">
@@ -92,6 +84,7 @@ export default {
       });
     },
     submitForm(loginForm) {
+      // setToken("Token", 'YGF-xiao-sb');
       this.$refs[loginForm].validate(valid => {
         if (valid) {
           this.loginForm.password = this.$md5(this.loginForm.password);

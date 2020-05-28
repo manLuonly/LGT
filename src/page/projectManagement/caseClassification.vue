@@ -15,17 +15,7 @@
       @click="lookCaseStatus(dialogTitle = '添加案例分类')"
     >添加案例分类</el-button>
 
-    <div class="system-type inline-block">
-      <span class="system-type-text">系统类型</span>
-      <el-select v-model="systemType" size="large" placeholder="请选择分类">
-        <el-option
-          v-for="item in systemTypeOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-    </div>
+    <select-system @selectSystem="selectSystem($event)"></select-system>
 
     <div class="table_container">
       <el-table v-loading="loading" :data="tableData" style="width: 100%" align="center">
@@ -82,6 +72,7 @@
 </template>
 
 <script>
+import selectSystem from "@/components/selectSystem";
 import caseClassificationDialog from "./Dialog/caseClassificationDialog";
 import Pagination from "@/components/pagination";
 
@@ -90,7 +81,7 @@ export default {
     return {
       tableData: [
         {
-          caseSortNum: 0,
+          caseSortNum: 99,
           caseName: "logo设计",
           jumpAddress: "www.baidu.com",
           updateTime: "2016-05-02"
@@ -121,25 +112,16 @@ export default {
         width: "400px",
         formLabelWidth: "120px"
       },
-      dialogTitle: "",
-      systemType: "0",
-      systemTypeOptions: [
-        {
-          value: "0",
-          label: "pc端"
-        },
-        {
-          value: "1",
-          label: "小程序"
-        }
-      ]
+      dialogTitle: ""
     };
   },
   components: {
     caseClassificationDialog,
+    selectSystem,
     Pagination
   },
-  computed: {},
+  computed: {
+  },
   mounted() {
     // this.getDataList();
     this.loading = false;
@@ -197,6 +179,10 @@ export default {
     // 改变 Switch状态
     changeSwitch(val) {
       console.log(val);
+    },
+    // 选择系统类型
+    selectSystem(type) {
+      console.log(type, '系统类型');
     }
   }
 };
@@ -211,12 +197,6 @@ export default {
     border-radius: 2px;
   }
 
-  .system-type {
-    margin: 0 50px;
-    .system-type-text {
-      margin-right: 10px;
-    }
-  }
   .addCase {
     margin-bottom: 15px;
   }

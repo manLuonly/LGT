@@ -160,4 +160,9 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.order-ruleForm {
+  /deep/ .el-select {
+    width: 220px;
+  }
+}
 </style>
