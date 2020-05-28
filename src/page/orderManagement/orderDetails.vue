@@ -11,7 +11,7 @@
     <div class="add-order-details">
       <el-button
         type="primary"
-        size="medium"
+        size="large"
         class="add-order-details-btn"
         @click="lookorderStatus(dialogTitle = '添加订单详情');"
       >添加订单详情</el-button>
@@ -64,6 +64,7 @@ export default {
           money: "500"
         }
       ],
+      pageTotal: 2,
       ruleForm: {
         userName: "",
         tel: "",
@@ -79,7 +80,6 @@ export default {
         limit: 20,
         name: ""
       },
-      pageTotal: 2,
       dialog: {
         width: "400px",
         formLabelWidth: "120px"
@@ -158,26 +158,13 @@ export default {
   background: #fff;
   border-radius: 2px;
 }
-.el-dialog--small {
-  width: 600px !important;
-}
-.pagination {
-  text-align: left;
-  margin-top: 10px;
-}
-.addCase {
-  height: 40px;
-  margin-bottom: 15px;
-}
+
+
 
 .order-details {
   padding: 20px;
   .add-order-details {
-    // padding: 10px;
     padding-bottom: 15px;
-    .add-order-details-btn {
-      height: 40px;
-    }
   }
 }
 </style>

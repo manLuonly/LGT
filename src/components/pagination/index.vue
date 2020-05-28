@@ -52,7 +52,7 @@
 
 <style lang="less" scoped>
     .pagination{
-        text-align: right;
+        text-align: left;
         padding: 10px 18px;
     }
 </style>

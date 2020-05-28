@@ -1,13 +1,16 @@
 <template>
-  <div class="date-picker">
+  <div class="date-picker inline-block">
     <div class="block">
       <el-date-picker
         v-model="date"
-        align="right"
-        type="date"
-        placeholder="选择日期"
-        :picker-options="pickerOptions"
+        type="daterange"
         size="large"
+        align="right"
+        unlink-panels
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions"
       ></el-date-picker>
     </div>
   </div>
@@ -20,30 +23,32 @@ export default {
   data() {
     return {
       pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        },
         shortcuts: [
           {
-            text: "今天",
+            text: "最近一周",
             onClick(picker) {
-              picker.$emit("pick", new Date());
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
             }
           },
           {
-            text: "昨天",
+            text: "最近一个月",
             onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit("pick", date);
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
             }
           },
           {
-            text: "一周前",
+            text: "最近三个月",
             onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", date);
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
             }
           }
         ]
@@ -58,7 +63,6 @@ export default {
 
 <style lang='less' scoped>
 .date-picker {
-    display: inline-block;
-    margin: 0 50px;
+  margin: 0 150px;
 }
 </style>

@@ -8,9 +8,16 @@
       @closeDialog="hideCaseDialog"
     ></caseClassificationDialog>
 
-    <div class="system-type">
+    <el-button
+      type="primary"
+      size="large"
+      class="addCase"
+      @click="lookCaseStatus(dialogTitle = '添加案例分类')"
+    >添加案例分类</el-button>
+
+    <div class="system-type inline-block">
       <span class="system-type-text">系统类型</span>
-      <el-select v-model="systemType" placeholder="请选择分类">
+      <el-select v-model="systemType" size="large" placeholder="请选择分类">
         <el-option
           v-for="item in systemTypeOptions"
           :key="item.value"
@@ -19,8 +26,6 @@
         ></el-option>
       </el-select>
     </div>
-
-    <el-button type="primary" class="addCase" @click="lookCaseStatus(dialogTitle = '添加案例分类')">添加案例分类</el-button>
 
     <div class="table_container">
       <el-table v-loading="loading" :data="tableData" style="width: 100%" align="center">
@@ -207,19 +212,13 @@ export default {
   }
 
   .system-type {
-    margin-bottom: 30px;
+    margin: 0 50px;
     .system-type-text {
-      margin-right: 20px;
+      margin-right: 10px;
     }
   }
   .addCase {
-    height: 40px;
     margin-bottom: 15px;
-  }
-
-  .pagination {
-    text-align: left;
-    margin-top: 10px;
   }
 }
 </style>

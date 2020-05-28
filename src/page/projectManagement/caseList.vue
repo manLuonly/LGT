@@ -12,6 +12,7 @@
       <div class="button-group">
         <el-button
           type="primary"
+          size="large"
           class="addCase"
           @click="lookCaseListStatus(dialogTitle = '添加案例列表')"
         >添加案例</el-button>
@@ -21,9 +22,9 @@
           @click="getList(item.type)"
         >{{ item.type_name }}</el-button>
         <div class="search">
-          <el-input class="search-input" placeholder="请输入名称" v-model="searchVal" clearable></el-input>
+          <el-input class="search-input" size="large" placeholder="请输入名称" v-model="searchVal" clearable></el-input>
           <div class="search-button">
-            <el-button icon="el-icon-search" size="medium" @click="searchCaseList"></el-button>
+            <el-button icon="el-icon-search" size="large" @click="searchCaseList"></el-button>
           </div>
         </div>
       </div>
@@ -235,13 +236,8 @@ export default {
   background: #fff;
   border-radius: 2px;
 }
-.el-dialog--small {
-  width: 600px !important;
-}
-.pagination {
-  text-align: left;
-  margin-top: 10px;
-}
+
+
 
 .classificationList {
   padding: 20px;
@@ -252,7 +248,6 @@ export default {
   }
   .button-group {
     /deep/ .el-button {
-      height: 40px;
       margin-bottom: 15px;
     }
     .search {
@@ -260,17 +255,9 @@ export default {
       .search-input {
         display: inline-block;
         width: 217px;
-        height: 40px;
-        line-height: 40px;
-        /deep/ .el-input__inner {
-          height: 40px !important;
-          line-height: 40px !important;
-        }
       }
       .search-button {
         display: inline-block;
-        height: 40px;
-        line-height: 40px;
         margin-left: -1px;
       }
     }
@@ -283,27 +270,6 @@ export default {
   }
 }
 
-.avatar-uploader .el-upload {
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
 </style>
 
 

@@ -90,18 +90,7 @@ export const asyncRouterMap = [{
             icon: 'icon-xiangmu',
         },
         component: Layout,
-        children: [
-            // {
-            //     path: 'caseDataLook',
-            //     name: 'caseDataLook',
-            //     meta: {
-            //         title: '案例数据查看',
-            //         routerType: 'leftmenu'
-            //     },
-            //     component: () =>
-            //         import ('@/page/projectManagement/caseDataLook'),
-            // },
-            {
+        children: [{
                 path: 'caseClassification',
                 name: 'caseClassification',
                 meta: {
@@ -162,65 +151,36 @@ export const asyncRouterMap = [{
             icon: 'icon-fuwuxiangmu'
         },
         children: [{
-                path: 'orderDetails',
-                name: 'orderDetails',
-                component: () =>
-                    import ('@/page/orderManagement/orderDetails'),
-                meta: {
-                    title: '订单详情',
-                    noCache: true
-                }
-            },
-            // {
-            //     path: '404',
-            //     name: 'page404',
-            //     component: () =>
-            //         import ('@/page/errorPage/404'),
-            //     meta: {
-            //         title: '退出',
-            //         noCache: true
-            //     }
-            // }
-        ]
+            path: 'orderDetails',
+            name: 'orderDetails',
+            component: () =>
+                import ('@/page/orderManagement/orderDetails'),
+            meta: {
+                title: '订单详情',
+                noCache: true
+            }
+        }, ]
     },
-    // {
-    //     path: '/personalInfo',
-    //     name: 'personalInfo',
-    //     meta: {
-    //         title: '个人信息',
-    //         icon: 'icon-gerenxinxi',
-    //     },
-    //     component: Layout,
-    //     children: [
-    // {
-    //     path: 'updateInfo',
-    //     name: 'updateInfo',
-    //     meta: {
-    //         title: '修改信息',
-    //         icon: 'iconinfo',
-    //         routerType: 'leftmenu',
-
-    //     },
-    //     component: () =>
-    //         import ('@/page/personalInfo/updateInfo'),
-
-    // },
-    // {
-    //     path: 'updatePassword',
-    //     name: 'updatePassword',
-    //     meta: {
-    //         title: '修改密码',
-    //         icon: 'iconinfo',
-    //         routerType: 'leftmenu',
-
-    //     },
-    //     component: () =>
-    //         import ('@/page/personalInfo/updatePassword'),
-
-    // }
-    // ]
-    // },
-
+    {
+        path: '/historyRecord',
+        component: Layout,
+        name: 'historyRecord',
+        meta: {
+            title: '历史记录',
+            icon: 'icon-fuwuxiangmu'
+        },
+        noDropdown: true, // 不开启下拉列表
+        children: [{
+            path: 'historyRecord',
+            name: 'historyRecord',
+            component: () =>
+                import ('@/page/historyRecord/historyRecord'),
+            meta: {
+                title: '历史记录',
+                noCache: true // 不缓存
+            }
+        }, ]
+    },
     { path: '*', redirect: '/404', hidden: true }
 ];
 

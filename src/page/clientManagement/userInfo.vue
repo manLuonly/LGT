@@ -8,18 +8,17 @@
       @closeDialog="hideUserInfoDialog"
     ></userInfoDialog>
 
-    <div class="add-user">
+    <div class="add-user inline-block">
       <el-button
         type="primary"
-        size="small"
+        size="large"
         class="add-user-btn"
         @click="lookUserStatus(dialogTitle = '新增客户信息')"
       >添加客户</el-button>
     </div>
 
     <date-picker></date-picker>
-    <search></search>
-
+    <search @searchUserList="searchUserList($event)"></search>
 
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%" align="center">
@@ -46,12 +45,7 @@
               size="mini"
               @click="lookUserStatus(scope.row,dialogTitle = '编辑客户信息');"
             >编辑</el-button>
-            <el-button
-              type="danger"
-              icon="delete"
-              size="mini"
-              @click="deleteUser(scope.row)"
-            >删除</el-button>
+            <el-button type="danger" icon="delete" size="mini" @click="deleteUser(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -69,7 +63,6 @@ import userInfoDialog from "./Dialog/userInfoDialog";
 import datePicker from "./components/datePicker";
 import search from "./components/search";
 import Pagination from "@/components/pagination";
-
 
 export default {
   data() {
@@ -162,6 +155,10 @@ export default {
         this.updateUserInfoDialog.dialogRow = { ...row };
       }
       this.showUserInfoDialog();
+    },
+    // 搜索客户列表
+    searchUserList(searchVal) {
+      console.log(searchVal,"我是搜索");
     }
   }
 };
@@ -171,9 +168,7 @@ export default {
 .user-info {
   padding: 20px;
   .add-user {
-    display: inline-block;
     .add-user-btn {
-      height: 40px;
       margin-bottom: 15px;
     }
   }
@@ -182,13 +177,7 @@ export default {
     background: #fff;
     border-radius: 2px;
   }
-  .el-dialog--small {
-    width: 600px !important;
-  }
-  .pagination {
-    text-align: left;
-    margin-top: 10px;
-  }
+
 }
 </style>
 
