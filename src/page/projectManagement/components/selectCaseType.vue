@@ -1,7 +1,8 @@
 <template>
   <div class="select-case-type inline-block">
     <span class="system-type-text">案例类型</span>
-    <el-select v-model="caseType" size="large" placeholder="请选择分类" @change="changeType">
+    <!-- @change="changeType" -->
+    <el-select v-model="caseType" size="large" placeholder="请选择分类" >
       <el-option
         v-for="item in caseTypeOptions"
         :key="item.value"

@@ -104,8 +104,8 @@ export default {
         box-sizing: border-box;
         box-shadow:0px 2px 5px 0px rgba(230,224,224,0.5);
         .logo {
-            height: 25px;
-            width: 36px;
+            height: 20px;
+            width: 65px;
             
             img {
                 width: 100%;
@@ -113,7 +113,7 @@ export default {
             }
         }
         .title{
-            font-size: 16px;
+            font-size: 14px;
             i{
                 color:#FF6C60;
             }

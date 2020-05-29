@@ -155,7 +155,7 @@ export default {
         }
       });
     },
-    // 根据上线还是下线状态添加class
+    // 根据状态添加class
     addClassStatus(val) {
       switch (val) {
         case "进行中":
