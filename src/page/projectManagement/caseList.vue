@@ -23,7 +23,7 @@
         >{{ item.type_name }}</el-button>-->
 
         <select-system></select-system>
-        <selectCaseType></selectCaseType>
+        <selectCaseType @selectCaseType="selectCaseType($event)"></selectCaseType>
 
         <div class="search">
           <el-input
@@ -45,35 +45,30 @@
         <el-table-column align="center" label="启停" width="60">
           <template slot-scope="scope">
             <el-switch
-              :disabled="true"
-              v-model="startStop"
+              v-model="scope.row.enable"
               active-color="#13ce66"
               inactive-color="#ff4949"
               @change="changeSwitch(scope.row)"
             ></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="排序" align="center" width="80">
-          <template slot-scope="scope">
-            <span>{{ scope.row.caseSortNum }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column label="排序" align="center" width="80" prop="id"></el-table-column>
         <el-table-column label="分类名称" align="center">
           <template slot-scope="scope">
-            <el-tag>{{ scope.row.caseName }}</el-tag>
+            <el-tag>{{ scope.row.type}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="名称" align="center"></el-table-column>
+        <el-table-column prop="type_name" label="名称" align="center"></el-table-column>
         <el-table-column v-if="idFlag" prop="address" label="分类名称" align="center"></el-table-column>
         <el-table-column label="跳转地址" align="center">
           <template slot-scope="scope">
             <el-input placeholder="请输入内容" v-model="scope.row.jumpAddress" :disabled="true"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="更新时间" align="center" sortable width="170">
+        <el-table-column prop="update_time" label="更新时间" align="center" sortable width="170">
           <template slot-scope="scope">
             <el-icon name="time"></el-icon>
-            <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
+            <span style="margin-left: 10px">{{ Date.$format(scope.row.update_time) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="operation" align="center" label="操作" width="180">
@@ -102,7 +97,7 @@ import caseListDialog from "./Dialog/caseListDialog";
 import selectSystem from "@/components/selectSystem";
 import selectCaseType from "./components/selectCaseType";
 import Pagination from "@/components/pagination";
-import { caseList, caseType } from "@/api/projectManagement";
+import { caseList } from "@/api/projectManagement";
 
 export default {
   data() {
@@ -123,10 +118,11 @@ export default {
         dialogRow: {}
       },
       paginationForm: {
+        opr: 'list',
+        pid: 'pc',
         pageNum: 1,
         pageSize: 20,
-        type: "",
-        name: ""
+        type: ''
       },
       pageTotal: 7,
       startStop: true,
@@ -149,9 +145,9 @@ export default {
   },
   computed: {},
   mounted() {
-    this.getDataList();
-    this.loading = false;
-    this.copyData = deepCopy(this.tableData);
+    //this.getDataList();
+    //this.loading = false;
+    //this.copyData = deepCopy(this.tableData);
   },
   methods: {
     setTableHeight() {
@@ -161,18 +157,12 @@ export default {
     },
     // 获取列表数据
     getDataList() {
-      this.paginationForm.type = "all";
       const para = Object.assign({}, this.paginationForm);
       caseList(para).then(res => {
         if (res.code === 0) {
           this.tableData = res.data;
         }
       });
-      // caseType().then(res => {
-      //   if (res.code === 0) {
-      //     // this.buttonGroup = res.data;
-      //   }
-      // });
     },
     // 上下分页
     handleCurrentChange(val) {
@@ -235,6 +225,15 @@ export default {
         }
       });
     },
+    selectCaseType (val) {
+      this.paginationForm.type = val;
+      this.getDataList();
+      this.loading = false;
+      this.copyData = deepCopy(this.tableData);
+    }
+    // selectSystem (val) {
+     
+    // }
   }
 };
 </script>

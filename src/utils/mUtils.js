@@ -45,23 +45,67 @@ export const removeStore = name => {
     window.localStorage.removeItem(name);
 }
 
+
 /**
- * 让整数自动保留2位小数
+ *  获取时间 YYYY-MM-DD 
+ * 
  */
-// export const returnFloat = value => { 
-//     var value=Math.round(parseFloat(value)*100)/100; 
-//     var xsd=value.toString().split("."); 
-//     if(xsd.length==1){ 
-//         value=value.toString()+".00"; 
-//         return value;   
-//     } 
-//     if(xsd.length>1){ 
-//         if(xsd[1].length<2){ 
-//             value=value.toString()+"0"; 
-//         } 
-//         return value; 
-//     } 
-// } 
+
+
+Date.getTime = () => {
+    let yy = new Date().getFullYear();
+    let mm = new Date().getMonth() + 1;
+    let dd = new Date().getDate();
+    return yy + '-' + mm + '-' + dd;
+}
+
+
+/**
+ *  获取当前时间 YYYY-MM-DD hh:MM:ss
+ * 
+ */
+
+Date.getNewTime = () => {
+    let yy = new Date().getFullYear();
+    let mm = new Date().getMonth() + 1;
+    let dd = new Date().getDate();
+    let hh = new Date().getHours();
+    let mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes();
+    let ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds();
+    return yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss;
+}
+
+/**
+ *  获取当前时间 YYYY-MM-DD 23:59:59
+ * 
+ */
+Date.getNewTime2 = () => {
+    let yy = new Date().getFullYear();
+    let mm = new Date().getMonth() + 1;
+    let dd = new Date().getDate();
+    let hh = 23;
+    let mf = 59;
+    let ss = 59;
+    return yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss;
+}
+
+/**
+ * format 时间戳格式化 YYYY-MM-DD
+ * 
+ */
+Date.$format = function(value) {
+    var date = new Date(value);
+    var YY = date.getFullYear() + '-';
+    var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+    var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+    var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+    var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+    var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+    return YY + MM + DD + " " + hh + mm + ss;
+};
+
+
+
 /**
  * @param {date} 标准时间格式:Fri Nov 17 2017 09:26:23 GMT+0800 (中国标准时间)
  * @param {type} 类型
@@ -69,7 +113,7 @@ export const removeStore = name => {
  *   type == 2 ---> "yyyymmddhhMMss"
  *   type == '' ---> "yyyy-mm-dd hh:MM:ss"
  */
-export const formatDate = (date, type) => {
+Date.formatDate = (date, type) => {
         var year = date.getFullYear(); //年
         var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1; //月
         var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate(); //日
@@ -142,13 +186,7 @@ export const toFixedNum = (num) => {
     return tonum;
 }
 
-export const showMessage = () => {
-    this.$message({
-        showClose: true,
-        message: '对不起，您暂无此操作权限~',
-        type: 'success'
-    });
-}
+
 
 /**
  * 读取base64

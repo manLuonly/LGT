@@ -16,25 +16,25 @@
         label-width="100px"
         class="order-ruleForm"
       >
-        <el-form-item label="客户姓名" prop="userName">
-          <el-input v-model="ruleForm.userName"></el-input>
+        <el-form-item label="客户姓名" prop="name">
+          <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="联系电话" prop="tel">
-          <el-input v-model.number="ruleForm.tel"></el-input>
+        <el-form-item label="联系电话" prop="phone">
+          <el-input v-model.number="ruleForm.phone"></el-input>
         </el-form-item>
-        <el-form-item label="服务项目" prop="serviceProject">
-          <el-select v-model="ruleForm.serviceProject" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
+        <el-form-item label="服务项目" prop="service">
+          <el-select v-model="ruleForm.service" placeholder="请选择服务项目">
+            <el-option v-for="item in serviceOptions" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="开始日期" prop="startDate">
-          <el-date-picker v-model="ruleForm.startDate" type="date" placeholder="选择日期"></el-date-picker>
+        <el-form-item label="开始日期" prop="begin_time">
+          <el-date-picker v-model="ruleForm.begin_time" type="date" placeholder="选择日期"></el-date-picker>
         </el-form-item>
-        <el-form-item label="结束日期" prop="endDate">
-          <el-date-picker v-model="ruleForm.endDate" type="date" placeholder="选择日期"></el-date-picker>
+        <el-form-item label="结束日期" prop="of_time">
+          <el-date-picker v-model="ruleForm.of_time" type="date" placeholder="选择日期"></el-date-picker>
         </el-form-item>
         <el-form-item label="状态" prop="orderStatus">
-          <el-select v-model="orderStatus" placeholder="请选择">
+          <el-select v-model="ruleForm.orderStatus" placeholder="请选择">
             <el-option
               v-for="item in orderStatusOptions"
               :key="item.value"
@@ -44,7 +44,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="金额" prop="money">
-          <el-input v-model.number="ruleForm.money" onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"></el-input>
+          <el-input
+            v-model.number="ruleForm.money"
+            onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -56,6 +59,9 @@
 </template>
 
 <script>
+import { getCaseType } from "@/api/caseType";
+import { userOrderInfo } from "@/api/orderDetails";
+
 export default {
   name: "orderDialog",
   data() {
@@ -78,29 +84,28 @@ export default {
     };
     return {
       ruleForm: {
-        userName: "",
-        tel: "",
-        serviceProject: "",
-        startDate: "",
-        endDate: "",
+        name: "",
+        phone: "",
+        service: "",
+        email: "",
+        begin_time: "",
+        of_time: "",
         orderStatus: "",
         money: ""
       },
       form_rules: {
-        userName: [
-          { required: true, message: "请输入客户姓名", trigger: "blur" }
-        ],
-        tel: [
+        name: [{ required: true, message: "请输入客户姓名", trigger: "blur" }],
+        phone: [
           { required: true, message: "请输入联系电话", trigger: "blur" },
           { validator: checkTel, trigger: "blur" }
         ],
-        serviceProject: [
+        service: [
           { required: true, message: "请选择服务项目", trigger: "change" }
         ],
-        startDate: [
+        begin_time: [
           { required: true, message: "请选择开始日期", trigger: "blur" }
         ],
-        endDate: [
+        of_time: [
           { required: true, message: "请选择结束日期", trigger: "blur" }
         ],
         orderStatus: [
@@ -108,15 +113,15 @@ export default {
         ],
         money: [{ required: true, message: "请输入金额", trigger: "blur" }]
       },
-      orderStatus: "",
+      serviceOptions: [],
       orderStatusOptions: [
         {
           value: "0",
-          label: "进行中"
+          label: "已完成"
         },
         {
           value: "1",
-          label: "已完成"
+          label: "进行中"
         },
         {
           value: "2",
@@ -131,20 +136,70 @@ export default {
     dialogRow: Object
   },
   mounted() {
-    if (this.dialogRow.type === "添加订单详情") {
+    if (this.dialogRow.title === "添加订单详情") {
       this.$nextTick(() => {
         this.$refs["ruleForm"].resetFields();
       });
     } else {
       this.ruleForm = this.dialogRow;
     }
+    this.getCaseType();
   },
   methods: {
+    // 获取服务项目
+    getCaseType() {
+      const form = { opr: "list", pid: "pc", pageNum: 1, pageSize: 20 };
+      getCaseType(form).then(res => {
+        this.serviceOptions = res.data.map(i => i.type) || [];
+      });
+    },
     // 发送表单
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
+          
+          
+          this.ruleForm.begin_time = Date.formatDate(this.ruleForm.begin_time); // 开始时间
+          this.ruleForm.of_time = Date.formatDate(this.ruleForm.of_time); // 结束时间
+          const para = Object.assign({}, this.ruleForm);
+          // add
+          if (this.dialogRow.title === "添加订单详情") {
+            console.log('add');
+            const form = {
+              opr: "add",
+              pid: "pc",
+              pageNum: 1,
+              pageSize: 20,
+              startTime: "",
+              endTime: "",
+              searchName: ""
+            };
+            userOrderInfo(form).then(res => {
+              this.$refs["ruleForm"].resetFields();
+              this.closeDialog();
+              this.message("新增订单成功");
+            });
+          } else {
+            console.log('edit');
+            
+            // edit
+            console.log(this.ruleForm);
+            
+            this.ruleForm.begin_time = Date.formatDate(
+              this.ruleForm.begin_time
+            ); // 开始时间
+            this.ruleForm.of_time = Date.formatDate(this.ruleForm.of_time); // 结束时间
+
+            const form = this.ruleForm;
+            console.log(form,'00');
+            
+
+            // userOrderInfo(form).then(res => {
+            //   this.$refs["ruleForm"].resetFields();
+            //   this.closeDialog();
+            //   this.message("新增订单成功");
+            // });
+          }
         } else {
           console.log("error submit!!");
           return false;

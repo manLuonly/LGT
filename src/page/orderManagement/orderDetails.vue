@@ -22,17 +22,18 @@
         <span>总额</span>
       </div>
       <div class="right-num inline-block">
-        <span>100000</span>
+        <span>{{ total }}</span>
       </div>
     </div>
 
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="userName" label="客户姓名" align="center"></el-table-column>
-        <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
-        <el-table-column prop="serviceProject" label="服务项目" align="center"></el-table-column>
-        <el-table-column prop="startDate" label="开始时间" align="center"></el-table-column>
-        <el-table-column prop="endDate" label="结束时间" align="center"></el-table-column>
+        <el-table-column prop="name" label="客户姓名" align="center"></el-table-column>
+        <el-table-column prop="phone" label="联系电话" align="center"></el-table-column>
+        <el-table-column prop="service" label="服务项目" align="center"></el-table-column>
+        <el-table-column prop="email" label="邮箱" align="center"></el-table-column>
+        <el-table-column prop="begin_time" label="开始时间" align="center"></el-table-column>
+        <el-table-column prop="of_time" label="结束时间" align="center"></el-table-column>
         <el-table-column label="状态" align="center">
           <template slot-scope="scope">
             <span :class="addClassStatus(scope.row.orderStatus)">{{ scope.row.orderStatus }}</span>
@@ -62,54 +63,32 @@
 <script>
 import Pagination from "@/components/pagination";
 import orderDialog from "./Dialog/orderDialog";
+import { userOrderInfo } from "@/api/orderDetails";
 
 export default {
   data() {
     return {
-      tableData: [
-        {
-          userName: "王小虎",
-          tel: "13978810644",
-          serviceProject: "logo设计",
-          startDate: "2016-05-02",
-          endDate: "2016-05-02",
-          orderStatus: "0",
-          money: "500"
-        },
-        {
-          userName: "王小虎",
-          tel: "13978810644",
-          serviceProject: "logo设计",
-          startDate: "2016-05-02",
-          endDate: "2016-05-02",
-          orderStatus: "1",
-          money: "500"
-        },
-        {
-          userName: "王小虎",
-          tel: "13978810644",
-          serviceProject: "logo设计",
-          startDate: "2016-05-02",
-          endDate: "2016-05-02",
-          orderStatus: "2",
-          money: "500"
-        }
-      ],
+      tableData: [],
       pageTotal: 2,
       ruleForm: {
-        userName: "",
-        tel: "",
-        serviceProject: "",
-        startDate: "",
-        endDate: "",
+        name: "",
+        phone: "",
+        service: "",
+        email: "",
+        begin_time: "",
+        of_time: "",
         orderStatus: "",
         money: ""
       },
       tableHeight: 0,
       paginationForm: {
-        page: 1,
-        limit: 20,
-        name: ""
+        opr: "list",
+        pid: "pc",
+        pageNum: 1,
+        pageSize: 20,
+        startTime: "",
+        endTime: "",
+        searchName: ""
       },
       dialog: {
         width: "400px",
@@ -119,7 +98,8 @@ export default {
       updateOrderDialog: {
         show: false,
         dialogRow: {}
-      }
+      },
+      total: ""
     };
   },
   components: {
@@ -138,24 +118,30 @@ export default {
     },
     // 获取列表数据
     getDataList() {
-      this.tableData.map(item => {
-        switch (item.orderStatus) {
-          case "0":
-            item.orderStatus = "进行中";
-            break;
-          case "1":
-            item.orderStatus = "已完成";
-            break;
-          case "2":
-            item.orderStatus = "未完成";
-            break;
-          default:
-            item.orderStatus = "进行中";
-            break;
-        }
+      const form = Object.assign({}, this.paginationForm);
+      userOrderInfo(form).then(res => {
+        this.total = res.total;
+        this.tableData = res.data || [];
+        this.pageTotal = res.count; // 条数
+        this.tableData.map(item => {
+          switch (item.orderStatus) {
+            case "0":
+              item.orderStatus = "已完成";
+              break;
+            case "1":
+              item.orderStatus = "进行中";
+              break;
+            case "2":
+              item.orderStatus = "未完成";
+              break;
+            default:
+              item.orderStatus = "进行中";
+              break;
+          }
+        });
       });
     },
-    // 根据上线还是下线状态添加class
+    // 根据状态添加class
     addClassStatus(val) {
       switch (val) {
         case "进行中":
@@ -174,12 +160,12 @@ export default {
     },
     // 上下分页
     handleCurrentChange(val) {
-      this.paginationForm.page = val;
+      this.paginationForm.pageNum = val;
       this.getDataList();
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.paginationForm.limit = val;
+      this.paginationForm.pageSize = val;
       this.getDataList();
     },
     // 订单

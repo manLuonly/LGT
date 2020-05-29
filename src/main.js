@@ -3,6 +3,7 @@ import App from './App'
 import router from './router'
 import store from './store/'
 
+
 // 'development',use package;'production':use cdn;
 import ElementUI from 'element-ui'
 Vue.use(ElementUI, { size: 'mini' });
@@ -56,6 +57,11 @@ Vue.prototype.message = function(message, type, showClose) {
         showClose: showClose || true
     });
 }
+
+
+
+
+
 
 Vue.config.productionTip = false;
 

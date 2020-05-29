@@ -4,22 +4,16 @@ const url = "192.168.0.106:8080";
 
 export function login(params) {
     return request({
-        url: '/login',
+        url: '/zngl/login',
         method: 'post',
         data: params
     })
 }
-// export function login(params) {
-//     return request({
-//         url: '/user/login',
-//         method: 'get',
-//         data: params
-//     })
-// }
+
 
 export function logout() {
     return request({
-        url: '/signout',
+        url: '/zngl/signout',
         method: 'post'
     })
 }

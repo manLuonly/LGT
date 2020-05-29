@@ -82,13 +82,13 @@ export default {
   data() {
     return {
       tableData: [
-        {
-          name: "王小虎",
-          tel: "13978810644",
-          mailbox: "wx10086",
-          vip: "0",
-          leavingMessage: "很Nice"
-        }
+        // {
+        //   name: "王小虎",
+        //   tel: "13978810644",
+        //   mailbox: "wx10086",
+        //   vip: "0",
+        //   leavingMessage: "很Nice"
+        // }
         // {
         //   userName: "王小虎",
         //   tel: "13978810644",

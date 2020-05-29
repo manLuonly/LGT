@@ -1,12 +1,12 @@
 <template>
   <div class="select-case-type inline-block">
     <span class="system-type-text">案例类型</span>
-    <el-select v-model="caseType" size="large" placeholder="请选择分类" @change="changeType">
+    <el-select v-model="caseType" size="large" placeholder="请选择分类"  @change="changeType">
       <el-option
         v-for="item in caseTypeOptions"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
+        :key="item.id"
+        :label="item.type_name"
+        :value="item.type"
       ></el-option>
     </el-select>
     {{ getList }}
@@ -15,15 +15,20 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { caseType } from "@/api/projectManagement";
+import { getCaseType } from "@/api/caseType";
 
 export default {
   name: "selectCaseType",
 
   data() {
     return {
-      caseType: "",
-      caseTypeOptions: []
+        caseType: "",
+        caseTypeOptions: [],
+        paginationForm: {
+        pid: 'pc',
+        pageNum: 1,
+        pageSize: 20
+      }
     };
   },
   computed: {
@@ -32,25 +37,24 @@ export default {
         this.systemType && this.getCaseList();
     }
   },
-  mounted() {
+  created () {
     this.getCaseList();
   },
   methods: {
     getCaseList() {
-        if (this.systemType == "0") {
-          caseType().then(res => {
-            if (res.code === 0) {
-              this.caseTypeOptions = res.data;
-            }
-          });
-          console.log("pc");
-        } else {
-          console.log("小程序");
+      this.paginationForm.pid = this.caseType == "0" ? 'pc' : 'sm';
+      const para = Object.assign({}, this.paginationForm);
+      getCaseType(para).then(res => {
+        if (res.code === 0) {
+          this.caseTypeOptions = res.data;
+          this.caseType = res.data[0] && res.data[0].type;
+          this.changeType();
         }
+      });
     },
-    // changeType() {
-    //   this.$emit("selectCaseType", this.caseType);
-    // }
+    changeType () {
+      this.$emit("selectCaseType", this.caseType);
+    }
   }
 };
 </script>

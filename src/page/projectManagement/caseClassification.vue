@@ -18,12 +18,17 @@
     <select-system @selectSystem="selectSystem($event)"></select-system>
 
     <div class="table_container">
-      <el-table v-loading="loading" :data="tableData" style="width: 100%" align="center">
+      <el-table
+        v-loading="loading"
+        :data="tableData"
+        style="width: 100%"
+        height="720"
+        align="center"
+      >
         <el-table-column align="center" label="启停" width="60">
           <template slot-scope="scope">
             <el-switch
-              :disabled="true"
-              v-model="startStop"
+              v-model="scope.row.enable"
               active-color="#13ce66"
               inactive-color="#ff4949"
               @change="changeSwitch(scope.row)"
@@ -32,12 +37,17 @@
         </el-table-column>
         <el-table-column label="排序" align="center">
           <template slot-scope="scope">
-            <span>{{ scope.row.caseSortNum }}</span>
+            <span>{{ scope.row.id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="名称" align="center">
+          <template slot-scope="scope">
+            <el-tag>{{ scope.row.type_name }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="分类名称" align="center">
           <template slot-scope="scope">
-            <el-tag>{{ scope.row.caseName }}</el-tag>
+            <el-tag>{{ scope.row.type }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="jumpAddress" label="跳转地址" align="center">
@@ -48,7 +58,7 @@
         <el-table-column prop="updateTime" label="更新时间" align="center" sortable>
           <template slot-scope="scope">
             <el-icon name="time"></el-icon>
-            <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
+            <span style="margin-left: 10px">{{ Date.$format(scope.row.update_time)}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="operation" align="center" label="操作">
@@ -62,11 +72,11 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination
+      <!-- <pagination
         :pageTotal="pageTotal"
         @handleCurrentChange="handleCurrentChange"
         @handleSizeChange="handleSizeChange"
-      ></pagination>
+      ></pagination> -->
     </div>
   </div>
 </template>
@@ -75,18 +85,12 @@
 import selectSystem from "@/components/selectSystem";
 import caseClassificationDialog from "./Dialog/caseClassificationDialog";
 import Pagination from "@/components/pagination";
+import { getCaseType } from "@/api/caseType";
 
 export default {
   data() {
     return {
-      tableData: [
-        {
-          caseSortNum: 99,
-          caseName: "logo设计",
-          jumpAddress: "www.baidu.com",
-          updateTime: "2016-05-02"
-        }
-      ],
+      tableData: [],
       ruleForm: {
         caseSortNum: 0,
         caseName: "",
@@ -102,12 +106,12 @@ export default {
         dialogRow: {}
       },
       paginationForm: {
-        page: 1,
-        limit: 20,
-        name: ""
+        opr: "list",
+        pid: "pc",
+        pageNum: 1,
+        pageSize: 20
       },
       pageTotal: 2,
-      startStop: true,
       dialog: {
         width: "400px",
         formLabelWidth: "120px"
@@ -120,10 +124,9 @@ export default {
     selectSystem,
     Pagination
   },
-  computed: {
-  },
+  computed: {},
   mounted() {
-    // this.getDataList();
+    this.getDataList();
     this.loading = false;
   },
   methods: {
@@ -133,7 +136,11 @@ export default {
       });
     },
     // 获取列表数据
-    getDataList() {},
+    getDataList() {
+      getCaseType(this.paginationForm).then(res => {
+        this.tableData = res.data || [];
+      });
+    },
 
     // 获取案例分类列表
     getCaseList() {},
@@ -177,12 +184,11 @@ export default {
         });
     },
     // 改变 Switch状态
-    changeSwitch(val) {
-      console.log(val);
-    },
+    changeSwitch(val) {},
     // 选择系统类型
     selectSystem(type) {
-      console.log(type, '系统类型');
+      this.paginationForm.pid = type === "0" ? "pc" : "sm";
+      this.getDataList();
     }
   }
 };

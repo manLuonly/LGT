@@ -63,6 +63,7 @@ import userInfoDialog from "./Dialog/userInfoDialog";
 import datePicker from "./components/datePicker";
 import search from "./components/search";
 import Pagination from "@/components/pagination";
+import { userInfo } from "@/api/userInfo";
 
 export default {
   data() {
@@ -84,9 +85,13 @@ export default {
         leaveMessage: ""
       },
       paginationForm: {
-        page: 1,
-        limit: 20,
-        name: ""
+        opr: "list",
+        pid: "pc",
+        pageNum: 1,
+        pageSize: 20,
+        startTime: "",
+        endTime: "",
+        searchName: ""
       },
       pageTotal: 2,
       updateUserInfoDialog: {
@@ -112,16 +117,28 @@ export default {
       });
     },
     // 获取列表数据
-    getDataList() {},
+    getDataList() {
+      
+      // console.log(Date.getNewTime2());
+      
+      
+      this.paginationForm.startTime = Date.getTime();
+      this.paginationForm.endTime = Date.getNewTime2();
+      const form = Object.assign({}, this.paginationForm);
+      userInfo(form).then(res => {
+        this.tableData = res.data || [];
+      });
+    },
+  
 
     // 上下分页
     handleCurrentChange(val) {
-      this.paginationForm.page = val;
+      this.paginationForm.pageNum = val;
       this.getDataList();
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.paginationForm.limit = val;
+      this.paginationForm.pageSize = val;
       this.getDataList();
     },
     // 显示客户信息dialog
@@ -158,7 +175,7 @@ export default {
     },
     // 搜索客户列表
     searchUserList(searchVal) {
-      console.log(searchVal,"我是搜索");
+      console.log(searchVal, "我是搜索");
     }
   }
 };
@@ -177,7 +194,6 @@ export default {
     background: #fff;
     border-radius: 2px;
   }
-
 }
 </style>
 

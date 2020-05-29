@@ -76,7 +76,7 @@ export const constantRouterMap = [{
 
 //注册路由
 export default new Router({
-    mode: 'history', // 默认为'hash'模式
+    // mode: 'history', // 默认为'hash'模式
     base: '/dist', // 添加跟目录,对应服务器部署子目录
     routes: constantRouterMap
 })
@@ -167,8 +167,7 @@ export const asyncRouterMap = [{
         name: 'historyRecord',
         meta: {
             title: '历史记录',
-            // icon: 'icon-history_record'
-            icon: 'icon-fuwuxiangmu'
+            icon: 'icon-Icon_orderhistory'
         },
         noDropdown: true, // 不开启下拉列表
         children: [{

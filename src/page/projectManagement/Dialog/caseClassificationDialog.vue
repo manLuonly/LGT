@@ -16,22 +16,12 @@
         :label-width="dialog.formLabelWidth"
         style="margin:10px;width:auto;"
       >
-        <el-form-item prop="username" label="启停">
-          <el-switch v-model="startStop" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        <el-form-item label="启停">
+          <el-switch v-model="ruleForm.enable" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
 
-        <el-form-item label="排序">
-          <el-input-number
-            v-model="ruleForm.caseSortNum"
-            @change="handleCaseSortNumChange"
-            :min="0"
-            :max="99999"
-            label="描述文字"
-          ></el-input-number>
-        </el-form-item>
-
-        <el-form-item prop="caseName" label="分类名称">
-          <el-input v-model="ruleForm.caseName"></el-input>
+        <el-form-item prop="type" label="分类名称">
+          <el-input v-model="ruleForm.type"></el-input>
         </el-form-item>
         
         <!-- 
@@ -54,7 +44,7 @@
 </template>
 
 <script>
-import { addMoney, updateMoney } from "@/api/money";
+import { getCaseType } from "@/api/caseType";
 
 export default {
   name: "addFundDialogs",
@@ -62,14 +52,14 @@ export default {
     return {
       isVisible: this.isShow,
       ruleForm: {
-        caseSortNum: 0,
-        caseName: "",
-        jumpAddress: "www.baidu.com"
+        enable: true,
+        type: "",
+        // jumpAddress: "www.baidu.com"
       },
+      test:true,
       form_rules: {
-        caseName: [{ required: true, message: "分类不能为空", trigger: "blur" }]
+        type: [{ required: true, message: "分类不能为空", trigger: "blur" }]
       },
-      startStop: true,
       //详情弹框信息
       dialog: {
         width: "400px",
@@ -99,7 +89,7 @@ export default {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
       });
-    } else {
+    } else { 
       this.ruleForm = this.dialogRow;
     }
   },
@@ -113,32 +103,36 @@ export default {
       this.$refs[form].validate(valid => {
         if (valid) {
           //表单数据验证完成之后，提交数据;
-          let formData = this[form];
-          const para = Object.assign({}, formData);
-          console.log(para);
-          // edit
-          if (this.addFundDialog.type === "edit") {
-            updateMoney(para).then(res => {
-              this.$message({
-                message: "修改成功",
-                type: "success"
-              });
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getFundList");
-            });
-          } else {
-            // add
-            addMoney(para).then(res => {
-              this.$message({
-                message: "新增成功",
-                type: "success"
-              });
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getFundList");
-            });
-          }
+          console.log(this.ruleForm);
+          
+          // const para = Object.assign({}, this.ruleForm);
+          // console.log(para);
+          // // edit
+          // if (this.addFundDialog.type === "edit") {
+          //   updateMoney(para).then(res => {
+          //     this.$message({
+          //       message: "修改成功",
+          //       type: "success"
+          //     });
+          //     this.$refs["form"].resetFields();
+          //     this.isVisible = false;
+          //     this.$emit("getFundList");
+          //   });
+          // } else {
+          //   // add
+          //   addMoney(para).then(res => {
+          //     this.$message({
+          //       message: "新增成功",
+          //       type: "success"
+          //     });
+          //     this.$refs["form"].resetFields();
+          //     this.isVisible = false;
+          //     this.$emit("getFundList");
+          //   });
+          // }
+        } else {
+          console.log("error submit!!");
+          return false;
         }
       });
     },

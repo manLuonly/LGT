@@ -4,15 +4,8 @@ const url = "192.168.0.106:8080";
 
 export function caseList(params) {
     return request({
-        url: '/caselist',
+        url: '/zngl/caseList',
         method: 'get',
         params: params
-    })
-}
-
-export function caseType() {
-    return request({
-        url: '/casetype',
-        method: 'get',
     })
 }

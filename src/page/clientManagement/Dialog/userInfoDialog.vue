@@ -118,7 +118,7 @@ export default {
     dialogRow: Object
   },
   mounted() {
-    if (this.dialogRow.type === "新增客户信息") {
+    if (this.dialogRow.title === "新增客户信息") {
       this.$nextTick(() => {
         this.$refs["ruleForm"].resetFields();
       });

@@ -3,7 +3,8 @@
     <transition name="form-fade" mode="in-out">
       <section class="form_contianer">
         <div class="titleArea rflex">
-          <img class="logo" src="../assets/img/logo.png" alt="智能桂联后台管理" />
+          <img class="logo" src="~@/assets/img/logo.png" alt="智能桂联后台管理" />
+          <span class='text'>智能桂联</span>
         </div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm" class="loginForm">
           <el-form-item prop="user" class="login-item">
@@ -133,6 +134,7 @@ export default {
   padding: 25px;
   text-align: center;
   .titleArea {
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     text-transform: uppercase;
@@ -141,12 +143,15 @@ export default {
     padding-bottom: 20px;
     .logo {
       width: 60px;
-      margin-right: 10px;
     }
     .title {
       i {
         color: #ff6c60;
       }
+    }
+    .text {
+      font-size: 16px;
+      padding-top: 5px;
     }
   }
 
