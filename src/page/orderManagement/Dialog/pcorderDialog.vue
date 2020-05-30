@@ -20,21 +20,46 @@
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
-          <el-input v-model.number="ruleForm.phone"></el-input>
+          <el-input v-model.number="ruleForm.phone" maxlength="11"></el-input>
         </el-form-item>
-        <el-form-item label="服务项目" prop="service">
+        <!-- <el-form-item label="服务项目" prop="service">
           <el-select v-model="ruleForm.service" placeholder="请选择服务项目">
             <el-option v-for="item in serviceOptions" :key="item" :label="item" :value="item"></el-option>
           </el-select>
+        </el-form-item>-->
+        <el-form-item label="服务项目">
+          <!-- <el-checkbox-group v-model="ruleForm.service" @change="changeProject">
+            <el-checkbox v-for="item in serviceOptions" :key="item" :label="item" name="type"></el-checkbox>
+          </el-checkbox-group>-->
+          <el-checkbox
+            :indeterminate="isIndeterminate"
+            v-model="checkAll"
+            @change="checkAllProject"
+          >全选</el-checkbox>
+          <div style="margin: 15px 0;"></div>
+          <el-checkbox-group v-model="ruleForm.service" @change="changeProject">
+            <el-checkbox v-for="item in serviceOptions" :label="item" :key="item">{{item}}</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="ruleForm.email"></el-input>
         </el-form-item>
         <el-form-item label="开始日期" prop="begin_time">
-          <el-date-picker v-model="ruleForm.begin_time" type="date" placeholder="选择日期"></el-date-picker>
+          <el-date-picker
+            v-model="ruleForm.begin_time"
+            :disabled="isEdit"
+            type="date"
+            placeholder="选择日期"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="结束日期" prop="of_time">
           <el-date-picker v-model="ruleForm.of_time" type="date" placeholder="选择日期"></el-date-picker>
         </el-form-item>
-        <el-form-item label="状态" prop="orderStatus">
-          <el-select v-model="ruleForm.orderStatus" placeholder="请选择">
+        <el-form-item label="留言">
+          <el-input type="textarea" v-model="ruleForm.leaving"></el-input>
+        </el-form-item>
+        <el-form-item label="状态" prop="state">
+          <el-select v-model="ruleForm.state" placeholder="请选择">
             <el-option
               v-for="item in orderStatusOptions"
               :key="item.value"
@@ -59,6 +84,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import { getCaseType } from "@/api/caseType";
 import { userOrderInfo } from "@/api/orderDetails";
 
@@ -90,7 +116,8 @@ export default {
         email: "",
         begin_time: "",
         of_time: "",
-        orderStatus: "",
+        leaving: "",
+        state: "",
         money: ""
       },
       form_rules: {
@@ -108,32 +135,36 @@ export default {
         of_time: [
           { required: true, message: "请选择结束日期", trigger: "blur" }
         ],
-        orderStatus: [
-          { required: true, message: "请选择状态", trigger: "change" }
-        ],
+        state: [{ required: true, message: "请选择状态", trigger: "change" }],
         money: [{ required: true, message: "请输入金额", trigger: "blur" }]
       },
-      serviceOptions: [],
+      serviceOptions: [1, 2, 3],
       orderStatusOptions: [
         {
-          value: "0",
+          value: 0,
           label: "已完成"
         },
         {
-          value: "1",
+          value: 1,
           label: "进行中"
         },
         {
-          value: "2",
+          value: 2,
           label: "未完成"
         }
       ],
-      isVisible: this.isShow
+      isVisible: this.isShow,
+      isEdit: false,
+      checkAll: false,
+      isIndeterminate: true
     };
   },
   props: {
     isShow: Boolean,
     dialogRow: Object
+  },
+  computed: {
+    ...mapGetters(["systemType"])
   },
   mounted() {
     if (this.dialogRow.title === "添加订单详情") {
@@ -141,6 +172,7 @@ export default {
         this.$refs["ruleForm"].resetFields();
       });
     } else {
+      this.isEdit = true;
       this.ruleForm = this.dialogRow;
     }
     this.getCaseType();
@@ -157,54 +189,44 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          
-          
-          this.ruleForm.begin_time = Date.formatDate(this.ruleForm.begin_time); // 开始时间
-          this.ruleForm.of_time = Date.formatDate(this.ruleForm.of_time); // 结束时间
-          const para = Object.assign({}, this.ruleForm);
+          const form = this.ruleForm;
+          this.ruleForm.pid = this.systemType; // 获取系统类型
+          delete form.title;
           // add
           if (this.dialogRow.title === "添加订单详情") {
-            console.log('add');
-            const form = {
-              opr: "add",
-              pid: "pc",
-              pageNum: 1,
-              pageSize: 20,
-              startTime: "",
-              endTime: "",
-              searchName: ""
-            };
+            this.ruleForm.opr = "add";
+            form.begin_time = Date.formatDate(form.begin_time);
+            form.of_time = Date.formatDate(form.of_time);
             userOrderInfo(form).then(res => {
               this.$refs["ruleForm"].resetFields();
               this.closeDialog();
               this.message("新增订单成功");
             });
           } else {
-            console.log('edit');
-            
             // edit
-            console.log(this.ruleForm);
-            
-            this.ruleForm.begin_time = Date.formatDate(
-              this.ruleForm.begin_time
-            ); // 开始时间
-            this.ruleForm.of_time = Date.formatDate(this.ruleForm.of_time); // 结束时间
-
-            const form = this.ruleForm;
-            console.log(form,'00');
-            
-
-            // userOrderInfo(form).then(res => {
-            //   this.$refs["ruleForm"].resetFields();
-            //   this.closeDialog();
-            //   this.message("新增订单成功");
-            // });
+            this.ruleForm.opr = "update";
+            form.begin_time = Date.Conversiontime(form.begin_time);
+            form.of_time = Date.Conversiontime(form.of_time);
+            userOrderInfo(form).then(res => {
+              this.$refs["ruleForm"].resetFields();
+              this.closeDialog();
+              this.message("修改订单成功");
+            });
           }
         } else {
           console.log("error submit!!");
           return false;
         }
       });
+    },
+    // 全选服务项目
+    checkAllProject(val) {
+      this.ruleForm.service = val ? this.serviceOptions : [];
+      this.isIndeterminate = false;
+    },
+    // 改变服务项目
+    changeProject(value) {
+      console.log(value, "project");
     },
     // 关闭dialog
     closeDialog() {

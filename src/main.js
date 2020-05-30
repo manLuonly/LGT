@@ -17,6 +17,12 @@ Vue.prototype.$axios = axios;
 
 import './components/iconSvg' // iconSvg
 
+/**
+ * 挂载公共组件 及全局方法
+ */
+import commonComponents from '@/components'
+Vue.use(commonComponents);
+
 import '@/permission' // permission control
 
 // import '@/mockjs'; // mock数据

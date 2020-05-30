@@ -275,30 +275,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 148px;
-  height: 148px;
-  line-height: 148px;
-  text-align: center;
-}
-.avatar {
-  width: 148px;
-  height: 148px;
-  display: block;
-}
-
 .form {
   .active {
     border-radius: 3px;
@@ -306,11 +282,36 @@ export default {
     color: #fff;
     background-color: rgb(102, 177, 255);
   }
-  .case-list-dialog {
-    /deep/ .case-list-dialog {
-      .el-textarea__inner {
-        height: 150px;
+  /deep/ .el-form {
+    .avatar-uploader {
+      .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        &:hover {
+          border-color: #409eff;
+        }
       }
+      .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 148px;
+        height: 148px;
+        line-height: 148px;
+        text-align: center;
+      }
+      .avatar {
+        width: 148px;
+        height: 148px;
+        display: block;
+      }
+    }
+
+    // 文本域高度
+    .el-textarea__inner {
+      height: 150px;
     }
   }
 }

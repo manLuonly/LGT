@@ -9,31 +9,23 @@
       @close="closeDialog"
       center
     >
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
-        <el-form-item label="姓名" prop="name">
+      <el-form
+        :model="ruleForm"
+        :rules="form_rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="order-ruleForm"
+      >
+        <el-form-item label="客户姓名" prop="name">
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
-          <el-input v-model.number="ruleForm.phone"></el-input>
+          <el-input v-model.number="ruleForm.phone" maxlength="11"></el-input>
         </el-form-item>
-        <el-form-item label="wx" prop="wx">
-          <el-input v-model="ruleForm.wx"></el-input>
-        </el-form-item>
-          <el-form-item label="邮箱" prop="mailbox">
-          <el-input v-model="ruleForm.mailbox"></el-input>
-        </el-form-item>
-        <el-form-item label="vip" prop="vip">
-          <el-select v-model="ruleForm.vip" placeholder="请选择">
-            <el-option
-              v-for="item in isVipOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
+        <el-form-item label="服务项目" prop="service">
+          <el-select v-model="ruleForm.service" placeholder="请选择服务项目">
+            <el-option v-for="item in serviceOptions" :key="item" :label="item" :value="item"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="留言" prop="leave">
-          <el-input class="leave-message" type="textarea" v-model="ruleForm.leave"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -46,10 +38,9 @@
 
 <script>
 export default {
-  name: "userInfoDialog",
+  name: "smorderDialog",
 
   data() {
-    // 手机号验证
     var checkTel = (rule, value, callback) => {
       const phoneReg = /^1[3|4|5|6|7|8][0-9]{9}$/;
       if (!value) {
@@ -71,31 +62,19 @@ export default {
       ruleForm: {
         name: "",
         phone: "",
-        wx: "",
-        mailbox: "",
-        vip: "",
-        leave: ""
+        service: ""
       },
-      rules: {
+      form_rules: {
         name: [{ required: true, message: "请输入客户姓名", trigger: "blur" }],
         phone: [
           { required: true, message: "请输入联系电话", trigger: "blur" },
           { validator: checkTel, trigger: "blur" }
         ],
-        vip: [
-          { required: true, message: "请选择客户是否属于vip", trigger: "blur" }
+        service: [
+          { required: true, message: "请选择服务项目", trigger: "change" }
         ]
       },
-      isVipOptions: [
-        {
-          value: true,
-          label: "是"
-        },
-        {
-          value: false,
-          label: "否"
-        }
-      ],
+      serviceOptions: [],
       isVisible: this.isShow
     };
   },
@@ -104,7 +83,7 @@ export default {
     dialogRow: Object
   },
   mounted() {
-    if (this.dialogRow.title === "新增客户信息") {
+    if (this.dialogRow.title === "添加订单详情") {
       this.$nextTick(() => {
         this.$refs["ruleForm"].resetFields();
       });
@@ -113,13 +92,35 @@ export default {
     }
   },
   methods: {
+    // 获取服务项目
+    getCaseType() {
+      const form = { opr: "list", pid: "pc", pageNum: 1, pageSize: 20 };
+      getCaseType(form).then(res => {
+        this.serviceOptions = res.data.map(i => i.type) || [];
+      });
+    },
+    // 发送表单
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
+          const form = this.ruleForm;
+          this.ruleForm.pid = this.systemType; // 获取系统类型
+          delete form.title;
+          // add
+          if (this.dialogRow.title === "添加订单详情") {
+            userOrderInfo(form).then(res => {
+              this.$refs["ruleForm"].resetFields();
+              this.closeDialog();
+              this.message("新增订单成功");
+            });
+          } else {
+            //   edit
+            userOrderInfo(form).then(res => {
+              this.$refs["ruleForm"].resetFields();
+              this.closeDialog();
+              this.message("修改订单成功");
+            });
+          }
         }
       });
     },

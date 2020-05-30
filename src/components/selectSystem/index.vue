@@ -18,21 +18,21 @@ export default {
 
   data() {
     return {
-      systemType: "0",
+      systemType: "pc",
       systemTypeOptions: [
         {
-          value: "0",
+          value: "pc",
           label: "pc端"
         },
         {
-          value: "1",
+          value: "sm",
           label: "小程序"
         }
       ]
     };
   },
   mounted() {
-    this.$store.commit("SET_SYSTEMTYPE", 0);
+    this.$store.commit("SET_SYSTEMTYPE", 'pc');
   },
   methods: {
     changeType() {
@@ -45,7 +45,7 @@ export default {
 
 <style lang='less' scoped>
 .system-type {
-  margin: 0 50px;
+  margin: 0 20px;
   .system-type-text {
     margin-right: 10px;
   }

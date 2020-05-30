@@ -10,7 +10,8 @@
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
-        :picker-options="pickerOptions"
+        :picker-options="disabledTodayPickerOption"
+        @change="changeDate"
       ></el-date-picker>
     </div>
   </div>
@@ -53,11 +54,20 @@ export default {
           }
         ]
       },
+      disabledTodayPickerOption: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
       date: ""
     };
   },
 
-  methods: {}
+  methods: {
+    changeDate(date) {
+      this.$emit("changeDate", date);
+    }
+  }
 };
 </script>
 

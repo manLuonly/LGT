@@ -17,24 +17,26 @@
       >添加客户</el-button>
     </div>
 
-    <date-picker></date-picker>
+    <select-system @selectSystem="selectSystem($event)"></select-system>
+    <date-picker @changeDate="changeDate($event)"></date-picker>
     <search @searchUserList="searchUserList($event)"></search>
 
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%" align="center">
         <el-table-column prop="name" label="姓名" align="center"></el-table-column>
-        <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
-        <el-table-column prop="mailbox" label="邮箱/微信" align="center"></el-table-column>
+        <el-table-column prop="phone" label="联系电话" align="center"></el-table-column>
+        <el-table-column prop="wx" label="微信" align="center"></el-table-column>
+        <el-table-column prop="mailbox" label="邮箱" align="center"></el-table-column>
         <el-table-column prop="vip" label="vip" align="center"></el-table-column>
-        <el-table-column prop="leavingMessage" label="留言" align="center">
+        <el-table-column label="留言" align="center">
           <template slot-scope="scope">
             <el-popover
               placement="top-start"
               width="200"
               trigger="hover"
-              :content="scope.row.leavingMessage"
+              :content="scope.row.leave"
             >
-              <span slot="reference">{{ scope.row.leavingMessage }}</span>
+              <span slot="reference">{{ scope.row.leave }}</span>
             </el-popover>
           </template>
         </el-table-column>
@@ -60,29 +62,20 @@
 
 <script>
 import userInfoDialog from "./Dialog/userInfoDialog";
-import datePicker from "./components/datePicker";
-import search from "./components/search";
-import Pagination from "@/components/pagination";
 import { userInfo } from "@/api/userInfo";
 
 export default {
   data() {
     return {
-      tableData: [
-        {
-          name: "王小虎",
-          tel: "13978810644",
-          mailbox: "wx10086",
-          vip: "0",
-          leavingMessage: "很Nice"
-        }
-      ],
+      tableData: [],
       tableHeight: 0,
       ruleForm: {
         name: "",
-        tel: "",
+        phone: "",
+        wx: "",
         mailbox: "",
-        leaveMessage: ""
+        vip: "",
+        leave: ""
       },
       paginationForm: {
         opr: "list",
@@ -101,10 +94,7 @@ export default {
     };
   },
   components: {
-    userInfoDialog,
-    datePicker,
-    search,
-    Pagination
+    userInfoDialog
   },
   computed: {},
   mounted() {
@@ -118,18 +108,28 @@ export default {
     },
     // 获取列表数据
     getDataList() {
-      
-      // console.log(Date.getNewTime2());
-      
-      
-      this.paginationForm.startTime = Date.getTime();
-      this.paginationForm.endTime = Date.getNewTime2();
+      // this.paginationForm.startTime = Date.getTime();
+      // this.paginationForm.endTime = Date.getNewTime();
+      delete this.paginationForm.startTime;
+      delete this.paginationForm.endTime;
       const form = Object.assign({}, this.paginationForm);
       userInfo(form).then(res => {
         this.tableData = res.data || [];
+        this.tableData.map(item => {
+          switch (item.vip) {
+            case true:
+              item.vip = "是";
+              break;
+            case true:
+              item.vip = "否";
+              break;
+            default:
+              item.vip = "否";
+              break;
+          }
+        });
       });
     },
-  
 
     // 上下分页
     handleCurrentChange(val) {
@@ -172,6 +172,14 @@ export default {
         this.updateUserInfoDialog.dialogRow = { ...row };
       }
       this.showUserInfoDialog();
+    },
+    // 选择系统类型(pc/sm)
+    selectSystem(val) {
+      console.log(val, "我是系统类型");
+    },
+    // 改变日期
+    changeDate(date) {
+      console.log(date, "我是日期");
     },
     // 搜索客户列表
     searchUserList(searchVal) {

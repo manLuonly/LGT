@@ -58,7 +58,7 @@
         <el-table-column prop="updateTime" label="更新时间" align="center" sortable>
           <template slot-scope="scope">
             <el-icon name="time"></el-icon>
-            <span style="margin-left: 10px">{{ Date.$format(scope.row.update_time)}}</span>
+            <span style="margin-left: 10px">{{ Date.format(scope.row.update_time)}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="operation" align="center" label="操作">
