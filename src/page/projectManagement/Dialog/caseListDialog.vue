@@ -51,8 +51,9 @@
             class="avatar-uploader"
             action="https://jsonplaceholder.typicode.com/posts/"
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
+            :on-success="successImg"
+            :before-upload="beforeUploadImg"
+            :limit="1"
           >
             <img v-if="imageUrl" :src="imageUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -79,7 +80,9 @@
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
+            :on-remove="removeImgList"
+            :limit="9"
+            multiple
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -143,15 +146,15 @@ export default {
       isCanSelectAddress: true,
       alignmentOptions: [
         {
-          value: "0",
+          value: 0,
           label: "文本左对齐"
         },
         {
-          value: "1",
+          value: 1,
           label: "文本居中对齐"
         },
         {
-          value: "2",
+          value: 2,
           label: "文本右对齐"
         }
       ],
@@ -192,20 +195,20 @@ export default {
       });
     },
 
-    handleAvatarSuccess(res, file) {
+    successImg(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
     },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+    beforeUploadImg(file) {
+      const isJPG = file.type === "image/jpg" || file.type === "image/png";
+      const isLt5M = file.size / 1024 / 1024 < 5;
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
+        this.$message.error("上传缩略图只能是 JPG或者PNG 格式!");
       }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+      if (!isLt5M) {
+        this.$message.error("上传缩略图大小不能超过 5MB!");
       }
-      return isJPG && isLt2M;
+      return isJPG && isLt5M;
     },
 
     //表单提交
@@ -218,22 +221,26 @@ export default {
           console.log(para);
           // edit
           if (this.addFundDialog.type === "edit") {
+            this.showLoading();
             updateMoney(para).then(res => {
               this.$message({
                 message: "修改成功",
                 type: "success"
               });
+              this.hideLoading();
               this.$refs["form"].resetFields();
               this.isVisible = false;
               this.$emit("getCaseList");
             });
           } else {
             // add
+            this.showLoading();
             addMoney(para).then(res => {
               this.$message({
                 message: "新增成功",
                 type: "success"
               });
+              this.hideLoading();
               this.$refs["form"].resetFields();
               this.isVisible = false;
               this.$emit("getCaseList");
@@ -251,7 +258,7 @@ export default {
         this.isCanSelectAddress = true;
       }
     },
-    handleRemove(file, fileList) {
+    removeImgList(file, fileList) {
       console.log(file, fileList);
     },
     handlePictureCardPreview(file) {
@@ -261,6 +268,21 @@ export default {
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
+    },
+    // 显示加载框
+    showLoading() {
+      const loading = this.$loading({
+        lock: true,
+        text: "上传中,请稍后...",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+      return loading
+    },
+    // 隐藏加载框
+    hideLoading() {
+     let loading = this.show();
+     loading.close();
     }
   }
 };

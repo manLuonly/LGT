@@ -120,7 +120,7 @@ export const asyncRouterMap = [{
             icon: 'icon-kehuguanli',
         },
         component: Layout,
-        redirect: '/clientManagement/projectStatistics',
+        redirect: '/clientManagement/userInfo',
         children: [
             // {
             //     path: 'projectStatistics',
