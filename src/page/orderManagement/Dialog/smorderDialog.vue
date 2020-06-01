@@ -24,7 +24,7 @@
         </el-form-item>
         <el-form-item label="服务项目" prop="service">
           <el-select v-model="ruleForm.service" placeholder="请选择服务项目">
-            <el-option v-for="item in serviceOptions" :key="item" :label="item" :value="item"></el-option>
+            <el-option v-for="item in serviceOptions" :key="item.type" :label="item.type_name" :value="item.type_name"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -37,6 +37,9 @@
 </template>
 
 <script>
+import { getCaseType } from "@/api/caseType";
+import { userOrderInfo } from "@/api/orderDetails";
+
 export default {
   name: "smorderDialog",
 
@@ -75,7 +78,8 @@ export default {
         ]
       },
       serviceOptions: [],
-      isVisible: this.isShow
+      isVisible: this.isShow,
+      service: ""
     };
   },
   props: {
@@ -90,13 +94,14 @@ export default {
     } else {
       this.ruleForm = this.dialogRow;
     }
+    this.getCaseType();
   },
   methods: {
     // 获取服务项目
     getCaseType() {
-      const form = { opr: "list", pid: "pc", pageNum: 1, pageSize: 20 };
+      const form = { opr: "list", pid: "sm", pageNum: 1, pageSize: 20 };
       getCaseType(form).then(res => {
-        this.serviceOptions = res.data.map(i => i.type) || [];
+        this.serviceOptions = res.data.map(i => i) || [];
       });
     },
     // 发送表单
@@ -108,17 +113,23 @@ export default {
           delete form.title;
           // add
           if (this.dialogRow.title === "添加订单详情") {
+            this.ruleForm.opr = "add";
+            this.ruleForm.pid = "sm";
             userOrderInfo(form).then(res => {
               this.$refs["ruleForm"].resetFields();
               this.closeDialog();
               this.message("新增订单成功");
+              this.$emit("getOrderList");
             });
           } else {
             //   edit
+            this.ruleForm.opr = "update";
+            this.ruleForm.pid = "sm";
             userOrderInfo(form).then(res => {
               this.$refs["ruleForm"].resetFields();
               this.closeDialog();
               this.message("修改订单成功");
+              this.$emit("getOrderList");
             });
           }
         }

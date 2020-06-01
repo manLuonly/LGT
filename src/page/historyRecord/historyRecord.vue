@@ -1,19 +1,13 @@
 <template>
   <div class="historyRecord">
-    <div class="system-type inline-block">
-      <span class="system-type-text">系统类型</span>
-      <el-select v-model="systemType" size="large" placeholder="请选择分类">
-        <el-option
-          v-for="item in systemTypeOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-    </div>
+    <select-system @selectSystem="selectSystem($event)"></select-system>
+
+    <page-type-cps @selectPage="selectPage($event)"></page-type-cps>
+
+    <search @searchUserList="searchUserList($event)" ref="search"></search>
 
     <div class="table_container">
-      <el-table :data="tableData" style="width: 100%" align="center" v-show="systemType == '0' ">
+      <el-table :data="tableData" style="width: 100%" align="center" v-show="pageType == 'userInfo' ">
         <el-table-column prop="name" label="姓名" align="center"></el-table-column>
         <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
         <el-table-column prop="mailbox" label="邮箱/微信" align="center"></el-table-column>
@@ -43,7 +37,7 @@
         </el-table-column>
       </el-table>
 
-      <el-table :data="tableData" style="width: 100%" v-show="systemType == '1' ">
+      <el-table :data="tableData" style="width: 100%" v-show="pageType == 'orderDetails' ">
         <el-table-column prop="userName" label="客户姓名" align="center"></el-table-column>
         <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
         <el-table-column prop="serviceProject" label="服务项目" align="center"></el-table-column>
@@ -69,80 +63,59 @@
         @handleSizeChange="handleSizeChange"
       ></pagination>
     </div>
-    {{ show }}
   </div>
 </template>
 
 <script>
-import Pagination from "@/components/pagination";
+import { mapGetters } from "vuex";
+import pageTypeCps from "./components/pageType";
 
 export default {
   name: "historyRecord",
 
   data() {
     return {
-      tableData: [
-        // {
-        //   name: "王小虎",
-        //   tel: "13978810644",
-        //   mailbox: "wx10086",
-        //   vip: "0",
-        //   leavingMessage: "很Nice"
-        // }
-        // {
-        //   userName: "王小虎",
-        //   tel: "13978810644",
-        //   serviceProject: "logo设计",
-        //   startDate: "2016-05-02",
-        //   endDate: "2016-05-02",
-        //   orderStatus: "0",
-        //   money: "500"
-        // }
-      ],
+      tableData: [],
       pageTotal: 1,
-      systemType: "0",
-      systemTypeOptions: [
-        {
-          value: "0",
-          label: "客户信息"
-        },
-        {
-          value: "1",
-          label: "订单详情"
-        }
-      ]
+      paginationForm: {
+        opr: "list",
+        pid: "pc",
+        pageNum: 1,
+        pageSize: 20,
+        searchName: ""
+      },
+      pageType: "userInfo"
     };
   },
   components: {
-    Pagination
+    pageTypeCps
   },
   computed: {
-    show() {
-      this.systemType && this.getDataList();
-    }
+    ...mapGetters(["systemType"]),
   },
   mounted() {
     //   this.getDataList();
+
   },
   methods: {
     // 获取数据
     getDataList() {
       // 请求客户信息列表
-      if (this.systemType == "0") {
-        console.log("0");
+      if (this.systemType == "userInfo") {
+        console.log("userInfo");
       } else {
         // 请求订单详情列表
-        console.log("1");
+        console.log("order");
       }
     },
     // 上下分页
     handleCurrentChange(val) {
-      this.paginationForm.page = val;
+      this.paginationForm.pageNum = val;
       this.getDataList();
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.paginationForm.limit = val;
+      this.paginationForm.pageSize = val;
       this.getDataList();
     },
     // 恢复历史记录
@@ -166,6 +139,27 @@ export default {
         .catch(err => {
           this.message("已取消", "info");
         });
+    },
+    // 选择系统类型(pc/sm)
+    selectSystem(val) {
+      this.paginationForm.pid = val;
+      this.getDataList();
+    },
+    // 选择页面类型
+    selectPage(val) {
+      console.log(val,'val');
+      this.pageType = val;
+      this.getDataList();
+    },
+    // 获取搜索值
+    searchUserList(searchVal) {
+      console.log(searchVal, "我是搜索");
+      this.paginationForm.searchName = searchVal;
+      this.getDataList();
+      setTimeout(() => {
+        this.$refs.search.searchVal = "";
+        this.paginationForm.searchName = "";
+      }, 1000);
     }
   }
 };

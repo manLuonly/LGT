@@ -22,23 +22,9 @@
         <el-form-item label="联系电话" prop="phone">
           <el-input v-model.number="ruleForm.phone" maxlength="11"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="服务项目" prop="service">
-          <el-select v-model="ruleForm.service" placeholder="请选择服务项目">
-            <el-option v-for="item in serviceOptions" :key="item" :label="item" :value="item"></el-option>
-          </el-select>
-        </el-form-item>-->
         <el-form-item label="服务项目">
-          <!-- <el-checkbox-group v-model="ruleForm.service" @change="changeProject">
-            <el-checkbox v-for="item in serviceOptions" :key="item" :label="item" name="type"></el-checkbox>
-          </el-checkbox-group>-->
-          <el-checkbox
-            :indeterminate="isIndeterminate"
-            v-model="checkAll"
-            @change="checkAllProject"
-          >全选</el-checkbox>
-          <div style="margin: 15px 0;"></div>
-          <el-checkbox-group v-model="ruleForm.service" @change="changeProject">
-            <el-checkbox v-for="item in serviceOptions" :label="item" :key="item">{{item}}</el-checkbox>
+          <el-checkbox-group v-model="service" @change="changeProject">
+            <el-checkbox v-for="item in serviceOptions" :label="item.type" :key="item.type">{{ item.type_name }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="邮箱">
@@ -138,7 +124,7 @@ export default {
         state: [{ required: true, message: "请选择状态", trigger: "change" }],
         money: [{ required: true, message: "请输入金额", trigger: "blur" }]
       },
-      serviceOptions: [1, 2, 3],
+      serviceOptions: [],
       orderStatusOptions: [
         {
           value: 0,
@@ -155,8 +141,7 @@ export default {
       ],
       isVisible: this.isShow,
       isEdit: false,
-      checkAll: false,
-      isIndeterminate: true
+      service: []
     };
   },
   props: {
@@ -182,7 +167,8 @@ export default {
     getCaseType() {
       const form = { opr: "list", pid: "pc", pageNum: 1, pageSize: 20 };
       getCaseType(form).then(res => {
-        this.serviceOptions = res.data.map(i => i.type) || [];
+        this.serviceOptions = res.data.map(i => i) || [];
+        this.service =  res.data.map(i => i.type_name) || [];
       });
     },
     // 发送表单
@@ -201,6 +187,7 @@ export default {
               this.$refs["ruleForm"].resetFields();
               this.closeDialog();
               this.message("新增订单成功");
+              this.$emit("getOrderList");
             });
           } else {
             // edit
@@ -211,6 +198,7 @@ export default {
               this.$refs["ruleForm"].resetFields();
               this.closeDialog();
               this.message("修改订单成功");
+              this.$emit("getOrderList");
             });
           }
         } else {
@@ -219,14 +207,10 @@ export default {
         }
       });
     },
-    // 全选服务项目
-    checkAllProject(val) {
-      this.ruleForm.service = val ? this.serviceOptions : [];
-      this.isIndeterminate = false;
-    },
     // 改变服务项目
     changeProject(value) {
       console.log(value, "project");
+      this.ruleForm.type = value.join(','); // 已选服务项目
     },
     // 关闭dialog
     closeDialog() {

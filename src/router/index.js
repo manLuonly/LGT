@@ -162,9 +162,9 @@ export const asyncRouterMap = [{
         }, ]
     },
     {
-        path: '/historyRecord',
+        path: '/history',
         component: Layout,
-        name: 'historyRecord',
+        name: 'history',
         meta: {
             title: '历史记录',
             icon: 'icon-Icon_orderhistory'
@@ -172,7 +172,7 @@ export const asyncRouterMap = [{
         noDropdown: true, // 不开启下拉列表
         children: [{
             path: 'historyRecord',
-            name: 'historyRecord',
+            name: 'history',
             component: () =>
                 import ('@/page/historyRecord/historyRecord'),
             meta: {

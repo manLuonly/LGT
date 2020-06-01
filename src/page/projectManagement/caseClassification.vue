@@ -4,7 +4,7 @@
       v-if="updateCaseDialog.show"
       :isShow="updateCaseDialog.show"
       :dialogRow="updateCaseDialog.dialogRow"
-      @getCaseList="getCaseList"
+      @getCaseList="getDataList"
       @closeDialog="hideCaseDialog"
     ></caseClassificationDialog>
 
@@ -137,13 +137,11 @@ export default {
     },
     // 获取列表数据
     getDataList() {
-      getCaseType(this.paginationForm).then(res => {
+      const form = this.paginationForm;
+      getCaseType(form).then(res => {
         this.tableData = res.data || [];
       });
     },
-
-    // 获取案例分类列表
-    getCaseList() {},
     // 显示案例分类dialog
     showCseDialog() {
       this.updateCaseDialog.show = true;
@@ -187,7 +185,7 @@ export default {
     changeSwitch(val) {},
     // 选择系统类型
     selectSystem(type) {
-      this.paginationForm.pid = type === "0" ? "pc" : "sm";
+      this.paginationForm.pid = type;
       this.getDataList();
     }
   }

@@ -15,7 +15,7 @@ const zh = {
         permission: '权限设置',
         orderManagement: '订单管理',
         orderDetails: '订单详情',
-        historyRecord: '历史记录',
+        history: '历史记录',
         loginOut: '退出',
         updateInfo: '修改信息',
         updatePassword: '修改密码',

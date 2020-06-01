@@ -1,7 +1,7 @@
 <template>
   <div class="select-case-type inline-block">
     <span class="system-type-text">案例类型</span>
-    <el-select v-model="caseType" size="large" placeholder="请选择分类"  @change="changeType">
+    <el-select v-model="caseType" size="large" placeholder="请选择分类" @change="changeType">
       <el-option
         v-for="item in caseTypeOptions"
         :key="item.id"
@@ -9,7 +9,6 @@
         :value="item.type"
       ></el-option>
     </el-select>
-    {{ getList }}
   </div>
 </template>
 
@@ -22,37 +21,30 @@ export default {
 
   data() {
     return {
-        caseType: "",
-        caseTypeOptions: [],
-        paginationForm: {
-        pid: 'pc',
+      caseType: "app",
+      caseTypeOptions: [],
+      paginationForm: {
+        pid: "pc",
         pageNum: 1,
         pageSize: 20
       }
     };
   },
+  props: {
+    caseList: Array
+  },
   computed: {
-    ...mapGetters(["systemType"]),
-    getList() {
-        this.systemType && this.getCaseList();
+    ...mapGetters(["systemType"])
+
+  },
+  watch: {
+    // 父组件获取数据,通过props传递属于异步,子组件只能通过watch监听数据
+    caseList: function() {
+      this.caseTypeOptions = this.caseList;
     }
   },
-  created () {
-    this.getCaseList();
-  },
   methods: {
-    getCaseList() {
-      this.paginationForm.pid = this.caseType == "0" ? 'pc' : 'sm';
-      const para = Object.assign({}, this.paginationForm);
-      getCaseType(para).then(res => {
-        if (res.code === 0) {
-          this.caseTypeOptions = res.data;
-          this.caseType = res.data[0] && res.data[0].type;
-          this.changeType();
-        }
-      });
-    },
-    changeType () {
+    changeType() {
       this.$emit("selectCaseType", this.caseType);
     }
   }

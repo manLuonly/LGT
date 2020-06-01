@@ -23,7 +23,7 @@
         <el-form-item prop="type" label="分类名称">
           <el-input v-model="ruleForm.type"></el-input>
         </el-form-item>
-        
+
         <!-- 
         <el-form-item prop="jumpAddress" label="上级分类">
           <span
@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import { getCaseType } from "@/api/caseType";
 
 export default {
@@ -53,10 +54,10 @@ export default {
       isVisible: this.isShow,
       ruleForm: {
         enable: true,
-        type: "",
+        type: ""
         // jumpAddress: "www.baidu.com"
       },
-      test:true,
+      test: true,
       form_rules: {
         type: [{ required: true, message: "分类不能为空", trigger: "blur" }]
       },
@@ -81,15 +82,16 @@ export default {
     isShow: Boolean,
     dialogRow: Object
   },
-  components: {},
-  computed: {},
+  computed: {
+    ...mapGetters(["systemType"])
+  },
   created() {},
   mounted() {
-    if (this.dialogRow.type === "添加案例分类") {
+    if (this.dialogRow.title === "添加案例分类") {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
       });
-    } else { 
+    } else {
       this.ruleForm = this.dialogRow;
     }
   },
@@ -102,34 +104,35 @@ export default {
     onSubmit(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          //表单数据验证完成之后，提交数据;
-          console.log(this.ruleForm);
-          
-          // const para = Object.assign({}, this.ruleForm);
-          // console.log(para);
-          // // edit
-          // if (this.addFundDialog.type === "edit") {
-          //   updateMoney(para).then(res => {
-          //     this.$message({
-          //       message: "修改成功",
-          //       type: "success"
-          //     });
-          //     this.$refs["form"].resetFields();
-          //     this.isVisible = false;
-          //     this.$emit("getFundList");
-          //   });
-          // } else {
-          //   // add
-          //   addMoney(para).then(res => {
-          //     this.$message({
-          //       message: "新增成功",
-          //       type: "success"
-          //     });
-          //     this.$refs["form"].resetFields();
-          //     this.isVisible = false;
-          //     this.$emit("getFundList");
-          //   });
-          // }
+   
+
+          this.ruleForm.pid = this.systemType;
+          const form = this.ruleForm;
+          console.log(form, "form");
+
+          if (this.dialogRow.title === "添加案例分类") {
+            this.ruleForm.opr = "add";
+            getCaseType(form).then(res => {
+              this.$message({
+                message: "新增案例分类成功",
+                type: "success"
+              });
+              this.$refs["form"].resetFields();
+              this.isVisible = false;
+              this.$emit("getCaseList");
+            });
+          } else {
+            this.ruleForm.opr = "update";
+            getCaseType(form).then(res => {
+              this.$message({
+                message: "编辑案例分类成功",
+                type: "success"
+              });
+              this.$refs["form"].resetFields();
+              this.isVisible = false;
+              this.$emit("getCaseList");
+            });
+          }
         } else {
           console.log("error submit!!");
           return false;

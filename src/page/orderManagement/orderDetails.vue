@@ -4,7 +4,7 @@
       v-if="updateOrderDialog.pcShow"
       :isShow="updateOrderDialog.pcShow"
       :dialogRow="updateOrderDialog.dialogRow"
-      @getOrderList="getOrderList"
+      @getOrderList="getDataList"
       @closeDialog="hideOrderDialog"
     ></pcorder-dialog>
 
@@ -12,6 +12,7 @@
       v-if="updateOrderDialog.smShow"
       :isShow="updateOrderDialog.smShow"
       :dialogRow="updateOrderDialog.dialogRow"
+      @getOrderList="getDataList"
       @closeDialog="hideOrderDialog"
     ></smorder-dialog>
 
@@ -59,7 +60,7 @@
             <span>{{ Date.format(scope.row.of_time) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="留言" align="center">
+        <el-table-column v-if="paginationForm.pid === 'pc' " label="留言" align="center"  >
           <template slot-scope="scope">
             <el-popover
               placement="top-start"
@@ -71,7 +72,7 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="state" label="状态" align="center" :formatter="switchConvert">
+        <el-table-column v-if="paginationForm.pid === 'pc' " prop="state" label="状态" align="center" :formatter="switchConvert">
           <!-- <template slot-scope="scope">
             <span :class="addClassStatus(scope.row.orderStatus)">{{ scope.row.orderStatus }}</span>
           </template>-->
@@ -206,6 +207,8 @@ export default {
     },
     // 订单
     lookorderStatus(row) {
+      console.log(row,'row');
+      
       if (this.dialogTitle == "添加订单详情") {
         this.ruleForm.title = "添加订单详情";
         this.updateOrderDialog.dialogRow = { ...this.ruleForm };

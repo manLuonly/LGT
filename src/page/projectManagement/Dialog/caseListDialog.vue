@@ -17,12 +17,12 @@
         style="margin:10px;width:auto;"
         class="case-list-dialog"
       >
-        <el-form-item prop="username" label="启停">
-          <el-switch v-model="startStop" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        <el-form-item label="启停">
+          <el-switch v-model="ruleForm.enable" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
 
-        <el-form-item prop="classificationName" label="上级分类">
-          <el-select v-model="ruleForm.classificationName" placeholder="请选择分类级别">
+        <el-form-item prop="type" label="上级分类">
+          <el-select v-model="ruleForm.type" placeholder="请选择分类级别">
             <el-option
               v-for="item in caseOptions"
               :key="item.value"
@@ -42,8 +42,8 @@
           <el-input v-model="ruleForm.jumpAddress" :disabled="isCanSelectAddress"></el-input>
         </el-form-item>-->
 
-        <el-form-item prop="caseName" label="案例名称">
-          <el-input v-model="ruleForm.caseName"></el-input>
+        <el-form-item prop="type_name" label="案例名称">
+          <el-input v-model="ruleForm.type_name"></el-input>
         </el-form-item>
 
         <el-form-item prop="accoutCash" label="缩略图">
@@ -97,7 +97,8 @@
 </template>
 
 <script>
-import { addMoney, updateMoney } from "@/api/money";
+import { mapGetters } from "vuex";
+import { getCaseType } from "@/api/caseType";
 
 export default {
   name: "caseListDialog",
@@ -105,16 +106,19 @@ export default {
     return {
       isVisible: this.isShow,
       ruleForm: {
-        classificationName: "",
-        caseName: "",
-        alignment: "",
-        text: ""
+        type_name: "",
+        update_time: "",
+        type: "",
+        enable: true,
+        suffix: "",
+        directory: "",
+        url: ""
       },
       form_rules: {
-        classificationName: [
+        type: [
           { required: true, message: "上级分类不能为空", trigger: "change" }
         ],
-        caseName: [
+        type_name: [
           { required: true, message: "案例名称不能为空", trigger: "blur" }
         ]
       },
@@ -126,36 +130,7 @@ export default {
         formLabelWidth: "120px"
       },
       isClear: false,
-      caseOptions: [
-        {
-          value: "LOGO设计",
-          label: "LOGO设计"
-        },
-        {
-          value: "小程序开发",
-          label: "小程序开发"
-        },
-        {
-          value: "APP开发",
-          label: "APP开发"
-        },
-        {
-          value: "包装设计",
-          label: "包装设计"
-        },
-        {
-          value: "画册设计",
-          label: "画册设计"
-        },
-        {
-          value: "网站开发",
-          label: "网站开发"
-        },
-        {
-          value: "品牌VI设计",
-          label: "网站开发"
-        }
-      ],
+      caseOptions: [],
       staticNumber: 0,
       ClassificationStatusItems: [
         {
@@ -188,7 +163,9 @@ export default {
     isShow: Boolean,
     dialogRow: Object
   },
-  components: {},
+  components: {
+    ...mapGetters(["systemType"])
+  },
   computed: {},
   created() {},
   mounted() {
@@ -199,8 +176,22 @@ export default {
     } else {
       this.ruleForm = this.dialogRow;
     }
+    this.getCaseTypeList();
   },
   methods: {
+    getCaseTypeList() {
+      const caseForm = {
+        pid: this.systemType,
+        pageNum: 1,
+        pageSize: 20
+      };
+      getCaseType(caseForm).then(res => {
+        if (res.code === 0) {
+          this.caseOptions = res.data || [];
+        }
+      });
+    },
+
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
     },
@@ -216,10 +207,7 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    // 关闭dialog
-    closeDialog() {
-      this.$emit("closeDialog");
-    },
+
     //表单提交
     onSubmit(form) {
       this.$refs[form].validate(valid => {
@@ -237,7 +225,7 @@ export default {
               });
               this.$refs["form"].resetFields();
               this.isVisible = false;
-              this.$emit("getFundList");
+              this.$emit("getCaseList");
             });
           } else {
             // add
@@ -248,7 +236,7 @@ export default {
               });
               this.$refs["form"].resetFields();
               this.isVisible = false;
-              this.$emit("getFundList");
+              this.$emit("getCaseList");
             });
           }
         }
@@ -269,6 +257,10 @@ export default {
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
+    },
+    // 关闭dialog
+    closeDialog() {
+      this.$emit("closeDialog");
     }
   }
 };

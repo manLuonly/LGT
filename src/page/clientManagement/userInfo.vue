@@ -1,12 +1,12 @@
 <template>
   <div class="user-info">
-    <userInfoDialog
+    <user-info-dialog
       v-if="updateUserInfoDialog.show"
       :isShow="updateUserInfoDialog.show"
       :dialogRow="updateUserInfoDialog.dialogRow"
       @getUserInfoList="getUserInfoList"
       @closeDialog="hideUserInfoDialog"
-    ></userInfoDialog>
+    ></user-info-dialog>
 
     <div class="add-user inline-block">
       <el-button
@@ -176,6 +176,8 @@ export default {
     // 选择系统类型(pc/sm)
     selectSystem(val) {
       console.log(val, "我是系统类型");
+      this.paginationForm.pid = val;
+      this.getDataList();
     },
     // 改变日期
     changeDate(date) {
@@ -184,6 +186,12 @@ export default {
     // 搜索客户列表
     searchUserList(searchVal) {
       console.log(searchVal, "我是搜索");
+      this.paginationForm.searchName = searchVal;
+      this.getDataList();
+      setTimeout(() => {
+        this.$refs.search.searchVal = "";
+        this.paginationForm.searchName = "";
+      }, 1000);
     }
   }
 };

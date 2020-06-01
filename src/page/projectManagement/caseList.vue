@@ -4,41 +4,20 @@
       v-if="updateCaseListDialog.show"
       :isShow="updateCaseListDialog.show"
       :dialogRow="updateCaseListDialog.dialogRow"
-      @getFundList="getDataList"
+      @getCaseList="getDataList"
       @closeDialog="hideUpdateCaseListDialog"
     ></caseListDialog>
 
-    <div>
-      <div class="button-group">
-        <el-button
-          type="primary"
-          size="large"
-          class="addCase"
-          @click="lookCaseListStatus(dialogTitle = '添加案例列表')"
-        >添加案例</el-button>
-        <!-- <el-button
-          v-for="(item) in buttonGroup"
-          :key="item.type_name"
-          @click="getList(item.type)"
-        >{{ item.type_name }}</el-button>-->
+    <el-button
+      type="primary"
+      size="large"
+      class="add-case"
+      @click="lookCaseListStatus(dialogTitle = '添加案例列表')"
+    >添加案例</el-button>
 
-        <select-system></select-system>
-        <selectCaseType @selectCaseType="selectCaseType($event)"></selectCaseType>
-
-        <div class="search">
-          <el-input
-            class="search-input"
-            size="large"
-            placeholder="请输入名称"
-            v-model="searchVal"
-            clearable
-          ></el-input>
-          <div class="search-button">
-            <el-button icon="el-icon-search" size="large" @click="searchCaseList"></el-button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <select-system @selectSystem="selectSystem($event)"></select-system>
+    <selectCaseType :caseList="caseList" @selectCaseType="selectCaseType($event)"></selectCaseType>
+    <search @searchUserList="searchUserList($event)" ref="search"></search>
 
     <div class="table_container">
       <el-table v-loading="loading" :data="tableData" style="width: 100%" align="center">
@@ -96,18 +75,21 @@ import { deepCopy } from "@/utils/mUtils";
 import caseListDialog from "./Dialog/caseListDialog";
 import selectSystem from "@/components/selectSystem";
 import selectCaseType from "./components/selectCaseType";
-import Pagination from "@/components/pagination";
 import { caseList } from "@/api/projectManagement";
+import { getCaseType } from "@/api/caseType";
 
 export default {
   data() {
     return {
       tableData: [],
       ruleForm: {
-        caseSortNum: 0,
-        caseName: "",
-        jumpAddress: "www.baidu.com",
-        updateTime: "2016-05-02"
+        type_name: "",
+        update_time: "",
+        type: "",
+        enable: true,
+        suffix: "",
+        directory: "",
+        url: ""
       },
       tableHeight: 0,
       loading: true,
@@ -117,12 +99,14 @@ export default {
         show: false,
         dialogRow: {}
       },
+      caseList: [],
       paginationForm: {
-        opr: 'list',
-        pid: 'pc',
+        opr: "list",
+        pid: "pc",
         pageNum: 1,
         pageSize: 20,
-        type: ''
+        type: "app",
+        searchName: ""
       },
       pageTotal: 7,
       startStop: true,
@@ -133,20 +117,21 @@ export default {
       },
       copyData: [],
       isCanSelectAddress: true,
-      // buttonGroup: [],
       dialogTitle: ""
     };
   },
   components: {
     caseListDialog,
     selectSystem,
-    selectCaseType,
-    Pagination
+    selectCaseType
   },
   computed: {},
+  created() {},
   mounted() {
-    //this.getDataList();
-    //this.loading = false;
+    this.getDataList();
+    this.getCaseTypeList();
+    this.setTableHeight();
+    this.loading = false;
     //this.copyData = deepCopy(this.tableData);
   },
   methods: {
@@ -157,10 +142,23 @@ export default {
     },
     // 获取列表数据
     getDataList() {
-      const para = Object.assign({}, this.paginationForm);
-      caseList(para).then(res => {
+      const form = this.paginationForm;
+      caseList(form).then(res => {
         if (res.code === 0) {
           this.tableData = res.data;
+          this.pageTotal = res.count;
+        }
+      });
+    },
+    getCaseTypeList(pid) {
+      const caseForm = {
+        pid: pid ? pid : 'pc',
+        pageNum: 1,
+        pageSize: 20
+      };
+      getCaseType(caseForm).then(res => {
+        if (res.code === 0) {
+          this.caseList = res.data;
         }
       });
     },
@@ -205,35 +203,33 @@ export default {
     },
     // 改变 Switch状态
     changeSwitch(val) {
-      console.log(val);
+      console.log(val, "switch");
     },
-    // 筛选案例列表数据
-    getList(val) {
-      let form = { pageNum: 1, pageSize: 20, type: val, name: "" };
-      caseList(form).then(res => {
-        if (res.code === 0) {
-          this.tableData = res.data;
-        }
-      });
+    // 选择系统类型(pc/sm)
+    selectSystem(val) {
+      this.paginationForm.pid = val;
+      // delete this.paginationForm.type;
+      // delete this.paginationForm.searchName;
+      this.getDataList();
+      this.getCaseTypeList(val)
     },
-    // 搜索案例列表数据
-    searchCaseList() {
-      let form = { pageNum: 1, pageSize: 20, type: "", name: this.searchVal };
-      caseList(form).then(res => {
-        if (res.code === 0) {
-          this.tableData = res.data;
-        }
-      });
-    },
-    selectCaseType (val) {
+    // 选择案例类型
+    selectCaseType(val) {
       this.paginationForm.type = val;
       this.getDataList();
       this.loading = false;
       this.copyData = deepCopy(this.tableData);
+    },
+    // 获取搜索值
+    searchUserList(searchVal) {
+      console.log(searchVal, "我是搜索");
+      this.paginationForm.searchName = searchVal;
+      this.getDataList();
+      setTimeout(() => {
+        this.$refs.search.searchVal = "";
+        this.paginationForm.searchName = "";
+      }, 1000);
     }
-    // selectSystem (val) {
-     
-    // }
   }
 };
 </script>
@@ -252,22 +248,8 @@ export default {
     background: #fff;
     border-radius: 2px;
   }
-
-  .button-group {
-    /deep/ .el-button {
-      margin-bottom: 15px;
-    }
-    .search {
-      float: right;
-      .search-input {
-        display: inline-block;
-        width: 217px;
-      }
-      .search-button {
-        display: inline-block;
-        margin-left: -1px;
-      }
-    }
+  .add-case {
+    margin-bottom: 15px;
   }
 
   .active {

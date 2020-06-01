@@ -46,6 +46,7 @@ module.exports = {
     // 打包时不生成.map文件
     productionSourceMap: false,
     devServer: {
+        hot: true, // 热更新
         open: true,
         host: '0.0.0.0',
         port: 8081,
