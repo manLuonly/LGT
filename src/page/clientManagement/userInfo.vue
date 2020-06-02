@@ -4,7 +4,7 @@
       v-if="updateUserInfoDialog.show"
       :isShow="updateUserInfoDialog.show"
       :dialogRow="updateUserInfoDialog.dialogRow"
-      @getUserInfoList="getUserInfoList"
+      @getUserInfoList="getDataList"
       @closeDialog="hideUserInfoDialog"
     ></user-info-dialog>
 
@@ -26,9 +26,14 @@
         <el-table-column prop="name" label="姓名" align="center"></el-table-column>
         <el-table-column prop="phone" label="联系电话" align="center"></el-table-column>
         <el-table-column prop="wx" label="微信" align="center"></el-table-column>
-        <el-table-column prop="mailbox" label="邮箱" align="center"></el-table-column>
-        <el-table-column prop="vip" label="vip" align="center"></el-table-column>
-        <el-table-column label="留言" align="center">
+        <!-- <el-table-column prop="mailbox" label="邮箱" align="center"></el-table-column> -->
+        <el-table-column prop="vip" label="vip" align="center" :formatter="switchConvert"></el-table-column>
+        <el-table-column label="更新日期" align="center">
+          <template slot-scope="scope">
+            <span>{{ Date.format(scope.row.begin_time) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="留言" align="center" width="250">
           <template slot-scope="scope">
             <el-popover
               placement="top-start"
@@ -115,20 +120,19 @@ export default {
       const form = Object.assign({}, this.paginationForm);
       userInfo(form).then(res => {
         this.tableData = res.data || [];
-        this.tableData.map(item => {
-          switch (item.vip) {
-            case true:
-              item.vip = "是";
-              break;
-            case true:
-              item.vip = "否";
-              break;
-            default:
-              item.vip = "否";
-              break;
-          }
-        });
+        this.pageTotal = res.data.count;
       });
+    },
+
+    switchConvert(row) {      
+      if (row.vip) {
+        return "是";
+      } else if (!row.vip) {
+        return "否";
+      } else {
+        return "否";
+      }
+      return row.vip;
     },
 
     // 上下分页

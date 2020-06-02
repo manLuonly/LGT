@@ -14,14 +14,14 @@
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
-          <el-input v-model.number="ruleForm.phone"></el-input>
+          <el-input v-model="ruleForm.phone" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item label="wx" prop="wx">
           <el-input v-model="ruleForm.wx"></el-input>
         </el-form-item>
-          <el-form-item label="邮箱" prop="mailbox">
+        <!-- <el-form-item label="邮箱" prop="mailbox">
           <el-input v-model="ruleForm.mailbox"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="vip" prop="vip">
           <el-select v-model="ruleForm.vip" placeholder="请选择">
             <el-option
@@ -45,6 +45,9 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import { userInfo } from "@/api/userInfo";
+
 export default {
   name: "userInfoDialog",
 
@@ -72,7 +75,7 @@ export default {
         name: "",
         phone: "",
         wx: "",
-        mailbox: "",
+        // mailbox: "",
         vip: "",
         leave: ""
       },
@@ -103,6 +106,9 @@ export default {
     isShow: Boolean,
     dialogRow: Object
   },
+  computed: {
+    ...mapGetters(["systemType"])
+  },
   mounted() {
     if (this.dialogRow.title === "新增客户信息") {
       this.$nextTick(() => {
@@ -116,7 +122,27 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
+          const form = this.ruleForm;
+          this.ruleForm.pid = this.systemType; // 获取系统类型
+          delete form.title;
+
+          if (this.dialogRow.title === "新增客户信息") {
+            this.ruleForm.opr = "add";
+            userInfo(form).then(res => {
+              this.$refs["ruleForm"].resetFields();
+              this.closeDialog();
+              this.message("新增客户成功");
+              this.$emit("getUserInfoList");
+            });
+          } else {
+            this.ruleForm.opr = "update";
+            userInfo(form).then(res => {
+              this.$refs["ruleForm"].resetFields();
+              this.closeDialog();
+              this.message("编辑客户成功");
+              this.$emit("getUserInfoList");
+            });
+          }
         } else {
           console.log("error submit!!");
           return false;

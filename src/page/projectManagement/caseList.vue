@@ -237,11 +237,6 @@ export default {
 <style lang="less" scoped>
 .classificationList {
   padding: 20px;
-  // .form {
-  //   /deep/ .el-textarea {
-  //     height: 200px;
-  //   }
-  // }
 
   .table_container {
     padding: 10px;
