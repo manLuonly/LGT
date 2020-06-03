@@ -1,26 +1,30 @@
 <template>
   <div class="historyRecord">
-    <select-system @selectSystem="selectSystem($event)"></select-system>
-
     <page-type-cps @selectPage="selectPage($event)"></page-type-cps>
+
+    <select-system v-show="pageType !== 'userInfo'" @selectSystem="selectSystem($event)"></select-system>
 
     <search @searchUserList="searchUserList($event)" ref="search"></search>
 
     <div class="table_container">
-      <el-table :data="tableData" style="width: 100%" align="center" v-show="pageType == 'userInfo' ">
+      <el-table :data="tableData" style="width: 100%" align="center" v-if="pageType == 'userInfo' ">
         <el-table-column prop="name" label="姓名" align="center"></el-table-column>
-        <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
-        <el-table-column prop="mailbox" label="邮箱/微信" align="center"></el-table-column>
-        <el-table-column prop="vip" label="vip" align="center"></el-table-column>
-        <el-table-column prop="leavingMessage" label="留言" align="center">
+        <el-table-column prop="phone" label="联系电话" align="center"></el-table-column>
+        <el-table-column prop="wx" label="邮箱/微信" align="center"></el-table-column>
+        <el-table-column prop="vip" label="vip" align="center">
+          <template slot-scope="scope">
+              <span>{{ scope.row.vip ? '是' : '否' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="leaving" label="留言" align="center">
           <template slot-scope="scope">
             <el-popover
               placement="top-start"
               width="200"
               trigger="hover"
-              :content="scope.row.leavingMessage"
+              :content="scope.row.leaving"
             >
-              <span slot="reference">{{ scope.row.leavingMessage }}</span>
+              <span slot="reference">{{ scope.row.leaving }}</span>
             </el-popover>
           </template>
         </el-table-column>
@@ -37,13 +41,17 @@
         </el-table-column>
       </el-table>
 
-      <el-table :data="tableData" style="width: 100%" v-show="pageType == 'orderDetails' ">
-        <el-table-column prop="userName" label="客户姓名" align="center"></el-table-column>
-        <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
-        <el-table-column prop="serviceProject" label="服务项目" align="center"></el-table-column>
-        <el-table-column prop="startDate" label="开始时间" align="center"></el-table-column>
-        <el-table-column prop="endDate" label="结束时间" align="center"></el-table-column>
-        <el-table-column prop="orderStatus" label="状态" align="center"></el-table-column>
+      <el-table :data="tableData" style="width: 100%" v-if="pageType == 'orderDetails' ">
+        <el-table-column prop="name" label="客户姓名" align="center"></el-table-column>
+        <el-table-column prop="phone" label="联系电话" align="center"></el-table-column>
+        <el-table-column prop="service" label="服务项目" align="center"></el-table-column>
+        <el-table-column prop="begin_time" label="开始时间" align="center"></el-table-column>
+        <el-table-column prop="of_time" label="结束时间" align="center"></el-table-column>
+        <el-table-column prop="state" label="状态" align="center">
+          <template slot-scope="scope">
+              <span :class="switchConverObj(scope.row.state).cls">{{ switchConverObj(scope.row.state).val }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="money" label="交易金额" align="center"></el-table-column>
         <el-table-column prop="operation" align="center" label="操作" width="180">
           <template slot-scope="scope">
@@ -69,6 +77,7 @@
 <script>
 import { mapGetters } from "vuex";
 import pageTypeCps from "./components/pageType";
+import { historyRecord } from "@/api/historyRecord";
 
 export default {
   name: "historyRecord",
@@ -94,19 +103,19 @@ export default {
     ...mapGetters(["systemType"]),
   },
   mounted() {
-    //   this.getDataList();
+    this.getDataList();
 
   },
   methods: {
     // 获取数据
     getDataList() {
       // 请求客户信息列表
-      if (this.systemType == "userInfo") {
-        console.log("userInfo");
-      } else {
-        // 请求订单详情列表
-        console.log("order");
-      }
+      historyRecord({
+        ...this.paginationForm,
+        filterType: this.pageType == "userInfo" ? 0 : 1
+      }).then(res => {
+          this.tableData = res && res.data;
+      });
     },
     // 上下分页
     handleCurrentChange(val) {
@@ -118,12 +127,35 @@ export default {
       this.paginationForm.pageSize = val;
       this.getDataList();
     },
+    switchConverObj (val = 2) {
+      return {
+        0: {
+          val: '已完成',
+          cls: '"completed"'
+        },
+        1: {
+           val: '进行中',
+           cls: 'processing'
+        },
+        2: {
+          val: '未完成',
+          cls: 'undone'
+        }
+      }[val];
+    },
     // 恢复历史记录
     restoreRecording(row) {
       console.log(row, "row");
+      row.opr = 'restore';
+      row.filterType = this.pageType == "userInfo" ? 0 : 1;
       this.alertMsgBox("此操作将恢复该数据,是否继续?")
         .then(() => {
-          this.message("恢复成功");
+          historyRecord(row).then( res => {
+              this.message(res.msg);
+              if (res.success) {
+                this.getDataList();
+              }
+          })
         })
         .catch(err => {
           this.message("已取消", "info");
@@ -132,9 +164,16 @@ export default {
     // 删除历史记录
     deleteRecording(row) {
       console.log(row, "row");
+      row.opr = "delete";
+      row.filterType = this.pageType == "userInfo" ? 0 : 1;
       this.alertMsgBox("此操作将永久删除该数据,是否继续?")
         .then(() => {
-          this.message("删除成功");
+          historyRecord(row). then ( res => {
+            this.message(res.msg);
+            if (res.success) {
+              this.getDataList();
+            }
+          })
         })
         .catch(err => {
           this.message("已取消", "info");
@@ -156,10 +195,12 @@ export default {
       console.log(searchVal, "我是搜索");
       this.paginationForm.searchName = searchVal;
       this.getDataList();
-      setTimeout(() => {
-        this.$refs.search.searchVal = "";
-        this.paginationForm.searchName = "";
-      }, 1000);
+
+      // --> (来自汤某人问号 2020 - 06 - 03 03 : 00)
+      // setTimeout(() => {
+      //   this.$refs.search.searchVal = "";
+      //   this.paginationForm.searchName = "";
+      // }, 1000);
     }
   }
 };
@@ -167,6 +208,7 @@ export default {
 
 <style lang='less' scoped>
 .table_container {
+  margin-top: 10px;
   padding: 10px;
   background: #fff;
   border-radius: 2px;
@@ -179,6 +221,22 @@ export default {
     .system-type-text {
       margin-right: 10px;
     }
+  }
+
+  // 进行中
+  .processing {
+    color: blue;
+    font-weight: bold;
+  }
+  // 已完成
+  .completed {
+    color: green;
+    font-weight: bold;
+  }
+  // 未完成
+  .undone {
+    color: red;
+    font-weight: bold;
   }
 }
 </style>

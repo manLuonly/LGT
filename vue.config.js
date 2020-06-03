@@ -38,8 +38,8 @@ const cdn = {
 
 
 module.exports = {
-    publicPath: process.env.NODE_ENV === "production" ? "/dist" : "/",
-    outputDir: './dist',
+    publicPath: process.env.NODE_ENV === "production" ? "/zngl/system" : "/",
+    outputDir: './zngl/system',
     assetsDir: 'static',
     filenameHashing: true, // false 来关闭文件名哈希
     lintOnSave: false, // 关闭eslint

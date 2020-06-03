@@ -17,7 +17,7 @@
       >添加客户</el-button>
     </div>
 
-    <select-system @selectSystem="selectSystem($event)"></select-system>
+    <!-- <select-system @selectSystem="selectSystem($event)"></select-system> 不需要区分小程序 and PC (都是客户)-->
     <date-picker @changeDate="changeDate($event)"></date-picker>
     <search @searchUserList="searchUserList($event)"></search>
 
@@ -39,9 +39,9 @@
               placement="top-start"
               width="200"
               trigger="hover"
-              :content="scope.row.leave"
+              :content="scope.row.leaving"
             >
-              <span slot="reference">{{ scope.row.leave }}</span>
+              <span slot="reference">{{ scope.row.leaving }}</span>
             </el-popover>
           </template>
         </el-table-column>
@@ -115,8 +115,8 @@ export default {
     getDataList() {
       // this.paginationForm.startTime = Date.getTime();
       // this.paginationForm.endTime = Date.getNewTime();
-      delete this.paginationForm.startTime;
-      delete this.paginationForm.endTime;
+      // delete this.paginationForm.startTime;
+      // delete this.paginationForm.endTime;
       const form = Object.assign({}, this.paginationForm);
       userInfo(form).then(res => {
         this.tableData = res.data || [];
@@ -160,7 +160,15 @@ export default {
     deleteUser(row) {
       this.alertMsgBox()
         .then(() => {
-          this.message("删除客户成功");
+          row.opr = "delete";
+          userInfo(row).then(res => {
+              if (res.success === true) {
+                  this.message(res.msg);
+                  this.getDataList();
+              } else {
+                  this.message(res.msg);
+              }
+          });
         })
         .catch(err => {
           this.message("已取消", "info");
@@ -185,7 +193,9 @@ export default {
     },
     // 改变日期
     changeDate(date) {
-      console.log(date, "我是日期");
+      this.paginationForm.startTime = date ? Date.formatDate(date[0]) : "";
+      this.paginationForm.endTime = date ? Date.formatDate(date[1]) : "";
+      this.getDataList();
     },
     // 搜索客户列表
     searchUserList(searchVal) {

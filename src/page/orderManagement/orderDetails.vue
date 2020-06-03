@@ -72,10 +72,10 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column v-if="paginationForm.pid === 'pc' " prop="state" label="状态" align="center" :formatter="switchConvert">
-          <!-- <template slot-scope="scope">
-            <span :class="addClassStatus(scope.row.orderStatus)">{{ scope.row.orderStatus }}</span>
-          </template>-->
+        <el-table-column v-if="paginationForm.pid === 'pc'" prop="state" label="状态" align="center" :formatter="switchConvert">
+          <template slot-scope="scope">
+            <span :class="switchConverObj(scope.row.state).cls">{{ switchConverObj(scope.row.state).val }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="money" label="交易金额" align="center"></el-table-column>
         <el-table-column prop="operation" align="center" label="操作" width="180">
@@ -168,32 +168,21 @@ export default {
         this.pageTotal = res.count; // 总条数
       });
     },
-    switchConvert(row) {
-      if (row.state == 0) {
-        return "已完成";
-      } else if (row.state == 1) {
-        return "进行中";
-      } else {
-        return "未完成";
-      }
-      return row.state;
-    },
-    // 根据状态添加class
-    addClassStatus(val) {
-      switch (val) {
-        case "进行中":
-          return "processing";
-          break;
-        case "已完成":
-          return "completed";
-          break;
-        case "未完成":
-          return "undone";
-          break;
-        default:
-          return "processing";
-          break;
-      }
+    switchConverObj (val = 2) {
+      return {
+        0: {
+          val: '已完成',
+          cls: '"completed"'
+        },
+        1: {
+           val: '进行中',
+           cls: 'processing'
+        },
+        2: {
+          val: '未完成',
+          cls: 'undone'
+        }
+      }[val];
     },
     // 上下分页
     handleCurrentChange(val) {
@@ -221,10 +210,16 @@ export default {
     // 获取订单列表
     getOrderList() {},
     // 删除订单详情
-    deleteOrder() {
+    deleteOrder(row) {
+      row.opr = 'delete';
       this.alertMsgBox()
         .then(() => {
-          this.message("删除订单成功");
+          userOrderInfo(row).then( res => {
+            this.message(res.msg);
+            if (res.success) {
+              this.getDataList();
+            }
+          })
         })
         .catch(err => {
           this.message("已取消", "info");
@@ -265,8 +260,10 @@ export default {
       console.log(searchVal, "我是搜索");
       this.paginationForm.searchName = searchVal;
       this.getDataList();
-      this.$refs.search.searchVal = "";
-      this.paginationForm.searchName = "";
+
+      // --------------->问号?
+      // this.$refs.search.searchVal = "";
+      // this.paginationForm.searchName = "";
     }
   }
 };

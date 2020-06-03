@@ -32,6 +32,7 @@
               active-color="#13ce66"
               inactive-color="#ff4949"
               @change="changeSwitch(scope.row)"
+              disabled
             ></el-switch>
           </template>
         </el-table-column>
@@ -85,7 +86,7 @@
 import selectSystem from "@/components/selectSystem";
 import caseClassificationDialog from "./Dialog/caseClassificationDialog";
 import Pagination from "@/components/pagination";
-import { getCaseType } from "@/api/caseType";
+import { getCaseType, del } from "@/api/caseType";
 
 export default {
   data() {
@@ -173,9 +174,17 @@ export default {
     },
     // 删除数据
     deleteCase(row) {
-      this.alertMsgBox()
+      this.alertMsgBox("此操作将删除该数据,是否继续?")
         .then(() => {
-          this.message("删除案例成功");
+          row.opr = "delete";
+          getCaseType(row).then(res => {
+              if (res.success === true) {
+                  this.message(res.msg);
+                  this.getDataList();
+              } else {
+                  this.message(res.msg);
+              }
+            })
         })
         .catch(err => {
           this.message("已取消", "info");
