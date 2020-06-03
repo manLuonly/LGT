@@ -1,0 +1,94 @@
+<!DOCTYPE html><html><head><meta http-equiv=Content-Type content="text/html;charset=utf-8"><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=renderer content=webkit><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv=pragma content=no-cache><meta http-equiv=Cache-Control content="no-cache, must-revalidate"><meta http-equiv=expires content=0><link rel=icon href=/zngl/system/favicon.ico><link rel=stylesheet href=//at.alicdn.com/t/font_1513448_bvkmi0qghqq.css><title>智能桂联后台管理</title><link href=https://cdn.bootcss.com/element-ui/2.11.1/theme-chalk/index.css rel=stylesheet><link href=https://cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css rel=stylesheet><link href=/zngl/system/static/css/app.a5cfd0c0.css rel=stylesheet></head><style>#loading-mask {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        background: #fff;
+        user-select: none;
+        z-index: 9999;
+        overflow: hidden
+    }
+    
+    .loading-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -100%)
+    }
+    
+    .loading-dot {
+        animation: antRotate 1.2s infinite linear;
+        transform: rotate(45deg);
+        position: relative;
+        display: inline-block;
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        box-sizing: border-box
+    }
+    
+    .loading-dot i {
+        width: 22px;
+        height: 22px;
+        position: absolute;
+        display: block;
+        background-color: #1890ff;
+        border-radius: 100%;
+        transform: scale(.75);
+        transform-origin: 50% 50%;
+        opacity: .3;
+        animation: antSpinMove 1s infinite linear alternate
+    }
+    
+    .loading-dot i:nth-child(1) {
+        top: 0;
+        left: 0
+    }
+    
+    .loading-dot i:nth-child(2) {
+        top: 0;
+        right: 0;
+        -webkit-animation-delay: .4s;
+        animation-delay: .4s
+    }
+    
+    .loading-dot i:nth-child(3) {
+        right: 0;
+        bottom: 0;
+        -webkit-animation-delay: .8s;
+        animation-delay: .8s
+    }
+    
+    .loading-dot i:nth-child(4) {
+        bottom: 0;
+        left: 0;
+        -webkit-animation-delay: 1.2s;
+        animation-delay: 1.2s
+    }
+    
+    @keyframes antRotate {
+        to {
+            -webkit-transform: rotate(405deg);
+            transform: rotate(405deg)
+        }
+    }
+    
+    @-webkit-keyframes antRotate {
+        to {
+            -webkit-transform: rotate(405deg);
+            transform: rotate(405deg)
+        }
+    }
+    
+    @keyframes antSpinMove {
+        to {
+            opacity: 1
+        }
+    }
+    
+    @-webkit-keyframes antSpinMove {
+        to {
+            opacity: 1
+        }
+    }</style><body><div id=app><div id=loading-mask><div class=loading-wrapper><span class="loading-dot loading-dot-spin"><i></i><i></i><i></i><i></i></span></div></div></div><script src=//at.alicdn.com/t/font_1258069_e40c6mwl0x8.js></script><script src=https://cdn.bootcss.com/vue/2.6.10/vue.min.js></script><script src=https://cdn.bootcss.com/vue-router/3.1.2/vue-router.min.js></script><script src=https://cdn.bootcss.com/vuex/2.3.1/vuex.min.js></script><script src=https://cdn.bootcss.com/axios/0.19.0/axios.min.js></script><script src=https://cdn.bootcss.com/vue-i18n/8.13.0/vue-i18n.min.js></script><script src=https://cdn.bootcss.com/element-ui/2.11.1/index.js></script><script src=https://cdn.bootcss.com/echarts/3.8.5/echarts.min.js></script><script src=https://cdn.bootcss.com/Mock.js/1.0.1-beta3/mock-min.js></script><script src=https://cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js></script><script src=https://cdn.bootcss.com/js-cookie/2.2.0/js.cookie.min.js></script><script src=/zngl/system/static/js/vendors~app.af37313d.js></script><script src=/zngl/system/static/js/app.10cdd61b.js></script></body><script src=//at.alicdn.com/t/font_1513448_p5nwdmtxkaj.js></script></html>

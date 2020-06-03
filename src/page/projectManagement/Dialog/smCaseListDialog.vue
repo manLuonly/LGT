@@ -21,7 +21,7 @@
           <el-switch v-model="ruleForm.enable" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
 
-        <el-form-item prop="type" label="上级分类">
+        <el-form-item prop="type" label="分类">
           <el-select v-model="ruleForm.type" placeholder="请选择分类级别">
             <el-option
               v-for="item in caseOptions"
@@ -46,7 +46,7 @@
           <el-input v-model="ruleForm.type_name"></el-input>
         </el-form-item>
 
-        <el-form-item prop="accoutCash" label="缩略图">
+        <el-form-item prop="accoutCash" label="案例图">
           <el-upload
             class="avatar-uploader"
             action="https://jsonplaceholder.typicode.com/posts/"
@@ -60,7 +60,7 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="文本对齐">
+        <!-- <el-form-item label="文本对齐">
           <el-select v-model="ruleForm.alignment" placeholder="请选择对齐方式">
             <el-option
               v-for="item in alignmentOptions"
@@ -73,9 +73,9 @@
 
         <el-form-item label="文本">
           <el-input type="textarea" v-model="ruleForm.text"></el-input>
-        </el-form-item>
+        </el-form-item> -->
 
-        <el-form-item label="图文详情">
+        <el-form-item label="案例详情图">
           <el-upload
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
@@ -119,7 +119,7 @@ export default {
       },
       form_rules: {
         type: [
-          { required: true, message: "上级分类不能为空", trigger: "change" }
+          { required: true, message: "分类不能为空", trigger: "change" }
         ],
         type_name: [
           { required: true, message: "案例名称不能为空", trigger: "blur" }
@@ -172,7 +172,7 @@ export default {
   computed: {},
   created() {},
   mounted() {
-    if (this.dialogRow.type === "添加案例列表") {
+    if (this.dialogRow.type === "添加小程序案例") {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
       });
@@ -196,6 +196,7 @@ export default {
     },
 
     successImg(res, file) {
+      debugger
       this.imageUrl = URL.createObjectURL(file.raw);
     },
     beforeUploadImg(file) {
@@ -219,8 +220,7 @@ export default {
           let formData = this[form];
           const para = Object.assign({}, formData);
           console.log(para);
-          // edit
-          if (this.addFundDialog.type === "edit") {
+          if (this.dialogRow.type === "添加小程序案例") {
             this.showLoading();
             updateMoney(para).then(res => {
               this.$message({
@@ -233,7 +233,6 @@ export default {
               this.$emit("getCaseList");
             });
           } else {
-            // add
             this.showLoading();
             addMoney(para).then(res => {
               this.$message({

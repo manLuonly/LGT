@@ -1,12 +1,20 @@
 <template>
   <div class="classificationList">
-    <caseListDialog
-      v-if="updateCaseListDialog.show"
-      :isShow="updateCaseListDialog.show"
+    <pc-case-list-dialog
+      v-if="updateCaseListDialog.pcShow"
+      :isShow="updateCaseListDialog.pcShow"
       :dialogRow="updateCaseListDialog.dialogRow"
       @getCaseList="getDataList"
       @closeDialog="hideUpdateCaseListDialog"
-    ></caseListDialog>
+    ></pc-case-list-dialog>
+
+    <sm-case-list-dialog
+      v-if="updateCaseListDialog.smShow"
+      :isShow="updateCaseListDialog.smShow"
+      :dialogRow="updateCaseListDialog.dialogRow"
+      @getCaseList="getDataList"
+      @closeDialog="hideUpdateCaseListDialog"
+    ></sm-case-list-dialog>
 
     <el-button
       type="primary"
@@ -20,10 +28,18 @@
     <search @searchUserList="searchUserList($event)" ref="search"></search>
 
     <div class="table_container">
-      <el-table v-loading="loading" :data="tableData" style="width: 100%" align="center">
+      <el-table
+        v-loading="loading"
+        :data="tableData"
+        :height="tableHeight"
+        :default-sort="{prop: 'update_time', order: 'descending'}"
+        style="width: 100%"
+        align="center"
+      >
         <el-table-column align="center" label="启停" width="60">
           <template slot-scope="scope">
             <el-switch
+              disabled
               v-model="scope.row.enable"
               active-color="#13ce66"
               inactive-color="#ff4949"
@@ -39,12 +55,12 @@
         </el-table-column>
         <el-table-column prop="type_name" label="名称" align="center"></el-table-column>
         <el-table-column v-if="idFlag" prop="address" label="分类名称" align="center"></el-table-column>
-        <el-table-column label="跳转地址" align="center">
+        <!-- <el-table-column label="跳转地址" align="center">
           <template slot-scope="scope">
             <el-input placeholder="请输入内容" v-model="scope.row.jumpAddress" :disabled="true"></el-input>
           </template>
-        </el-table-column>
-        <el-table-column prop="update_time" label="更新时间" align="center" sortable width="170">
+        </el-table-column>-->
+        <el-table-column prop="update_time" sortable label="更新时间" align="center" width="170">
           <template slot-scope="scope">
             <el-icon name="time"></el-icon>
             <span style="margin-left: 10px">{{ Date.format(scope.row.update_time) }}</span>
@@ -71,8 +87,9 @@
 </template>
 
 <script>
-import { deepCopy } from "@/utils/mUtils";
-import caseListDialog from "./Dialog/caseListDialog";
+import { mapGetters } from "vuex";
+import pcCaseListDialog from "./Dialog/pcCaseListDialog";
+import smCaseListDialog from "./Dialog/smCaseListDialog";
 import selectSystem from "@/components/selectSystem";
 import selectCaseType from "./components/selectCaseType";
 import { caseList } from "@/api/projectManagement";
@@ -96,7 +113,8 @@ export default {
       idFlag: false,
       isShow: false,
       updateCaseListDialog: {
-        show: false,
+        pcShow: false,
+        smShow: false,
         dialogRow: {}
       },
       caseList: [],
@@ -108,7 +126,7 @@ export default {
         type: "app",
         searchName: ""
       },
-      pageTotal: 7,
+      pageTotal: 0,
       startStop: true,
       searchVal: "", // 搜索值
       dialog: {
@@ -121,23 +139,25 @@ export default {
     };
   },
   components: {
-    caseListDialog,
+    pcCaseListDialog,
+    smCaseListDialog,
     selectSystem,
     selectCaseType
   },
-  computed: {},
+  computed: {
+    ...mapGetters(["systemType"])
+  },
   created() {},
   mounted() {
     this.getDataList();
     this.getCaseTypeList();
     this.setTableHeight();
     this.loading = false;
-    //this.copyData = deepCopy(this.tableData);
   },
   methods: {
     setTableHeight() {
       this.$nextTick(() => {
-        this.tableHeight = document.body.clientHeight - 300;
+        this.tableHeight = document.body.clientHeight - 250;
       });
     },
     // 获取列表数据
@@ -152,7 +172,7 @@ export default {
     },
     getCaseTypeList(pid) {
       const caseForm = {
-        pid: pid ? pid : 'pc',
+        pid: pid ? pid : "pc",
         pageNum: 1,
         pageSize: 20
       };
@@ -174,15 +194,28 @@ export default {
     },
     // 显示案例列表弹框
     showUpdateCaseListDialog() {
-      this.updateCaseListDialog.show = true;
+      if (this.systemType == "pc") {
+        this.updateCaseListDialog.pcShow = true;
+      } else {
+        this.updateCaseListDialog.smShow = true;
+      }
     },
+    // 隐藏案例列表弹框
     hideUpdateCaseListDialog() {
-      this.updateCaseListDialog.show = false;
+      if (this.systemType == "pc") {
+        this.updateCaseListDialog.pcShow = false;
+      } else {
+        this.updateCaseListDialog.smShow = false;
+      }
     },
     // 编辑操作方法
     lookCaseListStatus(row) {
       if (this.dialogTitle == "添加案例列表") {
-        this.ruleForm.title = "添加案例列表";
+        if (this.systemType == "pc") {
+          this.ruleForm.title = "添加网站案例";
+        } else {
+          this.ruleForm.title = "添加小程序案例";
+        }
         this.updateCaseListDialog.dialogRow = { ...this.ruleForm };
       } else {
         row.title = "修改案例列表";
@@ -190,7 +223,6 @@ export default {
       }
       this.showUpdateCaseListDialog();
     },
-
     // 删除数据
     deleteCaeList(row) {
       this.alertMsgBox()
@@ -208,27 +240,24 @@ export default {
     // 选择系统类型(pc/sm)
     selectSystem(val) {
       this.paginationForm.pid = val;
-      // delete this.paginationForm.type;
-      // delete this.paginationForm.searchName;
       this.getDataList();
-      this.getCaseTypeList(val)
+      this.getCaseTypeList(val);
     },
     // 选择案例类型
     selectCaseType(val) {
       this.paginationForm.type = val;
       this.getDataList();
       this.loading = false;
-      this.copyData = deepCopy(this.tableData);
     },
     // 获取搜索值
     searchUserList(searchVal) {
       console.log(searchVal, "我是搜索");
       this.paginationForm.searchName = searchVal;
       this.getDataList();
-      setTimeout(() => {
-        this.$refs.search.searchVal = "";
-        this.paginationForm.searchName = "";
-      }, 1000);
+      // setTimeout(() => {
+      //   this.$refs.search.searchVal = "";
+      //   this.paginationForm.searchName = "";
+      // }, 1000);
     }
   }
 };

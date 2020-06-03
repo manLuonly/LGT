@@ -32,8 +32,8 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="留言" prop="leave">
-          <el-input class="leave-message" type="textarea" v-model="ruleForm.leave"></el-input>
+        <el-form-item label="留言" prop="leaving">
+          <el-input class="leave-message" type="textarea" v-model="ruleForm.leaving"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -77,7 +77,7 @@ export default {
         wx: "",
         // mailbox: "",
         vip: "",
-        leave: ""
+        leaving: ""
       },
       rules: {
         name: [{ required: true, message: "请输入客户姓名", trigger: "blur" }],

@@ -1,12 +1,20 @@
 <template>
   <div class="case-classification">
-    <caseClassificationDialog
-      v-if="updateCaseDialog.show"
-      :isShow="updateCaseDialog.show"
+    <pc-case-classification-dialog
+      v-if="updateCaseDialog.pcShow"
+      :isShow="updateCaseDialog.pcShow"
       :dialogRow="updateCaseDialog.dialogRow"
       @getCaseList="getDataList"
       @closeDialog="hideCaseDialog"
-    ></caseClassificationDialog>
+    ></pc-case-classification-dialog>
+
+    <sm-case-classification-dialog
+      v-if="updateCaseDialog.smShow"
+      :isShow="updateCaseDialog.smShow"
+      :dialogRow="updateCaseDialog.dialogRow"
+      @getCaseList="getDataList"
+      @closeDialog="hideCaseDialog"
+    ></sm-case-classification-dialog>
 
     <el-button
       type="primary"
@@ -21,8 +29,9 @@
       <el-table
         v-loading="loading"
         :data="tableData"
+        :height="tableHeight"
+        :default-sort="{prop: 'update_time', order: 'descending'}"
         style="width: 100%"
-        height="720"
         align="center"
       >
         <el-table-column align="center" label="启停" width="60">
@@ -32,6 +41,7 @@
               active-color="#13ce66"
               inactive-color="#ff4949"
               @change="changeSwitch(scope.row)"
+              disabled
             ></el-switch>
           </template>
         </el-table-column>
@@ -55,7 +65,7 @@
             <el-input placeholder="请输入内容" v-model="scope.row.jumpAddress" :disabled="true"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="updateTime" label="更新时间" align="center" sortable>
+        <el-table-column prop="update_time" label="更新时间" align="center" sortable>
           <template slot-scope="scope">
             <el-icon name="time"></el-icon>
             <span style="margin-left: 10px">{{ Date.format(scope.row.update_time)}}</span>
@@ -72,20 +82,17 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- <pagination
-        :pageTotal="pageTotal"
-        @handleCurrentChange="handleCurrentChange"
-        @handleSizeChange="handleSizeChange"
-      ></pagination> -->
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import selectSystem from "@/components/selectSystem";
-import caseClassificationDialog from "./Dialog/caseClassificationDialog";
+import pcCaseClassificationDialog from "./Dialog/pcCaseClassificationDialog";
+import smCaseClassificationDialog from "./Dialog/smCaseClassificationDialog";
 import Pagination from "@/components/pagination";
-import { getCaseType } from "@/api/caseType";
+import { getCaseType, del } from "@/api/caseType";
 
 export default {
   data() {
@@ -102,7 +109,8 @@ export default {
       isShow: false,
       sortnum: 0,
       updateCaseDialog: {
-        show: false,
+        pcShow: false,
+        smShow: false,
         dialogRow: {}
       },
       paginationForm: {
@@ -111,7 +119,7 @@ export default {
         pageNum: 1,
         pageSize: 20
       },
-      pageTotal: 2,
+      pageTotal: 0,
       dialog: {
         width: "400px",
         formLabelWidth: "120px"
@@ -120,19 +128,23 @@ export default {
     };
   },
   components: {
-    caseClassificationDialog,
+    pcCaseClassificationDialog,
+    smCaseClassificationDialog,
     selectSystem,
     Pagination
   },
-  computed: {},
+  computed: {
+    ...mapGetters(["systemType"])
+  },
   mounted() {
     this.getDataList();
+    this.setTableHeight();
     this.loading = false;
   },
   methods: {
     setTableHeight() {
       this.$nextTick(() => {
-        this.tableHeight = document.body.clientHeight - 300;
+        this.tableHeight = document.body.clientHeight - 250;
       });
     },
     // 获取列表数据
@@ -144,11 +156,19 @@ export default {
     },
     // 显示案例分类dialog
     showCseDialog() {
-      this.updateCaseDialog.show = true;
+      if (this.systemType == "pc") {
+        this.updateCaseDialog.pcShow = true;
+      } else {
+        this.updateCaseDialog.smShow = true;
+      }
     },
     // 隐藏案例分类dialog
     hideCaseDialog() {
-      this.updateCaseDialog.show = false;
+      if (this.systemType == "pc") {
+        this.updateCaseDialog.pcShow = false;
+      } else {
+        this.updateCaseDialog.smShow = false;
+      }
     },
     // 上下分页
     handleCurrentChange(val) {
@@ -163,7 +183,11 @@ export default {
     // 编辑操作方法
     lookCaseStatus(row) {
       if (this.dialogTitle == "添加案例分类") {
-        this.ruleForm.title = "添加案例分类";
+        if (this.systemType == "pc") {
+          this.ruleForm.title = "添加网站案例分类";
+        } else {
+          this.ruleForm.title = "添加小程序案例分类";
+        }
         this.updateCaseDialog.dialogRow = { ...this.ruleForm };
       } else {
         row.title = "编辑案例分类";
@@ -173,9 +197,17 @@ export default {
     },
     // 删除数据
     deleteCase(row) {
-      this.alertMsgBox()
+      this.alertMsgBox("此操作将删除该数据,是否继续?")
         .then(() => {
-          this.message("删除案例成功");
+          row.opr = "delete";
+          getCaseType(row).then(res => {
+            if (res.success === true) {
+              this.message(res.msg);
+              this.getDataList();
+            } else {
+              this.message(res.msg);
+            }
+          });
         })
         .catch(err => {
           this.message("已取消", "info");

@@ -17,18 +17,22 @@
       >添加客户</el-button>
     </div>
 
-    <select-system @selectSystem="selectSystem($event)"></select-system>
     <date-picker @changeDate="changeDate($event)"></date-picker>
     <search @searchUserList="searchUserList($event)"></search>
 
     <div class="table_container">
-      <el-table :data="tableData" style="width: 100%" align="center">
+      <el-table
+        :data="tableData"
+        :height="tableHeight"
+        :default-sort="{prop: 'begin_time', order: 'descending'}"
+        style="width: 100%"
+        align="center"
+      >
         <el-table-column prop="name" label="姓名" align="center"></el-table-column>
         <el-table-column prop="phone" label="联系电话" align="center"></el-table-column>
         <el-table-column prop="wx" label="微信" align="center"></el-table-column>
-        <!-- <el-table-column prop="mailbox" label="邮箱" align="center"></el-table-column> -->
         <el-table-column prop="vip" label="vip" align="center" :formatter="switchConvert"></el-table-column>
-        <el-table-column label="更新日期" align="center">
+        <el-table-column prop="begin_time" sortable label="更新日期" align="center">
           <template slot-scope="scope">
             <span>{{ Date.format(scope.row.begin_time) }}</span>
           </template>
@@ -39,9 +43,9 @@
               placement="top-start"
               width="200"
               trigger="hover"
-              :content="scope.row.leave"
+              :content="scope.row.leaving"
             >
-              <span slot="reference">{{ scope.row.leave }}</span>
+              <span slot="reference">{{ scope.row.leaving }}</span>
             </el-popover>
           </template>
         </el-table-column>
@@ -91,7 +95,7 @@ export default {
         endTime: "",
         searchName: ""
       },
-      pageTotal: 2,
+      pageTotal: 1,
       updateUserInfoDialog: {
         show: false,
         dialogRow: {}
@@ -104,27 +108,24 @@ export default {
   computed: {},
   mounted() {
     this.getDataList();
+    this.setTableHeight();
   },
   methods: {
     setTableHeight() {
       this.$nextTick(() => {
-        this.tableHeight = document.body.clientHeight - 300;
+        this.tableHeight = document.body.clientHeight - 250;
       });
     },
     // 获取列表数据
     getDataList() {
-      // this.paginationForm.startTime = Date.getTime();
-      // this.paginationForm.endTime = Date.getNewTime();
-      delete this.paginationForm.startTime;
-      delete this.paginationForm.endTime;
       const form = Object.assign({}, this.paginationForm);
-      userInfo(form).then(res => {
+      userInfo(form).then(res => { 
         this.tableData = res.data || [];
-        this.pageTotal = res.data.count;
+        this.pageTotal = res.count;
       });
     },
 
-    switchConvert(row) {      
+    switchConvert(row) {
       if (row.vip) {
         return "是";
       } else if (!row.vip) {
@@ -160,7 +161,15 @@ export default {
     deleteUser(row) {
       this.alertMsgBox()
         .then(() => {
-          this.message("删除客户成功");
+          row.opr = "delete";
+          userInfo(row).then(res => {
+            if (res.success === true) {
+              this.message(res.msg);
+              this.getDataList();
+            } else {
+              this.message(res.msg);
+            }
+          });
         })
         .catch(err => {
           this.message("已取消", "info");
@@ -185,17 +194,19 @@ export default {
     },
     // 改变日期
     changeDate(date) {
-      console.log(date, "我是日期");
+      this.paginationForm.startTime = date ? Date.formatDate(date[0]) : "";
+      this.paginationForm.endTime = date ? Date.formatDate(date[1]) : "";
+      this.getDataList();
     },
     // 搜索客户列表
     searchUserList(searchVal) {
       console.log(searchVal, "我是搜索");
       this.paginationForm.searchName = searchVal;
       this.getDataList();
-      setTimeout(() => {
-        this.$refs.search.searchVal = "";
-        this.paginationForm.searchName = "";
-      }, 1000);
+      // setTimeout(() => {
+      //   this.$refs.search.searchVal = "";
+      //   this.paginationForm.searchName = "";
+      // }, 1000);
     }
   }
 };

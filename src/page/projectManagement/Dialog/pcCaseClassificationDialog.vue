@@ -20,7 +20,11 @@
           <el-switch v-model="ruleForm.enable" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
 
-        <el-form-item prop="type" label="分类名称">
+        <el-form-item prop="type_name" label="分类名称">
+          <el-input v-model="ruleForm.type_name"></el-input>
+        </el-form-item>
+
+        <el-form-item prop="type" label="分类">
           <el-input v-model="ruleForm.type"></el-input>
         </el-form-item>
 
@@ -54,12 +58,14 @@ export default {
       isVisible: this.isShow,
       ruleForm: {
         enable: true,
-        type: ""
+        type: "",
+        type_name: ''
         // jumpAddress: "www.baidu.com"
       },
       test: true,
       form_rules: {
-        type: [{ required: true, message: "分类不能为空", trigger: "blur" }]
+        type: [{ required: true, message: "分类不能为空", trigger: "blur" }],
+        type_name: [{ required: true, message: "分类名称不能为空", trigger: "blur" }]
       },
       //详情弹框信息
       dialog: {
@@ -87,7 +93,7 @@ export default {
   },
   created() {},
   mounted() {
-    if (this.dialogRow.title === "添加案例分类") {
+    if (this.dialogRow.title === "添加网站案例分类") {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
       });
@@ -110,7 +116,7 @@ export default {
           const form = this.ruleForm;
           console.log(form, "form");
 
-          if (this.dialogRow.title === "添加案例分类") {
+          if (this.dialogRow.title === "添加网站案例分类") {
             this.ruleForm.opr = "add";
             getCaseType(form).then(res => {
               this.$message({

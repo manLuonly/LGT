@@ -178,7 +178,6 @@ export default {
           const form = this.ruleForm;
           this.ruleForm.pid = this.systemType; // 获取系统类型
           delete form.title;
-          // add
           if (this.dialogRow.title === "添加订单详情") {
             this.ruleForm.opr = "add";
             form.begin_time = Date.formatDate(form.begin_time);
@@ -190,7 +189,6 @@ export default {
               this.$emit("getOrderList");
             });
           } else {
-            // edit
             this.ruleForm.opr = "update";
             form.begin_time = Date.Conversiontime(form.begin_time);
             form.of_time = Date.Conversiontime(form.of_time);

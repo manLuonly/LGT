@@ -39,10 +39,26 @@
     <search @searchUserList="searchUserList($event)" ref="search"></search>
 
     <div class="table_container">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table
+        :data="tableData"
+        :height="tableHeight"
+        :default-sort="{prop: 'of_time', order: 'descending'}"
+        style="width: 100%"
+      >
         <el-table-column prop="name" label="客户姓名" align="center"></el-table-column>
         <el-table-column prop="phone" label="联系电话" align="center" width="110"></el-table-column>
-        <el-table-column prop="service" label="服务项目" align="center" width="150"></el-table-column>
+        <el-table-column prop="service" label="服务项目" align="center">
+          <template slot-scope="scope">
+            <el-popover
+              placement="top-start"
+              width="200"
+              trigger="hover"
+              :content="scope.row.service"
+            >
+              <span slot="reference">{{ scope.row.service }}</span>
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column
           v-if="paginationForm.pid === 'pc' "
           prop="email"
@@ -50,17 +66,17 @@
           align="center"
           width="150"
         ></el-table-column>
-        <el-table-column label="开始时间" align="center" width="140">
+        <el-table-column prop="begin_time" sortable label="开始时间" align="center" width="140">
           <template slot-scope="scope">
             <span>{{ Date.format(scope.row.begin_time) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="结束时间" align="center" width="140">
+        <el-table-column prop="of_time" sortable label="结束时间" align="center" width="140">
           <template slot-scope="scope">
             <span>{{ Date.format(scope.row.of_time) }}</span>
           </template>
         </el-table-column>
-        <el-table-column v-if="paginationForm.pid === 'pc' " label="留言" align="center"  >
+        <el-table-column v-if="paginationForm.pid === 'pc' " label="留言" align="center">
           <template slot-scope="scope">
             <el-popover
               placement="top-start"
@@ -72,13 +88,15 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column v-if="paginationForm.pid === 'pc' " prop="state" label="状态" align="center" :formatter="switchConvert">
-          <!-- <template slot-scope="scope">
-            <span :class="addClassStatus(scope.row.orderStatus)">{{ scope.row.orderStatus }}</span>
-          </template>-->
+        <el-table-column v-if="paginationForm.pid === 'pc'" prop="state" label="状态" align="center">
+          <template slot-scope="scope">
+            <span
+              :class="switchConverObj(scope.row.state).cls"
+            >{{ switchConverObj(scope.row.state).val }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="money" label="交易金额" align="center"></el-table-column>
-        <el-table-column prop="operation" align="center" label="操作" width="180">
+        <el-table-column prop="operation" align="center" label="操作" width="150">
           <template slot-scope="scope">
             <el-button
               icon="edit"
@@ -152,11 +170,12 @@ export default {
   },
   mounted() {
     this.getDataList();
+    this.setTableHeight();
   },
   methods: {
     setTableHeight() {
       this.$nextTick(() => {
-        this.tableHeight = document.body.clientHeight - 300;
+        this.tableHeight = document.body.clientHeight - 250;
       });
     },
     // 获取列表数据
@@ -168,32 +187,21 @@ export default {
         this.pageTotal = res.count; // 总条数
       });
     },
-    switchConvert(row) {
-      if (row.state == 0) {
-        return "已完成";
-      } else if (row.state == 1) {
-        return "进行中";
-      } else {
-        return "未完成";
-      }
-      return row.state;
-    },
-    // 根据状态添加class
-    addClassStatus(val) {
-      switch (val) {
-        case "进行中":
-          return "processing";
-          break;
-        case "已完成":
-          return "completed";
-          break;
-        case "未完成":
-          return "undone";
-          break;
-        default:
-          return "processing";
-          break;
-      }
+    switchConverObj(val = 2) {
+      return {
+        0: {
+          val: "已完成",
+          cls: '"completed"'
+        },
+        1: {
+          val: "进行中",
+          cls: "processing"
+        },
+        2: {
+          val: "未完成",
+          cls: "undone"
+        }
+      }[val];
     },
     // 上下分页
     handleCurrentChange(val) {
@@ -207,8 +215,8 @@ export default {
     },
     // 订单
     lookorderStatus(row) {
-      console.log(row,'row');
-      
+      console.log(row, "row");
+
       if (this.dialogTitle == "添加订单详情") {
         this.ruleForm.title = "添加订单详情";
         this.updateOrderDialog.dialogRow = { ...this.ruleForm };
@@ -218,26 +226,21 @@ export default {
       }
       this.showOrderDialog();
     },
-    // 获取订单列表
-    getOrderList() {},
     // 删除订单详情
-    deleteOrder() {
+    deleteOrder(row) {
+      row.opr = "delete";
       this.alertMsgBox()
         .then(() => {
-          this.message("删除订单成功");
+          userOrderInfo(row).then(res => {
+            this.message(res.msg);
+            if (res.success) {
+              this.getDataList();
+            }
+          });
         })
         .catch(err => {
           this.message("已取消", "info");
         });
-    },
-    // 隐藏订单详情dialog
-    hideOrderDialog() {
-      // this.updateOrderDialog.show = false;
-      if (this.systemType == "pc") {
-        this.updateOrderDialog.pcShow = false;
-      } else {
-        this.updateOrderDialog.smShow = false;
-      }
     },
     // 展示订单详情dialog
     showOrderDialog() {
@@ -245,6 +248,14 @@ export default {
         this.updateOrderDialog.pcShow = true;
       } else {
         this.updateOrderDialog.smShow = true;
+      }
+    },
+    // 隐藏订单详情dialog
+    hideOrderDialog() {
+      if (this.systemType == "pc") {
+        this.updateOrderDialog.pcShow = false;
+      } else {
+        this.updateOrderDialog.smShow = false;
       }
     },
     // 选择系统类型(pc/sm)
@@ -265,8 +276,10 @@ export default {
       console.log(searchVal, "我是搜索");
       this.paginationForm.searchName = searchVal;
       this.getDataList();
-      this.$refs.search.searchVal = "";
-      this.paginationForm.searchName = "";
+
+      // --------------->问号?
+      // this.$refs.search.searchVal = "";
+      // this.paginationForm.searchName = "";
     }
   }
 };
