@@ -20,11 +20,15 @@
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
-          <el-input v-model.number="ruleForm.phone" maxlength="11"></el-input>
+          <el-input v-model="ruleForm.phone" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item label="服务项目">
           <el-checkbox-group v-model="service" @change="changeProject">
-            <el-checkbox v-for="item in serviceOptions" :label="item.type" :key="item.type">{{ item.type_name }}</el-checkbox>
+            <el-checkbox
+              v-for="item in serviceOptions"
+              :label="item.type"
+              :key="item.type"
+            >{{ item.type_name }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="邮箱">
@@ -34,12 +38,18 @@
           <el-date-picker
             v-model="ruleForm.begin_time"
             :disabled="isEdit"
+            :picker-options="startDatePicker"
             type="date"
             placeholder="选择日期"
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="结束日期" prop="of_time">
-          <el-date-picker v-model="ruleForm.of_time" type="date" placeholder="选择日期"></el-date-picker>
+          <el-date-picker
+            v-model="ruleForm.of_time"
+            :picker-options="endDatePicker"
+            type="date"
+            placeholder="选择日期"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="留言">
           <el-input type="textarea" v-model="ruleForm.leaving"></el-input>
@@ -141,7 +151,9 @@ export default {
       ],
       isVisible: this.isShow,
       isEdit: false,
-      service: []
+      service: [],
+      startDatePicker: this.beginDate(),
+      endDatePicker: this.processDate()
     };
   },
   props: {
@@ -152,6 +164,10 @@ export default {
     ...mapGetters(["systemType"])
   },
   mounted() {
+    if (this.dialogRow.type) {
+      this.service = this.dialogRow.type.split(",");
+    }
+
     if (this.dialogRow.title === "添加订单详情") {
       this.$nextTick(() => {
         this.$refs["ruleForm"].resetFields();
@@ -168,7 +184,8 @@ export default {
       const form = { opr: "list", pid: "pc", pageNum: 1, pageSize: 20 };
       getCaseType(form).then(res => {
         this.serviceOptions = res.data.map(i => i) || [];
-        this.service =  res.data.map(i => i.type_name) || [];
+        // this.service = res.data.map(i => i.type_name) || []; ..
+        // this.service =  res.data.map(i => i.type) || [];
       });
     },
     // 发送表单
@@ -208,11 +225,41 @@ export default {
     // 改变服务项目
     changeProject(value) {
       console.log(value, "project");
-      this.ruleForm.type = value.join(','); // 已选服务项目
+      this.ruleForm.type = value.join(","); // 已选服务项目
     },
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
+    },
+    // 处理开始日期
+    processDate() {
+      const self = this;
+      return {
+        disabledDate(time) {
+          if (self.ruleForm.begin_time) {
+            //如果开始时间不为空，则结束时间大于开始时间
+            return (
+              new Date(self.ruleForm.begin_time).getTime() > time.getTime()
+            );
+          } else {
+            // return time.getTime() > Date.now()//开始时间不选时，结束时间最大值小于等于当天
+          }
+        }
+      };
+    },
+    // 处理结束日期
+    beginDate() {
+      const self = this;
+      return {
+        disabledDate(time) {
+          if (self.ruleForm.of_time) {
+            //如果结束时间不为空，则小于结束时间
+            return new Date(self.ruleForm.of_time).getTime() < time.getTime();
+          } else {
+            // return time.getTime() > Date.now()//开始时间不选时，结束时间最大值小于等于当天
+          }
+        }
+      };
     }
   }
 };

@@ -20,12 +20,40 @@
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
-          <el-input v-model.number="ruleForm.phone" maxlength="11"></el-input>
+          <el-input v-model="ruleForm.phone" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item label="服务项目" prop="service">
           <el-select v-model="ruleForm.service" placeholder="请选择服务项目">
-            <el-option v-for="item in serviceOptions" :key="item.type" :label="item.type_name" :value="item.type_name"></el-option>
+            <el-option
+              v-for="item in serviceOptions"
+              :key="item.type"
+              :label="item.type_name"
+              :value="item.type"
+            ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="开始日期" prop="begin_time">
+          <el-date-picker
+            v-model="ruleForm.begin_time"
+            :disabled="isEdit"
+            :picker-options="startDatePicker"
+            type="date"
+            placeholder="选择日期"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="结束日期" prop="of_time">
+          <el-date-picker
+            v-model="ruleForm.of_time"
+            :picker-options="endDatePicker"
+            type="date"
+            placeholder="选择日期"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="金额" prop="money">
+          <el-input
+            v-model.number="ruleForm.money"
+            onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -65,7 +93,10 @@ export default {
       ruleForm: {
         name: "",
         phone: "",
-        service: ""
+        service: "",
+        begin_time: "",
+        of_time: "",
+        money: ""
       },
       form_rules: {
         name: [{ required: true, message: "请输入客户姓名", trigger: "blur" }],
@@ -75,11 +106,21 @@ export default {
         ],
         service: [
           { required: true, message: "请选择服务项目", trigger: "change" }
-        ]
+        ],
+        begin_time: [
+          { required: true, message: "请选择开始日期", trigger: "blur" }
+        ],
+        of_time: [
+          { required: true, message: "请选择结束日期", trigger: "blur" }
+        ],
+        money: [{ required: true, message: "请输入金额", trigger: "blur" }]
       },
       serviceOptions: [],
       isVisible: this.isShow,
-      service: ""
+      service: [],
+      isEdit: false,
+      startDatePicker: this.beginDate(),
+      endDatePicker: this.processDate()
     };
   },
   props: {
@@ -110,11 +151,14 @@ export default {
         if (valid) {
           const form = this.ruleForm;
           this.ruleForm.pid = this.systemType; // 获取系统类型
+          this.ruleForm.pid = "sm";
           delete form.title;
           // add
           if (this.dialogRow.title === "添加订单详情") {
             this.ruleForm.opr = "add";
-            this.ruleForm.pid = "sm";
+            this.ruleForm.type = this.ruleForm.service;
+            form.begin_time = Date.formatDate(form.begin_time);
+            form.of_time = Date.formatDate(form.of_time);
             userOrderInfo(form).then(res => {
               this.$refs["ruleForm"].resetFields();
               this.closeDialog();
@@ -124,7 +168,8 @@ export default {
           } else {
             //   edit
             this.ruleForm.opr = "update";
-            this.ruleForm.pid = "sm";
+            form.begin_time = Date.Conversiontime(form.begin_time);
+            form.of_time = Date.Conversiontime(form.of_time);
             userOrderInfo(form).then(res => {
               this.$refs["ruleForm"].resetFields();
               this.closeDialog();
@@ -138,6 +183,36 @@ export default {
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
+    },
+    // 处理开始日期
+    processDate() {
+      const self = this;
+      return {
+        disabledDate(time) {
+          if (self.ruleForm.begin_time) {
+            //如果开始时间不为空，则结束时间大于开始时间
+            return (
+              new Date(self.ruleForm.begin_time).getTime() > time.getTime()
+            );
+          } else {
+            // return time.getTime() > Date.now()//开始时间不选时，结束时间最大值小于等于当天
+          }
+        }
+      };
+    },
+    // 处理结束日期
+    beginDate() {
+      const self = this;
+      return {
+        disabledDate(time) {
+          if (self.ruleForm.of_time) {
+            //如果结束时间不为空，则小于结束时间
+            return new Date(self.ruleForm.of_time).getTime() < time.getTime();
+          } else {
+            // return time.getTime() > Date.now()//开始时间不选时，结束时间最大值小于等于当天
+          }
+        }
+      };
     }
   }
 };

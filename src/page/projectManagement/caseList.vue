@@ -24,7 +24,7 @@
     >添加案例</el-button>
 
     <select-system @selectSystem="selectSystem($event)"></select-system>
-    <selectCaseType :caseList="caseList" @selectCaseType="selectCaseType($event)"></selectCaseType>
+    <select-case-type :caseList="caseList" @selectCaseType="selectCaseType($event)"></select-case-type>
     <search @searchUserList="searchUserList($event)" ref="search"></search>
 
     <div class="table_container">
@@ -225,13 +225,20 @@ export default {
     },
     // 删除数据
     deleteCaeList(row) {
-      this.alertMsgBox()
-        .then(() => {
-          this.message("删除案例成功");
-        })
-        .catch(err => {
-          this.message("已取消", "info");
-        });
+      const form = this.paginationForm;
+      this.paginationForm.id = row.id;
+      this.paginationForm.opr = "delete";
+
+      caseList(form).then(res => {
+        this.alertMsgBox()
+          .then(() => {
+            this.message("删除案例成功");
+            this.getDataList();
+          })
+          .catch(err => {
+            this.message("已取消", "info");
+          });
+      });
     },
     // 改变 Switch状态
     changeSwitch(val) {

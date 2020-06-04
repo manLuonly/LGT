@@ -208,12 +208,6 @@ export default {
       console.log(searchVal, "我是搜索");
       this.paginationForm.searchName = searchVal;
       this.getDataList();
-
-      // --> (来自汤某人问号 2020 - 06 - 03 03 : 00)
-      // setTimeout(() => {
-      //   this.$refs.search.searchVal = "";
-      //   this.paginationForm.searchName = "";
-      // }, 1000);
     }
   }
 };

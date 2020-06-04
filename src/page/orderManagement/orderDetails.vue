@@ -146,7 +146,8 @@ export default {
         pageSize: 20,
         startTime: "",
         endTime: "",
-        searchName: ""
+        searchName: "",
+        type: ""
       },
       dialog: {
         width: "400px",
@@ -286,14 +287,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.table_container {
-  padding: 10px;
-  background: #fff;
-  border-radius: 2px;
-}
-
 .order-details {
   padding: 20px;
+  .table_container {
+    padding: 10px;
+    background: #fff;
+    border-radius: 2px;
+    /deep/ .el-popover__reference {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
   .add-order-details {
     padding-bottom: 15px;
   }

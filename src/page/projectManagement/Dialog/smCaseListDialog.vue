@@ -32,27 +32,18 @@
           </el-select>
         </el-form-item>
 
-        <!-- <el-form-item prop="jumpAddress" label="上级分类">
-          <span
-            v-for="(item,index) in ClassificationStatusItems"
-            :key="index"
-            @click="getClassificationStatus(index)"
-            :class="{active:index===staticNumber}"
-          >{{ item.name }}</span>
-          <el-input v-model="ruleForm.jumpAddress" :disabled="isCanSelectAddress"></el-input>
-        </el-form-item>-->
-
         <el-form-item prop="type_name" label="案例名称">
           <el-input v-model="ruleForm.type_name"></el-input>
         </el-form-item>
 
-        <el-form-item prop="accoutCash" label="案例图">
+        <el-form-item label="案例图">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://beta.fang.ekeae.com/wx/uploadImageOne"
             :show-file-list="false"
             :on-success="successImg"
-            :before-upload="beforeUploadImg"
+            :before-upload="beforeUploadIcon"
+            accept=".jpg, .jpeg, .png, .JPG, .JPEG"
             :limit="1"
           >
             <img v-if="imageUrl" :src="imageUrl" class="avatar" />
@@ -60,26 +51,14 @@
           </el-upload>
         </el-form-item>
 
-        <!-- <el-form-item label="文本对齐">
-          <el-select v-model="ruleForm.alignment" placeholder="请选择对齐方式">
-            <el-option
-              v-for="item in alignmentOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="文本">
-          <el-input type="textarea" v-model="ruleForm.text"></el-input>
-        </el-form-item> -->
-
         <el-form-item label="案例详情图">
           <el-upload
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://beta.fang.ekeae.com/wx/uploadImageOne"
             list-type="picture-card"
+            :show-file-list="true"
             :on-preview="handlePictureCardPreview"
+            :before-upload="beforeUploadImg"
+            :on-success="uploadSuccess"
             :on-remove="removeImgList"
             :limit="9"
             multiple
@@ -118,9 +97,7 @@ export default {
         url: ""
       },
       form_rules: {
-        type: [
-          { required: true, message: "分类不能为空", trigger: "change" }
-        ],
+        type: [{ required: true, message: "分类不能为空", trigger: "change" }],
         type_name: [
           { required: true, message: "案例名称不能为空", trigger: "blur" }
         ]
@@ -134,32 +111,15 @@ export default {
       },
       isClear: false,
       caseOptions: [],
-      staticNumber: 0,
-      ClassificationStatusItems: [
-        {
-          name: "默认"
-        },
-        {
-          name: "自定义"
-        }
-      ],
       isCanSelectAddress: true,
-      alignmentOptions: [
-        {
-          value: 0,
-          label: "文本左对齐"
-        },
-        {
-          value: 1,
-          label: "文本居中对齐"
-        },
-        {
-          value: 2,
-          label: "文本右对齐"
-        }
-      ],
       dialogImageUrl: "",
-      dialogVisible: false
+      dialogVisible: false,
+      file: "",
+      fileName: "",
+      iconBase64: "",
+      files: "",
+      fileNames: "",
+      fileList: []
     };
   },
   props: {
@@ -172,7 +132,13 @@ export default {
   computed: {},
   created() {},
   mounted() {
-    if (this.dialogRow.type === "添加小程序案例") {
+    this.imageUrl = this.noBaseUrlhandleSmImgUrl(
+      this.dialogRow.type_name,
+      this.dialogRow.suffix,
+      this.dialogRow.directory
+    );
+
+    if (this.dialogRow.title === "添加小程序案例") {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
       });
@@ -196,37 +162,72 @@ export default {
     },
 
     successImg(res, file) {
-      debugger
       this.imageUrl = URL.createObjectURL(file.raw);
     },
-    beforeUploadImg(file) {
-      const isJPG = file.type === "image/jpg" || file.type === "image/png";
+
+    beforeUploadIcon(file) {
+      this.ruleForm.suffix = file.type.split("/")[1];
+      this.file = file;
+      const isImg =
+        file.type === "image/jpg" ||
+        file.type === "image/jpeg" ||
+        file.type === "image/png";
       const isLt5M = file.size / 1024 / 1024 < 5;
 
-      if (!isJPG) {
-        this.$message.error("上传缩略图只能是 JPG或者PNG 格式!");
+      if (!isImg) {
+        this.$message.error("只能上传图片格式为jpg,jpeg,png!");
       }
       if (!isLt5M) {
-        this.$message.error("上传缩略图大小不能超过 5MB!");
+        this.$message.error("上传图片大小不能超过 5MB!");
       }
-      return isJPG && isLt5M;
+      this.fileName = file.name;
+      return isImg && isLt5M;
+    },
+
+    beforeUploadImg(file) {
+      this.files = file;
+      const isImg =
+        file.type === "image/jpg" ||
+        file.type === "image/jpeg" ||
+        file.type === "image/png";
+      const isLt5M = file.size / 1024 / 1024 < 5;
+
+      if (!isImg) {
+        this.$message.error("只能上传图片格式为jpg,jpeg,png!");
+      }
+      if (!isLt5M) {
+        this.$message.error("上传图片大小不能超过 5MB!");
+      }
+      this.fileNames = file.name;
+      return isImg && isLt5M;
+    },
+
+    // 图片上传成功
+    uploadSuccess(res, file, fileList) {
+      this.fileList = fileList;
     },
 
     //表单提交
     onSubmit(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          //表单数据验证完成之后，提交数据;
-          let formData = this[form];
-          const para = Object.assign({}, formData);
-          console.log(para);
-          if (this.dialogRow.type === "添加小程序案例") {
+          const form = this.ruleForm;
+          this.ruleForm.pid = "sm"; // 系统类型
+          this.ruleForm.directory = `mg/${this.ruleForm.type}`; // 存放文件目录(app,logo...)
+
+          console.log(form);
+          if (this.dialogRow.title === "添加小程序案例") {
             this.showLoading();
-            updateMoney(para).then(res => {
-              this.$message({
-                message: "修改成功",
-                type: "success"
-              });
+            this.file
+              ? this.iconToBase64(this.file)
+              : (this.ruleForm.base64Case = "");
+
+            this.fileList.map(item => {
+              this.imageToBase64(item.raw);
+            });
+
+            caseList(form).then(res => {
+              this.message("新增案例列表成功");
               this.hideLoading();
               this.$refs["form"].resetFields();
               this.isVisible = false;
@@ -234,11 +235,8 @@ export default {
             });
           } else {
             this.showLoading();
-            addMoney(para).then(res => {
-              this.$message({
-                message: "新增成功",
-                type: "success"
-              });
+            caseList(para).then(res => {
+              this.message("修改案例列表成功");
               this.hideLoading();
               this.$refs["form"].resetFields();
               this.isVisible = false;
@@ -248,26 +246,21 @@ export default {
         }
       });
     },
-    // 地址是否自定义
-    getClassificationStatus(index) {
-      this.staticNumber = index;
-      if (index === 1) {
-        this.isCanSelectAddress = false;
-      } else {
-        this.isCanSelectAddress = true;
-      }
-    },
+
     removeImgList(file, fileList) {
       console.log(file, fileList);
     },
+
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
+
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
     },
+
     // 显示加载框
     showLoading() {
       const loading = this.$loading({
@@ -276,12 +269,51 @@ export default {
         spinner: "el-icon-loading",
         background: "rgba(0, 0, 0, 0.7)"
       });
-      return loading
+      return loading;
     },
+
     // 隐藏加载框
     hideLoading() {
-     let loading = this.show();
-     loading.close();
+      let loading = this.show();
+      loading.close();
+    },
+
+    // 案例图二进制转base64
+    iconToBase64(file) {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        // console.log("cion file 转 base64结果：" + reader.result);
+        this.ruleForm.base64Case = reader.result.replace(
+          /^data:image\/\w+;base64,/,
+          ""
+        );
+      };
+      reader.onerror = function(error) {
+        console.log("Error: ", error);
+      };
+    },
+
+    // 案例详情图二进制转base64
+    imageToBase64(file) {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        // console.log("img file 转 base64结果：" + reader.result);
+        this.ruleForm.base64Details.push(
+          reader.result.replace(/^data:image\/\w+;base64,/, "")
+        );
+      };
+      reader.onerror = function(error) {
+        console.log("Error: ", error);
+      };
+    },
+
+    // 拼接图片
+    noBaseUrlhandleSmImgUrl(name, suffix, directory) {
+      if (name && suffix && directory) {
+        return `/zngl/fileOperate?name=${name}&suffix=${suffix}&directory=${directory}`;
+      }
     }
   }
 };

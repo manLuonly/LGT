@@ -46,13 +46,14 @@
           <el-input v-model="ruleForm.type_name"></el-input>
         </el-form-item>
 
-        <el-form-item prop="accoutCash" label="案例图">
+        <el-form-item label="案例图">
           <el-upload
             class="avatar-uploader"
             action="http://beta.fang.ekeae.com/wx/uploadImageOne"
             :show-file-list="false"
             :on-success="successImg"
-            :before-upload="beforeUploadImg"
+            :before-upload="beforeUploadIcon"
+            accept=".jpg, .jpeg, .png, .JPG, .JPEG"
             :limit="1"
           >
             <img v-if="imageUrl" :src="imageUrl" class="avatar" />
@@ -62,17 +63,21 @@
 
         <el-form-item label="案例详情图">
           <el-upload
+            :file-list="caseFileList"
             action="http://beta.fang.ekeae.com/wx/uploadImageOne"
             list-type="picture-card"
+            :show-file-list="true"
             :on-preview="handlePictureCardPreview"
+            :before-upload="beforeUploadImg"
+            :on-success="uploadSuccess"
             :on-remove="removeImgList"
             :limit="9"
             multiple
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt />
+          <el-dialog :visible.sync="dialogVisible" >
+            <img width="100%" :src="dialogImageUrl" />
           </el-dialog>
         </el-form-item>
       </el-form>
@@ -101,7 +106,8 @@ export default {
         enable: true,
         suffix: "",
         directory: "",
-        url: ""
+        url: "",
+        base64Details: []
       },
       form_rules: {
         type: [{ required: true, message: "分类不能为空", trigger: "change" }],
@@ -131,7 +137,13 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       file: "",
-      fileName: ""
+      fileName: "",
+      iconBase64: "",
+      files: "",
+      fileNames: "",
+      fileList: [],
+      caseFileList: [],
+      i: 0
     };
   },
   props: {
@@ -144,6 +156,26 @@ export default {
   computed: {},
   created() {},
   mounted() {
+    console.log(this.dialogRow, "dialogRow");
+
+    this.imageUrl = this.noBaseUrlhandleSmImgUrl(
+      this.dialogRow.type_name,
+      this.dialogRow.suffix,
+      this.dialogRow.directory
+    );
+
+    if (this.dialogRow.type_name_details_num > 0) {
+      let res = this.spliceImgsUrl(
+        this.dialogRow.type_name_details_num,
+        this.dialogRow.suffix,
+        this.dialogRow.directory,
+        this.dialogRow.type_name
+      );
+      this.caseFileList.push(res);
+    }
+
+    console.log(this.caseFileList, "this.caseFileList");
+
     if (this.dialogRow.title === "添加网站案例") {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
@@ -151,6 +183,7 @@ export default {
     } else {
       this.ruleForm = this.dialogRow;
     }
+
     this.getCaseTypeList();
   },
   methods: {
@@ -170,7 +203,9 @@ export default {
     successImg(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
     },
-    beforeUploadImg(file) {
+
+    beforeUploadIcon(file) {
+      this.ruleForm.suffix = file.type.split("/")[1];
       this.file = file;
       const isImg =
         file.type === "image/jpg" ||
@@ -188,55 +223,95 @@ export default {
       return isImg && isLt5M;
     },
 
+    beforeUploadImg(file) {
+      console.log(file, "file");
+
+      this.files = file;
+      const isImg =
+        file.type === "image/jpg" ||
+        file.type === "image/jpeg" ||
+        file.type === "image/png";
+      const isLt5M = file.size / 1024 / 1024 < 5;
+
+      if (!isImg) {
+        this.$message.error("只能上传图片格式为jpg,jpeg,png!");
+      }
+      if (!isLt5M) {
+        this.$message.error("上传图片大小不能超过 5MB!");
+      }
+      this.fileNames = file.name;
+      return isImg && isLt5M;
+    },
+
+    // 图片上传成功
+    uploadSuccess(res, file, fileList) {
+      console.log(fileList, "fileList");
+
+      this.fileList = fileList;
+    },
+
     //表单提交
     onSubmit(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
           const form = this.ruleForm;
-          form.pid = this.systemType; // 获取系统类型
+          this.ruleForm.pid = "pc"; // 系统类型
+          this.ruleForm.directory = `mg/${this.ruleForm.type}`; // 存放文件目录(app,logo...)
+
           delete form.title;
           console.log(form, "form");
           if (this.dialogRow.title === "添加网站案例") {
             this.ruleForm.opr = "add";
             this.showLoading();
+            this.file
+              ? this.iconToBase64(this.file)
+              : (this.ruleForm.base64Case = "");
 
-            let fileFormData = new FormData();
-            // fileFormData.append("file", this.file, this.fileName);
-            let requestConfig = {
-              headers: {
-                "Content-Type": "multipart/form-data"
-              }
-            };
-            
-            // this.$axios.post(
-            //   `zngl/caseList?form=${ form} }`,
-            //   fileFormData,
-            //   requestConfig
-            // ).then(res => {
-            //   console.log(res,'ressssss');
-              
-            // })
-            caseList(form, fileFormData, requestConfig).then(res => {
-              this.message("新增案例列表成功");
-              this.hideLoading();
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
+            this.fileList.map(item => {
+              this.imageToBase64(item.raw);
             });
+
+            setTimeout(() => {
+              caseList(form).then(res => {
+                this.message("新增案例列表成功");
+                this.hideLoading();
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              });
+            }, 500);
           } else {
             this.ruleForm.opr = "update";
             this.showLoading();
-            // caseList(form).then(res => {
-            //   this.message("修改案例列表成功");
-            //   this.hideLoading();
-            //   this.$refs["form"].resetFields();
-            //   this.isVisible = false;
-            //   this.$emit("getCaseList");
-            // });
+
+            console.log(this.file, "this.file");
+
+            this.file
+              ? this.iconToBase64(this.file)
+              : (this.ruleForm.base64Case = "");
+
+            console.log(this.fileList, "this.fileList");
+
+            this.fileList
+              ? this.fileList.map(item => {
+                  this.imageToBase64(item.raw);
+                })
+              : (this.ruleForm.base64Details = []);
+
+            setTimeout(() => {
+              caseList(form).then(res => {
+                this.message("修改案例列表成功");
+                this.hideLoading();
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              });
+            }, 500);
           }
         }
       });
     },
+
     // 地址是否自定义
     getClassificationStatus(index) {
       this.staticNumber = index;
@@ -246,17 +321,21 @@ export default {
         this.isCanSelectAddress = true;
       }
     },
+
     removeImgList(file, fileList) {
       console.log(file, fileList);
     },
+
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
+
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
     },
+
     // 显示加载框
     showLoading() {
       const loading = this.$loading({
@@ -267,17 +346,63 @@ export default {
       });
       return loading;
     },
+
     // 隐藏加载框
     hideLoading() {
       let loading = this.showLoading();
       loading.close();
     },
-    sendImg(form) {
-      this.$axios.post(
-        `http://192.168.31.50:80/zngl/caseList?form=${form}`,
-        fileFormData,
-        requestConfig
-      );
+
+    // 案例图二进制转base64
+    iconToBase64(file) {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        // console.log("cion file 转 base64结果：" + reader.result);
+        this.ruleForm.base64Case = reader.result.replace(
+          /^data:image\/\w+;base64,/,
+          ""
+        );
+      };
+      reader.onerror = function(error) {
+        console.log("Error: ", error);
+      };
+    },
+
+    // 案例详情图二进制转base64
+    imageToBase64(file) {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        // console.log("img file 转 base64结果：" + reader.result);
+        this.ruleForm.base64Details.push(
+          reader.result.replace(/^data:image\/\w+;base64,/, "")
+        );
+      };
+      reader.onerror = function(error) {
+        console.log("Error: ", error);
+      };
+    },
+
+    // 拼接案例图片
+    noBaseUrlhandleSmImgUrl(name, suffix, directory) {
+      if (name && suffix && directory) {
+        return `/zngl/fileOperate?name=${name}&suffix=${suffix}&directory=${directory}`;
+      }
+    },
+
+    // 拼接案例详情图片
+    spliceImgsUrl(type_name_details_num, suffix, directory, type_name) {
+      console.log(this.i, type_name_details_num);
+
+      while (this.i < type_name_details_num) {
+        return {
+          name: type_name,
+          url: `/zngl/fileOperate?name=${this.i +
+            1}&suffix=${suffix}&directory=${directory}/${type_name}`
+        };
+        this.i++;
+      }
     }
   }
 };
