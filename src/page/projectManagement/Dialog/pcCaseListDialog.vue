@@ -46,7 +46,8 @@
           <el-input v-model="ruleForm.type_name"></el-input>
         </el-form-item>
 
-        <el-form-item label="案例图">
+          <!-- prop="imageUrl" -->
+        <el-form-item  label="案例图">
           <el-upload
             class="avatar-uploader"
             action="http://beta.fang.ekeae.com/wx/uploadImageOne"
@@ -76,7 +77,7 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible" >
+          <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" />
           </el-dialog>
         </el-form-item>
@@ -113,7 +114,10 @@ export default {
         type: [{ required: true, message: "分类不能为空", trigger: "change" }],
         type_name: [
           { required: true, message: "案例名称不能为空", trigger: "blur" }
-        ]
+        ],
+        // imageUrl:[
+        //   { required: true, message: "案例图不能为空", trigger: "change" }
+        // ]
       },
       startStop: true,
       imageUrl: "",
@@ -143,7 +147,9 @@ export default {
       fileNames: "",
       fileList: [],
       caseFileList: [],
-      i: 0
+      i: 0,
+      deleteImg: [],
+      addImg: []
     };
   },
   props: {
@@ -165,13 +171,12 @@ export default {
     );
 
     if (this.dialogRow.type_name_details_num > 0) {
-      let res = this.spliceImgsUrl(
+      this.spliceImgsUrl(
         this.dialogRow.type_name_details_num,
         this.dialogRow.suffix,
         this.dialogRow.directory,
         this.dialogRow.type_name
       );
-      this.caseFileList.push(res);
     }
 
     console.log(this.caseFileList, "this.caseFileList");
@@ -201,6 +206,7 @@ export default {
     },
 
     successImg(res, file) {
+      
       this.imageUrl = URL.createObjectURL(file.raw);
     },
 
@@ -254,12 +260,13 @@ export default {
     onSubmit(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
+          
           const form = this.ruleForm;
           this.ruleForm.pid = "pc"; // 系统类型
           this.ruleForm.directory = `mg/${this.ruleForm.type}`; // 存放文件目录(app,logo...)
 
           delete form.title;
-          console.log(form, "form");
+
           if (this.dialogRow.title === "添加网站案例") {
             this.ruleForm.opr = "add";
             this.showLoading();
@@ -284,19 +291,24 @@ export default {
             this.ruleForm.opr = "update";
             this.showLoading();
 
-            console.log(this.file, "this.file");
-
             this.file
               ? this.iconToBase64(this.file)
               : (this.ruleForm.base64Case = "");
 
-            console.log(this.fileList, "this.fileList");
+            this.ruleForm.base64Details = [];
 
-            this.fileList
-              ? this.fileList.map(item => {
-                  this.imageToBase64(item.raw);
-                })
-              : (this.ruleForm.base64Details = []);
+            // 把新上传的图片放入数组
+            this.fileList.forEach(i => {
+              if (i.raw) {
+                this.addImg.push(i);
+              }
+            });
+
+            this.addImg.map(item => {
+              this.imageToBase64(item.raw);
+            });
+
+            console.log(this.ruleForm.base64Details, "base64Details");
 
             setTimeout(() => {
               caseList(form).then(res => {
@@ -323,7 +335,9 @@ export default {
     },
 
     removeImgList(file, fileList) {
-      console.log(file, fileList);
+      this.deleteImg.push(file);
+      console.log("现在删除的是", file, "目前数据", fileList);
+      console.log("已经删除的是", this.deleteImg);
     },
 
     handlePictureCardPreview(file) {
@@ -375,6 +389,8 @@ export default {
       reader.readAsDataURL(file);
       reader.onload = () => {
         // console.log("img file 转 base64结果：" + reader.result);
+        console.log(this.ruleForm.base64Details, "base64Details");
+
         this.ruleForm.base64Details.push(
           reader.result.replace(/^data:image\/\w+;base64,/, "")
         );
@@ -393,15 +409,13 @@ export default {
 
     // 拼接案例详情图片
     spliceImgsUrl(type_name_details_num, suffix, directory, type_name) {
-      console.log(this.i, type_name_details_num);
-
-      while (this.i < type_name_details_num) {
-        return {
+      console.log(suffix, type_name_details_num);
+      for (this.i = 0; this.i < type_name_details_num; this.i++) {
+        this.caseFileList.push({
           name: type_name,
           url: `/zngl/fileOperate?name=${this.i +
             1}&suffix=${suffix}&directory=${directory}/${type_name}`
-        };
-        this.i++;
+        });
       }
     }
   }

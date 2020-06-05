@@ -149,10 +149,12 @@ export default {
   },
   created() {},
   mounted() {
-    this.getDataList();
     this.getCaseTypeList();
     this.setTableHeight();
     this.loading = false;
+    setTimeout(() => {
+      this.getDataList();
+    }, 500);
   },
   methods: {
     setTableHeight() {
@@ -178,6 +180,7 @@ export default {
       };
       getCaseType(caseForm).then(res => {
         if (res.code === 0) {
+          this.paginationForm.type = res.data[0].type;
           this.caseList = res.data;
         }
       });
@@ -229,16 +232,17 @@ export default {
       this.paginationForm.id = row.id;
       this.paginationForm.opr = "delete";
 
-      caseList(form).then(res => {
-        this.alertMsgBox()
-          .then(() => {
+      this.alertMsgBox()
+        .then(() => {
+          caseList(form).then(res => {
             this.message("删除案例成功");
+            this.paginationForm.opr = "list";
             this.getDataList();
-          })
-          .catch(err => {
-            this.message("已取消", "info");
           });
-      });
+        })
+        .catch(err => {
+          this.message("已取消", "info");
+        });
     },
     // 改变 Switch状态
     changeSwitch(val) {
@@ -247,8 +251,10 @@ export default {
     // 选择系统类型(pc/sm)
     selectSystem(val) {
       this.paginationForm.pid = val;
-      this.getDataList();
       this.getCaseTypeList(val);
+      setTimeout(() => {
+        this.getDataList();
+      }, 500);
     },
     // 选择案例类型
     selectCaseType(val) {

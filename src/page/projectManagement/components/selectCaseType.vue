@@ -40,9 +40,8 @@ export default {
   watch: {
     // 父组件获取数据,通过props传递属于异步,子组件只能通过watch监听数据
     caseList: function() {
-      console.log(this.caseList,'this.caseList');
       
-      this.caseType = this.caseList[0].type_name;
+      this.caseType = this.caseList[0].type;
       
       this.caseTypeOptions = this.caseList;
     }
