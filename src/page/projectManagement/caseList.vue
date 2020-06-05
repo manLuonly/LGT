@@ -53,13 +53,12 @@
             <el-tag>{{ scope.row.type}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="type_name" label="名称" align="center"></el-table-column>
-        <el-table-column v-if="idFlag" prop="address" label="分类名称" align="center"></el-table-column>
-        <!-- <el-table-column label="跳转地址" align="center">
+        <el-table-column prop="type_name" label="名称" align="center">
           <template slot-scope="scope">
-            <el-input placeholder="请输入内容" v-model="scope.row.jumpAddress" :disabled="true"></el-input>
+            <span>{{ scope.row.type_name ? scope.row.type_name : scope.row.name }}</span>
           </template>
-        </el-table-column>-->
+        </el-table-column>
+        <el-table-column v-if="idFlag" prop="address" label="分类名称" align="center"></el-table-column>
         <el-table-column prop="update_time" sortable label="更新时间" align="center" width="170">
           <template slot-scope="scope">
             <el-icon name="time"></el-icon>
@@ -264,13 +263,8 @@ export default {
     },
     // 获取搜索值
     searchUserList(searchVal) {
-      console.log(searchVal, "我是搜索");
       this.paginationForm.searchName = searchVal;
       this.getDataList();
-      // setTimeout(() => {
-      //   this.$refs.search.searchVal = "";
-      //   this.paginationForm.searchName = "";
-      // }, 1000);
     }
   }
 };
