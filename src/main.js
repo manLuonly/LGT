@@ -25,7 +25,6 @@ Vue.use(commonComponents);
 
 import '@/permission' // permission control
 
-// import '@/mockjs'; // mock数据
 
 // i18n国际化
 import i18n from "@/lang";

@@ -85,7 +85,8 @@ export default {
       });
     },
     submitForm(loginForm) {
-      // setToken("Token", 'YGF-xiao-sb');
+      setToken("Token", 'YGF');
+      console.log('999');
       this.$refs[loginForm].validate(valid => {
         if (valid) {
           this.loginForm.password = this.$md5(this.loginForm.password);

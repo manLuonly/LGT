@@ -210,10 +210,8 @@ export default {
       this.$refs[form].validate(valid => {
         if (valid) {
           const form = this.ruleForm;
-          this.ruleForm.pid = "sm"; // 系统类型
           this.ruleForm.directory = `mg/${this.ruleForm.type}`; // 存放文件目录(app,logo...)
 
-          console.log(form);
           if (this.dialogRow.title === "添加小程序案例") {
             this.showLoading();
             this.file

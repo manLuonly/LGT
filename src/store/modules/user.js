@@ -1,6 +1,6 @@
 import * as mUtils from '@/utils/mUtils'
-import { logout, getUserInfo } from '@/api/user' // 导入用户信息相关接口
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { logout } from '@/api/user'
+import { getToken, removeToken } from '@/utils/auth'
 
 
 const user = {
@@ -11,6 +11,7 @@ const user = {
         roles: [],
         browserHeaderTitle: mUtils.getStore('browserHeaderTitle') || 'LGT后台管理',
         systemType: '',
+        status: 'add', // 状态(新增=add 编辑=edit)
     },
     getters: {
         token: state => state.token,
@@ -19,6 +20,7 @@ const user = {
         name: state => state.name,
         browserHeaderTitle: state => state.browserHeaderTitle,
         systemType: state => state.systemType,
+        status: state => state.status,
     },
     mutations: {
         SET_ROLES: (state, roles) => {
@@ -35,7 +37,10 @@ const user = {
         },
         SET_SYSTEMTYPE: (state, systemType) => {
             state.systemType = systemType
-        }
+        },
+        SET_ADDOREDIT: (state, status) => {
+            state.status = status
+        },
     },
     actions: {
         //登出
@@ -48,28 +53,7 @@ const user = {
                 })
             })
         },
-        // 动态修改权限;本实例中,role和token是相同的;
-        // ChangeRoles({ commit }, role) {
-        //     return new Promise(resolve => {
-        //         const token = role;
-        //         setToken("Token", token)
-        //         getUserInfo({ "token": token }).then(res => {
-        //             let data = res.data.userList;
-        //             commit('SET_ROLES', data.roles)
-        //             commit('SET_NAME', data.name)
-        //             commit('SET_AVATAR', data.avatar)
-        //             resolve()
-        //         })
-        //     })
-        // },
-
     }
 }
 
 export default user;
-
-/**
- * 1、用户退出,需要调取后台接口吗？后台具体的业务逻辑是什么？
- * 
- * 
- */

@@ -21,23 +21,12 @@
         </el-form-item>
 
         <el-form-item prop="type_name" label="分类名称">
-          <el-input v-model="ruleForm.type_name"></el-input>
+          <el-input v-model="ruleForm.type_name" maxlength="20" show-word-limit clearable></el-input>
         </el-form-item>
 
         <el-form-item prop="type" label="分类">
-          <el-input v-model="ruleForm.type"></el-input>
+          <el-input v-model="ruleForm.type" maxlength="20" show-word-limit clearable></el-input>
         </el-form-item>
-
-        <!-- 
-        <el-form-item prop="jumpAddress" label="上级分类">
-          <span
-            v-for="(item,index) in ClassificationStatusItems"
-            :key="index"
-            @click="getClassificationStatus(index)"
-            :class="{active:index===staticNumber}"
-          >{{ item.name }}</span>
-          <el-input v-model="ruleForm.jumpAddress" :disabled="isCanSelectAddress"></el-input>
-        </el-form-item>-->
       </el-form>
     </div>
     <span slot="footer" class="dialog-footer">
@@ -49,7 +38,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { getCaseType } from "@/api/caseType";
+import { addType, editType } from "@/api/caseType";
 
 export default {
   name: "addFundDialogs",
@@ -59,29 +48,21 @@ export default {
       ruleForm: {
         enable: true,
         type: "",
-        type_name: ''
-        // jumpAddress: "www.baidu.com"
+        type_name: ""
       },
       test: true,
       form_rules: {
         type: [{ required: true, message: "分类不能为空", trigger: "blur" }],
-        type_name: [{ required: true, message: "分类名称不能为空", trigger: "blur" }]
+        type_name: [
+          { required: true, message: "分类名称不能为空", trigger: "blur" }
+        ]
       },
       //详情弹框信息
       dialog: {
         width: "400px",
         formLabelWidth: "120px"
       },
-      staticNumber: 0,
-      ClassificationStatusItems: [
-        {
-          name: "默认"
-        },
-        {
-          name: "自定义"
-        }
-      ],
-      isCanSelectAddress: true
+      staticNumber: 0
     };
   },
   props: {
@@ -89,11 +70,11 @@ export default {
     dialogRow: Object
   },
   computed: {
-    ...mapGetters(["systemType"])
+    ...mapGetters(["systemType", "status"])
   },
   created() {},
   mounted() {
-    if (this.dialogRow.title === "添加网站案例分类") {
+    if (this.status === "add") {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
       });
@@ -110,30 +91,19 @@ export default {
     onSubmit(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-   
-
-          this.ruleForm.pid = this.systemType;
           const form = this.ruleForm;
-          console.log(form, "form");
 
-          if (this.dialogRow.title === "添加网站案例分类") {
-            this.ruleForm.opr = "add";
-            getCaseType(form).then(res => {
-              this.$message({
-                message: "新增案例分类成功",
-                type: "success"
-              });
+          if (this.status === "add") {
+            addType(form).then(res => {
+              this.message("新增案例分类成功");
               this.$refs["form"].resetFields();
               this.isVisible = false;
               this.$emit("getCaseList");
             });
           } else {
-            this.ruleForm.opr = "update";
-            getCaseType(form).then(res => {
-              this.$message({
-                message: "编辑案例分类成功",
-                type: "success"
-              });
+            delete
+            editType(form).then(res => {
+              this.message("编辑案例分类成功");
               this.$refs["form"].resetFields();
               this.isVisible = false;
               this.$emit("getCaseList");
@@ -144,18 +114,6 @@ export default {
           return false;
         }
       });
-    },
-    handleCaseSortNumChange(val) {
-      console.log("案例排序发生了变化" + val);
-    },
-    // 地址是否自定义
-    getClassificationStatus(index) {
-      this.staticNumber = index;
-      if (index === 1) {
-        this.isCanSelectAddress = false;
-      } else {
-        this.isCanSelectAddress = true;
-      }
     }
   }
 };

@@ -1,86 +1,65 @@
 <template>
-  <el-dialog
-    :visible.sync="isVisible"
-    :title="dialogRow.title"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :modal-append-to-body="false"
-    @close="closeDialog"
-    center
-  >
-    <div class="form">
-      <el-form
-        ref="form"
-        :model="ruleForm"
-        :rules="form_rules"
-        :label-width="dialog.formLabelWidth"
-        style="margin:10px;width:auto;"
-        class="case-list-dialog"
-      >
-        <el-form-item label="启停">
-          <el-switch v-model="ruleForm.enable" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-        </el-form-item>
-
-        <el-form-item prop="type" label="分类">
-          <el-select v-model="ruleForm.type" placeholder="请选择分类级别">
-            <el-option
-              v-for="item in caseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item prop="type_name" label="案例名称">
-          <el-input v-model="ruleForm.type_name"></el-input>
-        </el-form-item>
-
-        <el-form-item label="案例图">
-          <el-upload
-            class="avatar-uploader"
-            action="http://beta.fang.ekeae.com/wx/uploadImageOne"
-            :show-file-list="false"
-            :on-success="successImg"
-            :before-upload="beforeUploadIcon"
-            accept=".jpg, .jpeg, .png, .JPG, .JPEG"
-            :limit="1"
-          >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-        </el-form-item>
-
-        <el-form-item label="案例详情图">
-          <el-upload
-            action="http://beta.fang.ekeae.com/wx/uploadImageOne"
-            list-type="picture-card"
-            :show-file-list="true"
-            :on-preview="handlePictureCardPreview"
-            :before-upload="beforeUploadImg"
-            :on-success="uploadSuccess"
-            :on-remove="removeImgList"
-            :limit="9"
-            multiple
-          >
-            <i class="el-icon-plus"></i>
-          </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt />
-          </el-dialog>
-        </el-form-item>
-      </el-form>
-    </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSubmit('form')">确 定</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
-    </span>
-  </el-dialog>
+  <div class="table_container">
+    <el-table
+      v-loading="loading"
+      :data="tableData"
+      :height="tableHeight"
+      :default-sort="{prop: 'update_time', order: 'descending'}"
+      style="width: 100%"
+      align="center"
+    >
+      <el-table-column align="center" label="启停" width="60">
+        <template slot-scope="scope">
+          <el-switch
+            disabled
+            v-model="scope.row.enable"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            @change="changeSwitch(scope.row)"
+          ></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序" align="center" width="80" prop="id"></el-table-column>
+      <el-table-column label="分类名称" align="center">
+        <template slot-scope="scope">
+          <el-tag>{{ scope.row.type}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="type_name" label="名称" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.type_name ? scope.row.type_name : scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="idFlag" prop="address" label="分类名称" align="center"></el-table-column>
+      <el-table-column prop="update_time" sortable label="更新时间" align="center" width="170">
+        <template slot-scope="scope">
+          <el-icon name="time"></el-icon>
+          <span style="margin-left: 10px">{{ Date.format(scope.row.update_time) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="operation" align="center" label="操作" width="180">
+        <template slot-scope="scope">
+          <el-button
+            icon="edit"
+            size="mini"
+            @click="lookCaseListStatus(scope.row,dialogTitle = '编辑案例列表')"
+          >编辑</el-button>
+          <el-button type="danger" icon="delete" size="mini" @click="deleteCaeList(scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <pagination
+      :pageTotal="pageTotal"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+    ></pagination>
+  </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import { getCaseType } from "@/api/caseType";
+import { caseList } from "@/api/projectManagement";
 
 export default {
   name: "caseListDialog",
@@ -94,13 +73,17 @@ export default {
         enable: true,
         suffix: "",
         directory: "",
-        url: ""
+        url: "",
+        base64Details: []
       },
       form_rules: {
         type: [{ required: true, message: "分类不能为空", trigger: "change" }],
         type_name: [
           { required: true, message: "案例名称不能为空", trigger: "blur" }
         ]
+        // imageUrl:[
+        //   { required: true, message: "案例图不能为空", trigger: "change" }
+        // ]
       },
       startStop: true,
       imageUrl: "",
@@ -111,6 +94,15 @@ export default {
       },
       isClear: false,
       caseOptions: [],
+      staticNumber: 0,
+      ClassificationStatusItems: [
+        {
+          name: "默认"
+        },
+        {
+          name: "自定义"
+        }
+      ],
       isCanSelectAddress: true,
       dialogImageUrl: "",
       dialogVisible: false,
@@ -119,7 +111,11 @@ export default {
       iconBase64: "",
       files: "",
       fileNames: "",
-      fileList: []
+      fileList: [],
+      caseFileList: [],
+      i: 0,
+      deleteImg: [],
+      addImg: []
     };
   },
   props: {
@@ -129,20 +125,36 @@ export default {
   components: {
     ...mapGetters(["systemType"])
   },
+  computed: {},
+  created() {},
   mounted() {
+    console.log(this.dialogRow, "dialogRow");
+
     this.imageUrl = this.noBaseUrlhandleSmImgUrl(
       this.dialogRow.type_name,
       this.dialogRow.suffix,
       this.dialogRow.directory
     );
 
-    if (this.dialogRow.title === "添加小程序案例") {
+    if (this.dialogRow.type_name_details_num > 0) {
+      this.spliceImgsUrl(
+        this.dialogRow.type_name_details_num,
+        this.dialogRow.suffix,
+        this.dialogRow.directory,
+        this.dialogRow.type_name
+      );
+    }
+
+    console.log(this.caseFileList, "this.caseFileList");
+
+    if (this.dialogRow.title === "添加网站案例") {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
       });
     } else {
       this.ruleForm = this.dialogRow;
     }
+
     this.getCaseTypeList();
   },
   methods: {
@@ -154,7 +166,7 @@ export default {
       };
       getCaseType(caseForm).then(res => {
         if (res.code === 0) {
-          this.caseOptions = res.data || [];
+          this.caseOptions = res.data.map(i => i) || [];
         }
       });
     },
@@ -183,6 +195,8 @@ export default {
     },
 
     beforeUploadImg(file) {
+      console.log(file, "file");
+
       this.files = file;
       const isImg =
         file.type === "image/jpg" ||
@@ -202,6 +216,8 @@ export default {
 
     // 图片上传成功
     uploadSuccess(res, file, fileList) {
+      console.log(fileList, "fileList");
+
       this.fileList = fileList;
     },
 
@@ -210,11 +226,13 @@ export default {
       this.$refs[form].validate(valid => {
         if (valid) {
           const form = this.ruleForm;
-          this.ruleForm.pid = "sm"; // 系统类型
+          this.ruleForm.pid = "pc"; // 系统类型
           this.ruleForm.directory = `mg/${this.ruleForm.type}`; // 存放文件目录(app,logo...)
 
-          console.log(form);
-          if (this.dialogRow.title === "添加小程序案例") {
+          delete form.title;
+
+          if (this.dialogRow.title === "添加网站案例") {
+            this.ruleForm.opr = "add";
             this.showLoading();
             this.file
               ? this.iconToBase64(this.file)
@@ -224,29 +242,66 @@ export default {
               this.imageToBase64(item.raw);
             });
 
-            caseList(form).then(res => {
-              this.message("新增案例列表成功");
-              this.hideLoading();
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
-            });
+            setTimeout(() => {
+              caseList(form).then(res => {
+                this.message("新增案例列表成功");
+                this.hideLoading();
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              });
+            }, 500);
           } else {
+            this.ruleForm.opr = "update";
             this.showLoading();
-            caseList(para).then(res => {
-              this.message("修改案例列表成功");
-              this.hideLoading();
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
+
+            this.file
+              ? this.iconToBase64(this.file)
+              : (this.ruleForm.base64Case = "");
+
+            this.ruleForm.base64Details = [];
+
+            // 把新上传的图片放入数组
+            this.fileList.forEach(i => {
+              if (i.raw) {
+                this.addImg.push(i);
+              }
             });
+
+            this.addImg.map(item => {
+              this.imageToBase64(item.raw);
+            });
+
+            console.log(this.ruleForm.base64Details, "base64Details");
+
+            setTimeout(() => {
+              caseList(form).then(res => {
+                this.message("修改案例列表成功");
+                this.hideLoading();
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              });
+            }, 500);
           }
         }
       });
     },
 
+    // 地址是否自定义
+    getClassificationStatus(index) {
+      this.staticNumber = index;
+      if (index === 1) {
+        this.isCanSelectAddress = false;
+      } else {
+        this.isCanSelectAddress = true;
+      }
+    },
+
     removeImgList(file, fileList) {
-      console.log(file, fileList);
+      this.deleteImg.push(file);
+      console.log("现在删除的是", file, "目前数据", fileList);
+      console.log("已经删除的是", this.deleteImg);
     },
 
     handlePictureCardPreview(file) {
@@ -272,7 +327,7 @@ export default {
 
     // 隐藏加载框
     hideLoading() {
-      let loading = this.show();
+      let loading = this.showLoading();
       loading.close();
     },
 
@@ -298,6 +353,8 @@ export default {
       reader.readAsDataURL(file);
       reader.onload = () => {
         // console.log("img file 转 base64结果：" + reader.result);
+        console.log(this.ruleForm.base64Details, "base64Details");
+
         this.ruleForm.base64Details.push(
           reader.result.replace(/^data:image\/\w+;base64,/, "")
         );
@@ -307,10 +364,22 @@ export default {
       };
     },
 
-    // 拼接图片
+    // 拼接案例图片
     noBaseUrlhandleSmImgUrl(name, suffix, directory) {
       if (name && suffix && directory) {
         return `/zngl/fileOperate?name=${name}&suffix=${suffix}&directory=${directory}`;
+      }
+    },
+
+    // 拼接案例详情图片
+    spliceImgsUrl(type_name_details_num, suffix, directory, type_name) {
+      console.log(suffix, type_name_details_num);
+      for (this.i = 0; this.i < type_name_details_num; this.i++) {
+        this.caseFileList.push({
+          name: type_name,
+          url: `/zngl/fileOperate?name=${this.i +
+            1}&suffix=${suffix}&directory=${directory}/${type_name}`
+        });
       }
     }
   }

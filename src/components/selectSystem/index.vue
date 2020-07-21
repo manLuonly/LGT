@@ -25,7 +25,7 @@ export default {
           label: "pc端"
         },
         {
-          value: "sm",
+          value: "mini",
           label: "小程序"
         }
       ]

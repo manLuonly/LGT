@@ -21,23 +21,24 @@
         </el-form-item>
 
         <el-form-item prop="type_name" label="分类名称">
-          <el-input v-model="ruleForm.type_name"></el-input>
+          <el-input v-model="ruleForm.type_name" maxlength="20" show-word-limit clearable></el-input>
         </el-form-item>
 
         <el-form-item prop="type" label="分类">
-          <el-input v-model="ruleForm.type"></el-input>
+          <el-input v-model="ruleForm.type" maxlength="20" show-word-limit clearable></el-input>
         </el-form-item>
 
         <el-form-item label="图标">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="action"
             :show-file-list="false"
             :on-success="successIcon"
             :before-upload="beforeUpload"
+            accept="image/jpg, image/jpeg, image/png"
             :limit="1"
           >
-            <img v-if="iconUrl" :src="iconUrl" class="avatar" />
+            <img v-if="ruleForm.icon_img" :src="ruleForm.icon_img" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
@@ -45,23 +46,20 @@
         <el-form-item label="封面图">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="action"
             :show-file-list="false"
             :on-success="successImg"
             :before-upload="beforeUpload"
             :limit="1"
           >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <img v-if="ruleForm.cover_img" :src="ruleForm.cover_img" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="输入框1">
-          <el-input placeholder="请输入内容" v-model="input1"></el-input>
-        </el-form-item>
-
-        <el-form-item label="输入框2">
-          <el-input placeholder="请输入内容" v-model="input2"></el-input>
+        <el-form-item label="描述">
+          <el-input placeholder="请输入内容" v-model="description1"></el-input>
+          <el-input placeholder="请输入内容" v-model="description2"></el-input>
         </el-form-item>
       </el-form>
     </div>
@@ -74,7 +72,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { getCaseType } from "@/api/caseType";
+import { addH5Type, editH5Type } from "@/api/caseType";
 
 export default {
   name: "addFundDialogs",
@@ -82,9 +80,13 @@ export default {
     return {
       isVisible: this.isShow,
       ruleForm: {
-        enable: true,
+        type_name: "",
         type: "",
-        type_name: ""
+        cover_img: "",
+        details: "",
+        price: 0,
+        icon_img: "",
+        enable: true
       },
       test: true,
       form_rules: {
@@ -98,10 +100,9 @@ export default {
         width: "400px",
         formLabelWidth: "120px"
       },
-      iconUrl: "",
-      imageUrl: "",
-      input1: "",
-      input2: ""
+      description1: "",
+      description2: "",
+      action: "https://imgkr.com/api/v2/files/upload"
     };
   },
   props: {
@@ -109,24 +110,26 @@ export default {
     dialogRow: Object
   },
   computed: {
-    ...mapGetters(["systemType"])
+    ...mapGetters(["systemType", "status"])
   },
   created() {},
   mounted() {
-    if (this.dialogRow.title === "添加小程序案例分类") {
+    if (this.status === "add") {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
       });
     } else {
       this.ruleForm = this.dialogRow;
     }
+    this.description1 = this.dialogRow.details.split("|")[0];
+    this.description2 = this.dialogRow.details.split("|")[1];
   },
   methods: {
     successIcon(res, file) {
-      this.iconUrl = URL.createObjectURL(file.raw);
+      this.ruleForm.icon_img = res.data;
     },
     successImg(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.ruleForm.cover_img = res.data;
     },
     beforeUpload(file) {
       const isImg =
@@ -148,28 +151,19 @@ export default {
     onSubmit(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.ruleForm.pid = this.systemType;
-          const form = this.ruleForm;
-          console.log(form, "form");
+          let form = this.ruleForm;
 
-          if (this.dialogRow.title === "添加小程序案例分类") {
-            this.ruleForm.opr = "add";
-            getCaseType(form).then(res => {
-              this.$message({
-                message: "新增案例分类成功",
-                type: "success"
-              });
+          form.details = this.description1 + "|" + this.description2;
+          if (this.status === "add") {
+            addH5Type(form).then(res => {
+              this.message("新增案例分类成功");
               this.$refs["form"].resetFields();
               this.isVisible = false;
               this.$emit("getCaseList");
             });
           } else {
-            this.ruleForm.opr = "update";
-            getCaseType(form).then(res => {
-              this.$message({
-                message: "编辑案例分类成功",
-                type: "success"
-              });
+            editH5Type(form).then(res => {
+              this.message("编辑案例分类成功");
               this.$refs["form"].resetFields();
               this.isVisible = false;
               this.$emit("getCaseList");
@@ -180,9 +174,6 @@ export default {
           return false;
         }
       });
-    },
-    handleCaseSortNumChange(val) {
-      console.log("案例排序发生了变化" + val);
     },
     // 关闭dialog
     closeDialog() {

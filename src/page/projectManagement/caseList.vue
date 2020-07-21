@@ -27,7 +27,11 @@
     <select-case-type :caseList="caseList" @selectCaseType="selectCaseType($event)"></select-case-type>
     <search @searchUserList="searchUserList($event)" ref="search"></search>
 
-    <div class="table_container">
+    <pc-case-list-table v-if="systemType == 'pc'" :table="caseTable"></pc-case-list-table>
+
+    <sm-case-list-table></sm-case-list-table>
+
+    <!-- <div class="table_container">
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -81,17 +85,19 @@
         @handleCurrentChange="handleCurrentChange"
         @handleSizeChange="handleSizeChange"
       ></pagination>
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import pcCaseListDialog from "./Dialog/pcCaseListDialog";
+import pcCaseListTable from "./table/pcCaseListTable";
 import smCaseListDialog from "./Dialog/smCaseListDialog";
+import smCaseListTable from "./table/smCaseListTable";
 import selectSystem from "@/components/selectSystem";
 import selectCaseType from "./components/selectCaseType";
-import { caseList } from "@/api/projectManagement";
+import { listPage } from "@/api/projectManagement";
 import { getCaseType } from "@/api/caseType";
 
 export default {
@@ -109,37 +115,38 @@ export default {
       },
       tableHeight: 0,
       loading: true,
-      idFlag: false,
       isShow: false,
       updateCaseListDialog: {
         pcShow: false,
         smShow: false,
         dialogRow: {}
       },
+      caseTable: {
+        loading: true,
+        table: [],
+        tableHeight: 0
+      },
       caseList: [],
       paginationForm: {
-        opr: "list",
-        pid: "pc",
         pageNum: 1,
         pageSize: 20,
         type: "app",
         searchName: ""
       },
       pageTotal: 0,
-      startStop: true,
       searchVal: "", // 搜索值
       dialog: {
         width: "400px",
         formLabelWidth: "120px"
       },
-      copyData: [],
-      isCanSelectAddress: true,
       dialogTitle: ""
     };
   },
   components: {
     pcCaseListDialog,
+    pcCaseListTable,
     smCaseListDialog,
+    smCaseListTable,
     selectSystem,
     selectCaseType
   },
@@ -164,7 +171,7 @@ export default {
     // 获取列表数据
     getDataList() {
       const form = this.paginationForm;
-      caseList(form).then(res => {
+      listPage(form).then(res => {
         if (res.code === 0) {
           this.tableData = res.data;
           this.pageTotal = res.count;
