@@ -29,7 +29,7 @@
 
     <!-- pc表格 -->
     <pc-case-classification-table
-      v-if="systemType == 'pc'"
+      v-show="systemType == 'pc'"
       :table="caseTable"
       @changeLoading="changeLoading"
       @showCaseDialog="showCaseDialog"
@@ -38,7 +38,7 @@
 
     <!-- 小程序表格 -->
     <sm-case-classification-table
-      v-if="systemType == 'mini'"
+      v-show="systemType == 'mini'"
       :table="caseTable"
       @changeLoading="changeLoading"
       @showCaseDialog="showCaseDialog"
@@ -60,13 +60,6 @@ import { listAll } from "@/api/caseType";
 export default {
   data() {
     return {
-      tableData: [],
-      ruleForm: {
-        caseSortNum: 0,
-        caseName: "",
-        jumpAddress: "www.baidu.com",
-        updateTime: "2016-05-02"
-      },
       tableHeight: 0,
       isShow: false,
       updateCaseDialog: {
@@ -135,16 +128,6 @@ export default {
         this.updateCaseDialog.smShow = false;
       }
     },
-    // 上下分页
-    handleCurrentChange(val) {
-      this.paginationForm.page = val;
-      this.getDataList();
-    },
-    // 每页显示多少条
-    handleSizeChange(val) {
-      this.paginationForm.limit = val;
-      this.getDataList();
-    },
     // 选择系统类型
     selectSystem(type) {
       this.paginationForm.system_type = type;
@@ -154,7 +137,7 @@ export default {
     changeLoading(loading) {
       this.caseTable.loading = loading;
     },
-    // 清空表单
+    // 设置状态,清空表单
     setEmptyForm() {
       this.$store.commit("SET_ADDOREDIT", "add");
     }

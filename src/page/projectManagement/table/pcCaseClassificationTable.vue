@@ -33,6 +33,7 @@
           <el-tag>{{ scope.row.type }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column prop="list_total_num" label="案例总条数" align="center" ></el-table-column>
       <el-table-column prop="update_time" label="更新时间" align="center" sortable>
         <template slot-scope="scope">
           <el-icon name="time"></el-icon>

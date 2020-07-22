@@ -67,7 +67,8 @@ export default {
   },
   props: {
     isShow: Boolean,
-    dialogRow: Object
+    dialogRow: Object,
+    default: () => {}
   },
   computed: {
     ...mapGetters(["systemType", "status"])
@@ -101,7 +102,7 @@ export default {
               this.$emit("getCaseList");
             });
           } else {
-            delete
+        
             editType(form).then(res => {
               this.message("编辑案例分类成功");
               this.$refs["form"].resetFields();

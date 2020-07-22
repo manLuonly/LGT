@@ -57,6 +57,7 @@
           <el-tag>{{ scope.row.type }}</el-tag>
         </template>
       </el-table-column>
+       <el-table-column prop="list_total_num" label="案例总条数" align="center" ></el-table-column>
       <el-table-column show-overflow-tooltip width="120" label="描述" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.details }}</span>
