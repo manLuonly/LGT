@@ -32,12 +32,12 @@ export default {
     };
   },
   mounted() {
-    this.$store.commit("SET_SYSTEMTYPE", 'pc');
+    this.$store.commit("SET_SYSTEMTYPE", "pc");
   },
   methods: {
     changeType() {
       this.$store.commit("SET_SYSTEMTYPE", this.systemType);
-      this.$emit('selectSystem',this.systemType)
+      this.$emit("selectSystem", this.systemType);
     }
   }
 };

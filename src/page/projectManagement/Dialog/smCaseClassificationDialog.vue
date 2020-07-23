@@ -86,31 +86,31 @@ export default {
         details: "",
         price: 0,
         icon_img: "",
-        enable: true
+        enable: true,
       },
       test: true,
       form_rules: {
         type: [{ required: true, message: "分类不能为空", trigger: "blur" }],
         type_name: [
-          { required: true, message: "分类名称不能为空", trigger: "blur" }
-        ]
+          { required: true, message: "分类名称不能为空", trigger: "blur" },
+        ],
       },
       //详情弹框信息
       dialog: {
         width: "400px",
-        formLabelWidth: "120px"
+        formLabelWidth: "120px",
       },
       description1: "",
       description2: "",
-      action: "https://imgkr.com/api/v2/files/upload"
+      action: "https://imgkr.com/api/v2/files/upload",
     };
   },
   props: {
     isShow: Boolean,
-    dialogRow: Object
+    dialogRow: Object,
   },
   computed: {
-    ...mapGetters(["systemType", "status"])
+    ...mapGetters(["systemType", "status"]),
   },
   created() {},
   mounted() {
@@ -149,25 +149,37 @@ export default {
 
     //表单提交
     onSubmit(form) {
-      this.$refs[form].validate(valid => {
+      this.$refs[form].validate((valid) => {
         if (valid) {
           let form = this.ruleForm;
 
           form.details = this.description1 + "|" + this.description2;
           if (this.status === "add") {
-            addH5Type(form).then(res => {
-              this.message("新增案例分类成功");
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
-            });
+            this.showLoading();
+
+            addH5Type(form)
+              .then((res) => {
+                this.message("新增案例分类成功");
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              })
+              .finally(() => {
+                this.hideLoading();
+              });
           } else {
-            editH5Type(form).then(res => {
-              this.message("编辑案例分类成功");
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
-            });
+            this.showLoading();
+
+            editH5Type(form)
+              .then((res) => {
+                this.message("编辑案例分类成功");
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              })
+              .finally(() => {
+                this.hideLoading();
+              });
           }
         } else {
           console.log("error submit!!");
@@ -178,8 +190,8 @@ export default {
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -10,8 +10,8 @@ const user = {
         token: getToken('Token'),
         roles: [],
         browserHeaderTitle: mUtils.getStore('browserHeaderTitle') || 'LGT后台管理',
-        systemType: '',
-        status: 'add', // 状态(新增=add 编辑=edit)
+        systemType: '', // 系统类型(pc=pc 小程序=mini)
+        status: 'add', // dialog状态(新增=add 编辑=edit)
     },
     getters: {
         token: state => state.token,

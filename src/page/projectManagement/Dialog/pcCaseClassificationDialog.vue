@@ -48,30 +48,30 @@ export default {
       ruleForm: {
         enable: true,
         type: "",
-        type_name: ""
+        type_name: "",
       },
       test: true,
       form_rules: {
         type: [{ required: true, message: "分类不能为空", trigger: "blur" }],
         type_name: [
-          { required: true, message: "分类名称不能为空", trigger: "blur" }
-        ]
+          { required: true, message: "分类名称不能为空", trigger: "blur" },
+        ],
       },
       //详情弹框信息
       dialog: {
         width: "400px",
-        formLabelWidth: "120px"
+        formLabelWidth: "120px",
       },
-      staticNumber: 0
+      staticNumber: 0,
     };
   },
   props: {
     isShow: Boolean,
     dialogRow: Object,
-    default: () => {}
+    default: () => {},
   },
   computed: {
-    ...mapGetters(["systemType", "status"])
+    ...mapGetters(["systemType", "status"]),
   },
   created() {},
   mounted() {
@@ -90,33 +90,44 @@ export default {
     },
     //表单提交
     onSubmit(form) {
-      this.$refs[form].validate(valid => {
+      this.$refs[form].validate((valid) => {
         if (valid) {
           const form = this.ruleForm;
 
           if (this.status === "add") {
-            addType(form).then(res => {
-              this.message("新增案例分类成功");
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
-            });
+            this.showLoading();
+
+            addType(form)
+              .then((res) => {
+                this.message("新增案例分类成功");
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              })
+              .finally(() => {
+                this.hideLoading();
+              });
           } else {
-        
-            editType(form).then(res => {
-              this.message("编辑案例分类成功");
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
-            });
+            this.showLoading();
+
+            editType(form)
+              .then((res) => {
+                this.message("编辑案例分类成功");
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              })
+              .finally(() => {
+                this.hideLoading();
+              });
           }
         } else {
           console.log("error submit!!");
           return false;
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

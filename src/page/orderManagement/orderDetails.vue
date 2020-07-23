@@ -34,7 +34,6 @@
       </div>
     </div>-->
 
-    <select-system @selectSystem="selectSystem($event)"></select-system>
     <date-picker @changeDate="changeDate($event)"></date-picker>
     <search @searchUserList="searchUserList($event)" ref="search"></search>
 
@@ -258,12 +257,6 @@ export default {
       } else {
         this.updateOrderDialog.smShow = false;
       }
-    },
-    // 选择系统类型(pc/sm)
-    selectSystem(val) {
-      console.log(val, "我是系统类型");
-      this.paginationForm.pid = val;
-      this.getDataList();
     },
     // 改变日期
     changeDate(date) {

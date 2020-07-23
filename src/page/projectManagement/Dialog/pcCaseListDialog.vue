@@ -57,9 +57,10 @@
             :action="action"
             list-type="picture-card"
             :show-file-list="true"
-            :on-preview="handlePictureCardPreview"
             :before-upload="beforeUploadImg"
             :on-success="uploadSuccess"
+            :on-remove="removeImg"
+            :handlePictureCardPreview="handlePictureCardPreview"
             :limit="9"
             multiple
             accept=".jpg, .jpeg, .png, .JPG, .JPEG"
@@ -94,34 +95,34 @@ export default {
         type: "",
         name: "",
         img: "",
-        details_imgs: []
+        details_imgs: [],
       },
       form_rules: {
         type: [{ required: true, message: "分类不能为空", trigger: "change" }],
         type_name: [
-          { required: true, message: "案例名称不能为空", trigger: "blur" }
-        ]
+          { required: true, message: "案例名称不能为空", trigger: "blur" },
+        ],
       },
       //详情弹框信息
       dialog: {
         width: "400px",
-        formLabelWidth: "120px"
+        formLabelWidth: "120px",
       },
       caseOptions: [],
       dialogImageUrl: "",
       dialogVisible: false,
       fileList: [],
       action: "https://imgkr.com/api/v2/files/upload",
-      type: ""
+      type: "",
     };
   },
   props: {
     isShow: Boolean,
     dialogRow: Object,
-    default: () => {}
+    default: () => {},
   },
   components: {
-    ...mapGetters(["systemType"])
+    ...mapGetters(["systemType"]),
   },
   mounted() {
     this.type = this.$store.state.user.status;
@@ -139,18 +140,19 @@ export default {
     // 数组字符串改为数组对象
     setObj() {
       let arr = [];
-      this.ruleForm.details_imgs.map(item => {
+      this.ruleForm.details_imgs.map((item) => {
         item = { url: item };
         arr.push(item);
       });
       this.ruleForm.details_imgs = arr;
+      this.fileList = this.ruleForm.details_imgs; // 详情图赋值
     },
     // 获取案例列表
     getCaseTypeList() {
       let systemType = this.$store.state.user.systemType;
       let type = { system_type: systemType };
-      listAll(type).then(res => {
-        this.caseOptions = res.data.map(i => i) || [];
+      listAll(type).then((res) => {
+        this.caseOptions = res.data.map((i) => i) || [];
       });
     },
     // 限制上传类型为图片
@@ -177,39 +179,58 @@ export default {
     uploadSuccess(res, file, fileList) {
       this.fileList = fileList;
     },
+    // 移除图片
+    removeImg(file, fileList) {
+      this.fileList = fileList;
+      this.getDetailsImgs();
+    },
+    // 获取案例详情图
+    getDetailsImgs() {
+      let details_imgs = [];
+      this.fileList.map((item) => {
+        let data = item.response ? item.response.data : item.url;
+        details_imgs.push(data);
+      });
+
+      this.ruleForm.details_imgs = details_imgs;
+      this.ruleForm.details_total = details_imgs.length;
+    },
+
     //表单提交
     onSubmit(form) {
-      this.$refs[form].validate(valid => {
+      this.$refs[form].validate((valid) => {
         if (valid) {
           let form = this.ruleForm;
-          let details_imgs = [];
 
-          this.fileList.map(item => {
-            details_imgs.push(item.response.data);
-          });
-
-          this.ruleForm.details_imgs = details_imgs;
-          this.ruleForm.details_total = details_imgs.length;
+          this.getDetailsImgs();
 
           if (this.type === "add") {
             this.showLoading();
-            addTypeList(form).then(res => {
-              this.message("新增案例列表成功");
-              this.hideLoading();
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
-            });
+            addTypeList(form)
+              .then((res) => {
+                this.message("新增案例列表成功");
+                this.hideLoading();
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              })
+              .finally(() => {
+                this.hideLoading();
+              });
           } else {
             this.showLoading();
 
-            editTypeList(form).then(res => {
-              this.message("修改案例列表成功");
-              this.hideLoading();
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
-            });
+            editTypeList(form)
+              .then((res) => {
+                this.message("修改案例列表成功");
+                this.hideLoading();
+                this.$refs["form"].resetFields();
+                this.isVisible = false;
+                this.$emit("getCaseList");
+              })
+              .finally(() => {
+                this.hideLoading();
+              });
           }
         }
       });
@@ -225,24 +246,7 @@ export default {
     closeDialog() {
       this.$emit("closeDialog");
     },
-
-    // 显示加载框
-    showLoading() {
-      const loading = this.$loading({
-        lock: true,
-        text: "上传中,请稍后...",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
-      return loading;
-    },
-
-    // 隐藏加载框
-    hideLoading() {
-      let loading = this.showLoading();
-      loading.close();
-    }
-  }
+  },
 };
 </script>
 

@@ -23,48 +23,11 @@ import './components/iconSvg' // iconSvg
 import commonComponents from '@/components'
 Vue.use(commonComponents);
 
-import '@/permission' // permission control
+import '@/permission';
 
 
 // i18n国际化
 import i18n from "@/lang";
-
-
-Vue.prototype.alertMsgBox = function alert(msg, title, settings = {}) {
-    Object.assign(settings, { //合并对象
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        dangerouslyUseHTMLString: true, //允许确认框内容为html格式
-        beforeClose: (action, instance, done) => {
-            if (action === 'confirm') {
-                instance.confirmButtonLoading = true;
-                instance.confirmButtonText = '执行中...';
-                setTimeout(() => {
-                    done();
-                    setTimeout(() => {
-                        instance.confirmButtonLoading = false;
-                    }, 300);
-                }, 1000);
-            } else {
-                done();
-            }
-        }
-    })
-    return this.$confirm(`<p style="font-weight:bold;">${msg || '此操作将删除该数据,30天内可恢复,是否继续?' }</p>`, title || '提示', settings)
-}
-
-
-Vue.prototype.message = function(message, type, showClose) {
-    this.$message({
-        message: message || '成功',
-        type: type || "success",
-        showClose: showClose || true
-    });
-}
-
-
-
 
 
 

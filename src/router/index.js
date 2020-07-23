@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { Layout, Content } from "../layout"; // 页面整体布局
-import { topRouterMap } from "./topRouter";
+// import { topRouterMap } from "./topRouter";
+let topRouterMap = [];
 
 process.env.NODE_ENV === "development" ? Vue.use(Router) : null;
 
@@ -116,50 +117,51 @@ export const asyncRouterMap = [{
         path: '/clientManagement',
         name: 'clientManagement',
         meta: {
-            title: '客户管理',
+            title: '预约管理',
             icon: 'icon-kehuguanli',
         },
         component: Layout,
         redirect: '/clientManagement/userInfo',
-        children: [
-            // {
-            //     path: 'projectStatistics',
-            //     name: 'projectStatistics',
-            //     meta: {
-            //         title: '项目统计'
-            //     },
-            //     component: () =>
-            //         import ('@/page/clientManagement/projectStatistics')
-            // },
-            {
-                path: 'userInfo',
-                name: 'userInfo',
-                meta: {
-                    title: '客户信息'
-                },
-                component: () =>
-                    import ('@/page/clientManagement/userInfo')
-            }
-        ]
+        children: [{
+            path: 'userInfo',
+            name: 'userInfo',
+            meta: {
+                title: '预约管理'
+            },
+            component: () =>
+                import ('@/page/clientManagement/userInfo')
+        }]
     },
     {
         path: '/orderManagement',
         component: Layout,
         name: 'orderManagement',
         meta: {
-            title: '订单管理',
+            title: '录入管理',
             icon: 'icon-fuwuxiangmu'
         },
         children: [{
-            path: 'orderDetails',
-            name: 'orderDetails',
-            component: () =>
-                import ('@/page/orderManagement/orderDetails'),
-            meta: {
-                title: '订单详情',
-                noCache: true
-            }
-        }, ]
+                path: 'orderDetails',
+                name: 'orderDetails',
+                component: () =>
+                    import ('@/page/orderManagement/orderDetails'),
+                meta: {
+                    title: '订单录入',
+                    noCache: true
+                }
+            },
+            {
+                path: 'userDetails',
+                name: 'userDetails',
+                component: () =>
+                    import ('@/page/orderManagement/userDetails'),
+                meta: {
+                    title: '客户录入',
+                    noCache: true
+                }
+            },
+
+        ]
     },
     {
         path: '/history',

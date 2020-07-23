@@ -48,6 +48,7 @@
           ></el-image>
         </template>
       </el-table-column>
+      <el-table-column prop="details_total" label="详情图数量" align="center"></el-table-column>
       <el-table-column prop="update_time" sortable label="更新时间" align="center" width="170">
         <template slot-scope="scope">
           <el-icon name="time"></el-icon>
@@ -71,8 +72,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { getCaseType } from "@/api/caseType";
-import { caseList } from "@/api/projectManagement";
+import { deleteTypeList } from "@/api/projectManagement";
 
 export default {
   name: "caseListDialog",
@@ -80,15 +80,11 @@ export default {
     return {
       caseTable: {},
       imgList: [],
-      pageTotal: 0
     };
   },
   props: {
     table: Object,
-    default: () => {}
-  },
-  components: {
-    ...mapGetters(["systemType", "status"])
+    default: () => {},
   },
   mounted() {
     this.$emit("changeLoading", false);
@@ -99,19 +95,6 @@ export default {
       this.$emit("showCaseDialog", row);
       this.$store.commit("SET_ADDOREDIT", "edit");
     },
-    getCaseTypeList() {
-      const caseForm = {
-        pid: this.systemType,
-        pageNum: 1,
-        pageSize: 20
-      };
-      getCaseType(caseForm).then(res => {
-        if (res.code === 0) {
-          this.caseOptions = res.data.map(i => i) || [];
-        }
-      });
-    },
-
     //
     addImg(row) {
       this.imgList = [];
@@ -120,11 +103,11 @@ export default {
 
     // 上下分页
     handleCurrentChange(val) {
-      this.$emit('handleCurrentChange',val)
+      this.$emit("handleCurrentChange", val);
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.$emit('handleSizeChange',val)
+      this.$emit("handleSizeChange", val);
     },
     // 编辑操作方法
     lookCaseListStatus(row) {
@@ -136,18 +119,16 @@ export default {
       let id = row.id;
       this.alertMsgBox("此操作将删除该数据,是否继续?")
         .then(() => {
-          deleteType(id).then(res => {
-            if (res.code === 0) {
-              this.message(res.msg);
-              this.$emit("getCaseList");
-            }
+          deleteTypeList(id).then((res) => {
+            this.message(res.msg);
+            this.$emit("getCaseList");
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.message("已取消", "info");
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

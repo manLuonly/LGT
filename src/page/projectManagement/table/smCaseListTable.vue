@@ -48,6 +48,7 @@
           ></el-image>
         </template>
       </el-table-column>
+      <el-table-column prop="details_total" label="详情图数量" align="center"></el-table-column>
       <el-table-column prop="update_time" sortable label="更新时间" align="center" width="170">
         <template slot-scope="scope">
           <el-icon name="time"></el-icon>
@@ -71,8 +72,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { getCaseType } from "@/api/caseType";
-import { caseList } from "@/api/projectManagement";
+import { deleteH5TypeList } from "@/api/projectManagement";
 
 export default {
   name: "caseListDialog",
@@ -87,9 +87,6 @@ export default {
     table: Object,
     default: () => {}
   },
-  components: {
-    ...mapGetters(["systemType", "status"])
-  },
   mounted() {
     this.$emit("changeLoading", false);
   },
@@ -99,131 +96,6 @@ export default {
       this.$emit("showCaseDialog", row);
       this.$store.commit("SET_ADDOREDIT", "edit");
     },
-    getCaseTypeList() {
-      const caseForm = {
-        pid: this.systemType,
-        pageNum: 1,
-        pageSize: 20
-      };
-      getCaseType(caseForm).then(res => {
-        if (res.code === 0) {
-          this.caseOptions = res.data.map(i => i) || [];
-        }
-      });
-    },
-
-    successImg(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
-
-    beforeUploadIcon(file) {
-      this.ruleForm.suffix = file.type.split("/")[1];
-      this.file = file;
-      const isImg =
-        file.type === "image/jpg" ||
-        file.type === "image/jpeg" ||
-        file.type === "image/png";
-      const isLt5M = file.size / 1024 / 1024 < 5;
-
-      if (!isImg) {
-        this.$message.error("只能上传图片格式为jpg,jpeg,png!");
-      }
-      if (!isLt5M) {
-        this.$message.error("上传图片大小不能超过 5MB!");
-      }
-      this.fileName = file.name;
-      return isImg && isLt5M;
-    },
-
-    beforeUploadImg(file) {
-      console.log(file, "file");
-
-      this.files = file;
-      const isImg =
-        file.type === "image/jpg" ||
-        file.type === "image/jpeg" ||
-        file.type === "image/png";
-      const isLt5M = file.size / 1024 / 1024 < 5;
-
-      if (!isImg) {
-        this.$message.error("只能上传图片格式为jpg,jpeg,png!");
-      }
-      if (!isLt5M) {
-        this.$message.error("上传图片大小不能超过 5MB!");
-      }
-      this.fileNames = file.name;
-      return isImg && isLt5M;
-    },
-
-    // 图片上传成功
-    uploadSuccess(res, file, fileList) {
-      console.log(fileList, "fileList");
-
-      this.fileList = fileList;
-    },
-
-    //表单提交
-    onSubmit(form) {
-      this.$refs[form].validate(valid => {
-        if (valid) {
-          const form = this.ruleForm;
-
-          if (this.status === "add") {
-            caseList(form).then(res => {
-              this.message("新增案例列表成功");
-              this.hideLoading();
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
-            });
-          } else {
-            this.showLoading();
-
-            caseList(form).then(res => {
-              this.message("修改案例列表成功");
-              this.hideLoading();
-              this.$refs["form"].resetFields();
-              this.isVisible = false;
-              this.$emit("getCaseList");
-            });
-          }
-        }
-      });
-    },
-
-    removeImgList(file, fileList) {
-      this.deleteImg.push(file);
-      console.log("现在删除的是", file, "目前数据", fileList);
-      console.log("已经删除的是", this.deleteImg);
-    },
-
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
-
-    // 关闭dialog
-    closeDialog() {
-      this.$emit("closeDialog");
-    },
-
-    // 显示加载框
-    showLoading() {
-      const loading = this.$loading({
-        lock: true,
-        text: "上传中,请稍后...",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
-      return loading;
-    },
-
-    // 隐藏加载框
-    hideLoading() {
-      let loading = this.showLoading();
-      loading.close();
-    },
-
     //
     addImg(row) {
       this.imgList = [];
@@ -250,7 +122,7 @@ export default {
       let id = row.id;
       this.alertMsgBox("此操作将删除该数据,是否继续?")
         .then(() => {
-          deleteType(id).then(res => {
+          deleteH5TypeList(id).then(res => {
             if (res.code === 0) {
               this.message(res.msg);
               this.$emit("getCaseList");

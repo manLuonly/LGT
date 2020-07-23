@@ -20,7 +20,7 @@
       type="primary"
       size="large"
       class="add-case"
-      @click="showCaseDialog(undefined);setEmptyForm();"
+      @click="showCaseDialog();setEmptyForm();"
     >添加案例</el-button>
 
     <select-system @selectSystem="selectSystem($event)"></select-system>
@@ -77,7 +77,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         system_type: "pc",
-        type: "app",
+        type: "",
         search_name: ""
       },
       searchVal: "", // 搜索值
@@ -97,11 +97,13 @@ export default {
     selectCaseType
   },
   computed: {
-    ...mapGetters(["systemType"])
+    ...mapGetters(["systemType", "caseType"])
   },
   mounted() {
     this.getCaseTypeList("pc");
-    this.getDataList();
+    setTimeout(() => {
+      this.getDataList();
+    }, 1000);
     this.setTableHeight();
   },
   methods: {
@@ -110,18 +112,19 @@ export default {
         this.caseTable.tableHeight = document.body.clientHeight - 250;
       });
     },
-    // 获取列表数据
-    getDataList() {
-      const form = this.paginationForm;
-      listPage(form).then(res => {
-        this.caseTable.data = res || {};
-      });
-    },
     // 获取案例列表
     getCaseTypeList(val) {
       let type = { system_type: val };
       listAll(type).then(res => {
         this.caseList = res.data;
+        this.paginationForm.type = res.data[0].type; // 第一条案例类型,根据类型获取数据
+      });
+    },
+    // 获取列表数据
+    getDataList() {
+      const form = this.paginationForm;
+      listPage(form).then(res => {
+        this.caseTable.data = res || {};
       });
     },
     // 上下分页
@@ -154,7 +157,10 @@ export default {
     // 选择系统类型(pc/sm)
     selectSystem(val) {
       this.getCaseTypeList(val);
-      this.getDataList();
+      setTimeout(() => {
+        this.selectCaseType(this.caseList[0].type); // 第一条案例类型
+      }, 1500);
+      this.paginationForm.system_type = this.systemType ; // 修改系统类型
     },
     // 选择案例类型
     selectCaseType(val) {
@@ -170,7 +176,6 @@ export default {
     changeLoading(loading) {
       this.caseTable.loading = loading;
     },
-
     // 设置状态,清空表单
     setEmptyForm() {
       this.$store.commit("SET_ADDOREDIT", "add");

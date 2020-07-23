@@ -1,8 +1,7 @@
-import axios from 'axios'
-import { Message, MessageBox } from 'element-ui'
-import store from '../store'
-import { getToken } from '@/utils/auth'
-
+import axios from 'axios';
+import { Message } from 'element-ui';
+import store from '../store';
+import { getToken } from '@/utils/auth';
 
 
 // 创建axios实例
@@ -35,7 +34,7 @@ service.interceptors.response.use(
                     type: 'error',
                     duration: 5 * 1000
                 })
-                return Promise.reject('error')
+                return Promise.reject(response.data)
             }
         } else {
             console.log(response, 'response')
