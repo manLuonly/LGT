@@ -9,11 +9,14 @@ import ElementUI from 'element-ui'
 Vue.use(ElementUI, { size: 'mini' });
 import ('element-ui/lib/theme-chalk/index.css')
 
-import md5 from 'js-md5';
-Vue.prototype.$md5 = md5;
+
 
 import axios from 'axios'
 Vue.prototype.$axios = axios;
+
+// 引入echarts
+import echarts from 'echarts';
+Vue.prototype.$echarts = echarts;
 
 import './components/iconSvg' // iconSvg
 

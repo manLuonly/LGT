@@ -2,7 +2,7 @@
   <div class="index">
     <div class="show_info_box">
       <ul>
-        <li v-for="(item) in infoForm" :key="item.tiele">
+        <li v-for="item in infoForm" :key="item.tiele">
           <div class="left">
             <span class="title">{{ item.title}}</span>
           </div>
@@ -15,11 +15,13 @@
         </li>
       </ul>
     </div>
+    <money></money>
   </div>
 </template>
 
 <script>
-
+import money from "./components/money";
+import { nums } from "@/api/home";
 
 export default {
   data() {
@@ -29,55 +31,64 @@ export default {
           title: "案",
           right: {
             text: "案例总数",
-            number: 100
-          }
+            number: 100,
+          },
         },
         {
           title: "客",
           right: {
             text: "客户留言",
-            number: 10
-          }
+            number: 10,
+          },
         },
         {
           title: "定",
           right: {
             text: "成交订单",
-            number: 20
-          }
+            number: 20,
+          },
         },
         {
           title: "额",
           right: {
             text: "交易总额",
-            number: 80
-          }
+            number: 0,
+          },
         },
         {
           title: "户",
           right: {
             text: "客户总数",
-            number: 17
-          }
+            number: 17,
+          },
         },
         {
           title: "录",
           right: {
             text: "历史记录",
-            number: 0
-          }
-        }
-      ]
+            number: 0,
+          },
+        },
+      ],
     };
   },
   components: {
-    
+    money
   },
-  created() {},
-  mounted() {},
+  mounted() {
+    this.getDataList();
+  },
   methods: {
+    getDataList() {
+      nums().then((res) => {
+        this.infoForm[0].right.number = res.data.caseNum; // 案例总数
+        this.infoForm[1].right.number = res.data.reservationNum; // 预约总数
+        this.infoForm[2].right.number = res.data.orderNum; // 订单总数
+        this.infoForm[3].right.number = res.data.totalPrice; // 交易总额
+        this.infoForm[4].right.number = res.data.clientNum; // 客户总数
+      }); 
+    },
     goDetails(title) {
-      console.log(title, "title");
       switch (title) {
         case "案":
           this.$router.push({ path: "/projectManagement/classificationList" });
@@ -97,8 +108,8 @@ export default {
         default:
           break;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -131,30 +142,6 @@ export default {
       }
     }
   }
-  // .show_info_box {
-  //   ul > li {
-  //     width: 20%;
-  //     height: 100px;
-  //     margin: 0 28px;
-  //     display: inline-block;
-  //     background-color: #fff;
-  //     img {
-  //       display: inline-block;
-  //       margin: 20px;
-  //       line-height: 50px;
-  //     }
-  //     div {
-  //       display: inline-block;
-  //       span {
-  //         display: block;
-  //         margin: 15px 30px;
-  //       }
-  //       .number {
-  //         font-size: 30px;
-  //       }
-  //     }
-  //   }
-  // }
   .show_info_box {
     ul {
       display: flex;
@@ -190,10 +177,10 @@ export default {
             transform: translate(-50%, -50%);
             .text {
               margin-right: 2px;
-              font-size: 18px;
+              font-size: 16px;
             }
             .number {
-              font-size: 24px;
+              font-size: 16px;
               color: rgb(47, 114, 184);
               cursor: pointer;
             }
