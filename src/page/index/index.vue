@@ -15,12 +15,16 @@
         </li>
       </ul>
     </div>
-    <money></money>
+    <div id="echarts">
+      <money class="wflex"></money>
+      <reservation class="wflex"></reservation>
+    </div>
   </div>
 </template>
 
 <script>
 import money from "./components/money";
+import reservation from "./components/reservation";
 import { nums } from "@/api/home";
 
 export default {
@@ -35,9 +39,9 @@ export default {
           },
         },
         {
-          title: "客",
+          title: "约",
           right: {
-            text: "客户留言",
+            text: "预约人数",
             number: 10,
           },
         },
@@ -73,7 +77,8 @@ export default {
     };
   },
   components: {
-    money
+    money,
+    reservation
   },
   mounted() {
     this.getDataList();
@@ -86,7 +91,7 @@ export default {
         this.infoForm[2].right.number = res.data.orderNum; // 订单总数
         this.infoForm[3].right.number = res.data.totalPrice; // 交易总额
         this.infoForm[4].right.number = res.data.clientNum; // 客户总数
-      }); 
+      });
     },
     goDetails(title) {
       switch (title) {
@@ -188,6 +193,10 @@ export default {
         }
       }
     }
+  }
+  #echarts {
+    display: flex;
+    justify-content: center;
   }
 }
 </style>

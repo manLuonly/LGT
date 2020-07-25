@@ -17,15 +17,46 @@
         class="order-ruleForm"
       >
         <el-form-item label="客户姓名" prop="name">
-          <el-input v-model="ruleForm.name"></el-input>
+          <el-select
+            v-model="ruleForm.name"
+            v-clearSpecial:[ruleForm.name]="{set:setValue, setName:'name'}"
+            clearable
+            filterable
+            placeholder="请选择或输入姓名"
+            @change="currentVal"
+          >
+            <el-option v-for="item in userOptions" :key="item.tel" :label="item.name" :value="item"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="联系电话" prop="tel">
-          <el-input v-model="ruleForm.tel" maxlength="11"></el-input>
+          <el-select
+            v-model="ruleForm.tel"
+            v-clearSpecial:[ruleForm.tel]="{set:setValue, setName:'tel'}"
+            clearable
+            filterable
+            placeholder="请选择或输入电话"
+            @change="currentVal"
+          >
+            <el-option v-for="item in userOptions" :key="item.tel" :label="item.tel" :value="item"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="微信号">
-          <el-input v-model="ruleForm.wx_number"></el-input>
+          <el-select
+            v-model="ruleForm.wx_number"
+            v-clearSpecial:[ruleForm.wx_number]="{set:setValue, setName:'wx_number'}"
+            clearable
+            filterable
+            placeholder="请选择微信号"
+            @change="currentVal"
+          >
+            <el-option
+              v-for="item in userOptions"
+              :key="item.tel"
+              :label="item.wx_number"
+              :value="item"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <!-- prop="email" -->
         <el-form-item label="邮箱">
           <el-input v-model="ruleForm.email"></el-input>
         </el-form-item>
@@ -33,7 +64,7 @@
           <el-select v-model="ruleForm.service_type" placeholder="请选择服务项目">
             <el-option
               v-for="item in serviceOptions"
-              :key="item.type"
+              :key="item.type_name"
               :label="item.type_name"
               :value="item.type"
             ></el-option>
@@ -43,7 +74,7 @@
           <el-select v-model="ruleForm.state" placeholder="请选择">
             <el-option
               v-for="item in stateOptions"
-              :key="item.value"
+              :key="item.label"
               :label="item.label"
               :value="item.value"
             ></el-option>
@@ -62,11 +93,12 @@
         <el-form-item label="金额" prop="price">
           <el-input
             v-model.number="ruleForm.price"
+            v-clearSpecial:[ruleForm.price]="{set:setValue, setName:'price'}"
             onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
           ></el-input>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input type="textarea" v-model="ruleForm.leave_message"></el-input>
+          <el-input type="textarea" v-model="ruleForm.note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -80,7 +112,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { listAll } from "@/api/caseType";
-import { add, edit } from "@/api/orderDetails";
+import { add, edit, userListAll } from "@/api/orderDetails";
 
 export default {
   name: "orderDialog",
@@ -111,16 +143,15 @@ export default {
         email: "",
         service_type: "",
         state: "",
+        vip: "",
         price: "",
+        note: "",
       },
       form_rules: {
         name: [{ required: true, message: "请输入客户姓名", trigger: "blur" }],
         tel: [
           { required: true, message: "请输入联系电话", trigger: "blur" },
           { validator: checkTel, trigger: "blur" },
-        ],
-        email: [
-          { type: "email", message: "请输入正确的邮箱地址", trigger: "blur" },
         ],
         service_type: [
           { required: true, message: "请选择服务项目", trigger: "change" },
@@ -153,6 +184,7 @@ export default {
         },
       ],
       serviceOptions: [],
+      userOptions: [],
     };
   },
   props: {
@@ -170,9 +202,17 @@ export default {
     } else {
       this.ruleForm = this.dialogRow;
     }
+    this.getUserList();
     this.getCaseType();
   },
   methods: {
+    // 获取用户列表
+    getUserList() {
+      let name = this.ruleForm.name ? this.ruleForm.name : " ";
+      userListAll(name).then((res) => {
+        this.userOptions = res.data || [];
+      });
+    },
     // 获取服务项目
     getCaseType() {
       const form = { pageNum: 1, pageSize: 20, system_type: "pc" };
@@ -216,6 +256,26 @@ export default {
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
+    },
+    // 表单赋值
+    currentVal(item) {
+      console.log(item, "item");
+      // this.ruleForm = item;
+      this.ruleForm = {
+        name: item.name,
+        tel: item.tel,
+        wx_number: item.wx_number,
+        email: item.email,
+        service_type: "",
+        state: "",
+        vip: item.vip,
+        price: "",
+        note: item.note,
+      };
+    },
+    setValue(name, val) {
+      console.log(val, "val");
+      this.ruleForm[name] = val;
     },
   },
 };

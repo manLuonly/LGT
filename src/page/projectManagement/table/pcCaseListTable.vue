@@ -1,7 +1,10 @@
 <template>
   <div class="table_container">
     <el-table
-      v-loading="table.loading"
+      v-loading.lock="table.loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
       :data="table.data.data"
       :height="table.tableHeight"
       :default-sort="{prop: 'update_time', order: 'descending'}"
@@ -67,6 +70,7 @@
       @handleCurrentChange="handleCurrentChange"
       @handleSizeChange="handleSizeChange"
     ></pagination>
+    {{ watchTable }}
   </div>
 </template>
 
@@ -86,8 +90,12 @@ export default {
     table: Object,
     default: () => {},
   },
-  mounted() {
-    this.$emit("changeLoading", false);
+  computed: {
+    watchTable() {
+      if (this.table.data.count > 0) {
+        this.$emit("changeLoading", false);
+      }
+    },
   },
   methods: {
     // 编辑操作方法
@@ -100,7 +108,6 @@ export default {
       this.imgList = [];
       this.imgList.push(row.img);
     },
-
     // 上下分页
     handleCurrentChange(val) {
       this.$emit("handleCurrentChange", val);

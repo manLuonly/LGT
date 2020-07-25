@@ -21,11 +21,23 @@
         </el-form-item>
 
         <el-form-item prop="type_name" label="分类名称">
-          <el-input v-model="ruleForm.type_name" maxlength="20" show-word-limit clearable></el-input>
+          <el-input
+            v-model="ruleForm.type_name"
+            maxlength="20"
+            show-word-limit
+            clearable
+            v-clearSpecial:[ruleForm.type_name]="{set:setValue, setName:'type_name'}"
+          ></el-input>
         </el-form-item>
 
         <el-form-item prop="type" label="分类">
-          <el-input v-model="ruleForm.type" maxlength="20" show-word-limit clearable></el-input>
+          <el-input
+            v-model="ruleForm.type"
+            maxlength="20"
+            show-word-limit
+            clearable
+            v-clearSpecial:[ruleForm.type]="{set:setValue, setName:'type'}"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="图标">
@@ -190,6 +202,9 @@ export default {
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
+    },
+    setValue(name, val) {
+      this.ruleForm[name] = val;
     },
   },
 };

@@ -7,7 +7,7 @@
                 <bread></bread>
                 <router-view></router-view><!--页面渲染入口-->
             </div>
-            <backTop :ele="$refs.menu_right"></backTop>
+            <!-- <backTop :ele="$refs.menu_right"></backTop> -->
         </div>
     </div>
 </template>

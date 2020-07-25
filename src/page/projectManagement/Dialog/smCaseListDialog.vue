@@ -33,7 +33,13 @@
         </el-form-item>
 
         <el-form-item prop="name" label="案例名称">
-          <el-input v-model="ruleForm.name" maxlength="30" show-word-limit clearable></el-input>
+          <el-input
+            v-model="ruleForm.name"
+            maxlength="30"
+            show-word-limit
+            clearable
+            v-clearSpecial:[ruleForm.name]="{set:setValue, setName:'name'}"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="案例图">
@@ -60,15 +66,15 @@
             :before-upload="beforeUploadImg"
             :on-success="uploadSuccess"
             :on-remove="removeImg"
-            :handlePictureCardPreview="handlePictureCardPreview"
+            :on-preview="handlePictureCardPreview"
             :limit="9"
             multiple
             accept=".jpg, .jpeg, .png, .JPG, .JPEG"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" v-if="ruleForm.details_imgs" :src="ruleForm.details_imgs" />
+          <el-dialog :visible.sync="dialogVisible" append-to-body>
+            <img width="100%" :src="dialogImageUrl" />
           </el-dialog>
         </el-form-item>
       </el-form>
@@ -235,9 +241,8 @@ export default {
         }
       });
     },
-
+    // 详情图放大
     handlePictureCardPreview(file) {
-      console.log("shadongxi");
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
@@ -245,6 +250,9 @@ export default {
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
+    },
+    setValue(name, val) {
+      this.ruleForm[name] = val;
     },
   },
 };

@@ -53,5 +53,8 @@ export default {
   .filter-type-text {
     margin-right: 10px;
   }
+  /deep/ .el-select {
+    width: 145px;
+  }
 }
 </style>

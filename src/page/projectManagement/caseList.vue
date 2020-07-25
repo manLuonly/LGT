@@ -25,7 +25,7 @@
 
     <select-system @selectSystem="selectSystem($event)"></select-system>
     <select-case-type :caseList="caseList" @selectCaseType="selectCaseType($event)"></select-case-type>
-    <search @searchUserList="searchUserList($event)" ref="search"></search>
+    <search :customizePlaceholder="customizePlaceholder" @searchUserList="searchUserList($event)"></search>
 
     <pc-case-list-table
       v-if="systemType == 'pc'"
@@ -37,13 +37,15 @@
       @handleSizeChange="handleSizeChange"
     ></pc-case-list-table>
 
-    <smCaseListTable
+    <sm-case-list-table
       v-if="systemType == 'mini'"
       :table="caseTable"
       @changeLoading="changeLoading"
       @showCaseDialog="showCaseDialog"
       @getCaseList="getDataList"
-    ></smCaseListTable>
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+    ></sm-case-list-table>
   </div>
 </template>
 
@@ -65,12 +67,12 @@ export default {
       updateCaseListDialog: {
         pcShow: false,
         smShow: false,
-        dialogRow: {}
+        dialogRow: {},
       },
       caseTable: {
         loading: true,
         data: {},
-        tableHeight: 0
+        tableHeight: 0,
       },
       caseList: [],
       paginationForm: {
@@ -78,14 +80,15 @@ export default {
         pageSize: 20,
         system_type: "pc",
         type: "",
-        search_name: ""
+        search_name: "",
       },
       searchVal: "", // 搜索值
       dialog: {
         width: "400px",
-        formLabelWidth: "120px"
+        formLabelWidth: "120px",
       },
-      dialogTitle: ""
+      dialogTitle: "",
+      customizePlaceholder: "请输入名字",
     };
   },
   components: {
@@ -94,10 +97,10 @@ export default {
     smCaseListDialog,
     smCaseListTable,
     selectSystem,
-    selectCaseType
+    selectCaseType,
   },
   computed: {
-    ...mapGetters(["systemType", "caseType"])
+    ...mapGetters(["systemType", "caseType"]),
   },
   mounted() {
     this.getCaseTypeList("pc");
@@ -115,15 +118,16 @@ export default {
     // 获取案例列表
     getCaseTypeList(val) {
       let type = { system_type: val };
-      listAll(type).then(res => {
-        this.caseList = res.data;
-        this.paginationForm.type = res.data[0].type; // 第一条案例类型,根据类型获取数据
+      listAll(type).then((res) => {
+        const all = [{ list_total_num: 0, type_name: "全部", id: 0, type: -1 }];
+        this.caseList = all.concat(res.data);
+        this.paginationForm.type = -1;
       });
     },
     // 获取列表数据
     getDataList() {
       const form = this.paginationForm;
-      listPage(form).then(res => {
+      listPage(form).then((res) => {
         this.caseTable.data = res || {};
       });
     },
@@ -160,7 +164,7 @@ export default {
       setTimeout(() => {
         this.selectCaseType(this.caseList[0].type); // 第一条案例类型
       }, 1500);
-      this.paginationForm.system_type = this.systemType ; // 修改系统类型
+      this.paginationForm.system_type = this.systemType; // 修改系统类型
     },
     // 选择案例类型
     selectCaseType(val) {
@@ -179,8 +183,8 @@ export default {
     // 设置状态,清空表单
     setEmptyForm() {
       this.$store.commit("SET_ADDOREDIT", "add");
-    }
-  }
+    },
+  },
 };
 </script>
 

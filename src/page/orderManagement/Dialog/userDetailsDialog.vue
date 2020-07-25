@@ -17,13 +17,23 @@
         class="order-ruleForm"
       >
         <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name"></el-input>
+          <el-input
+            v-model="ruleForm.name"
+            v-clearSpecial:[ruleForm.name]="{set:setValue, setName:'name'}"
+          ></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="tel">
-          <el-input v-model="ruleForm.tel" maxlength="11"></el-input>
+          <el-input
+            v-model="ruleForm.tel"
+            maxlength="11"
+            v-clearSpecial:[ruleForm.tel]="{set:setValue, setName:'tel'}"
+          ></el-input>
         </el-form-item>
         <el-form-item label="微信号">
-          <el-input v-model="ruleForm.wx_number"></el-input>
+          <el-input
+            v-model="ruleForm.wx_number"
+            v-clearSpecial:[ruleForm.wx_number]="{set:setValue, setName:'wx_number'}"
+          ></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="ruleForm.email"></el-input>
@@ -164,6 +174,9 @@ export default {
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");
+    },
+    setValue(name, val) {
+      this.ruleForm[name] = val;
     },
   },
 };

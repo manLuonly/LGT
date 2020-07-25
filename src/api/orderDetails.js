@@ -91,3 +91,18 @@ export function edit(data) {
         data
     })
 }
+
+
+/**
+ *
+ * 获取全部客户
+ * @export
+ * @param {*} search_name
+ * @returns
+ */
+export function userListAll(search_name) {
+    return request({
+        url: `/clientLists/listAll?search_name=${search_name}`,
+        method: 'get'
+    })
+}

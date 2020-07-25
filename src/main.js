@@ -3,22 +3,10 @@ import App from './App'
 import router from './router'
 import store from './store/'
 
-
 // 'development',use package;'production':use cdn;
 import ElementUI from 'element-ui'
 Vue.use(ElementUI, { size: 'mini' });
 import ('element-ui/lib/theme-chalk/index.css')
-
-
-
-import axios from 'axios'
-Vue.prototype.$axios = axios;
-
-// 引入echarts
-import echarts from 'echarts';
-Vue.prototype.$echarts = echarts;
-
-import './components/iconSvg' // iconSvg
 
 /**
  * 挂载公共组件 及全局方法
@@ -26,11 +14,20 @@ import './components/iconSvg' // iconSvg
 import commonComponents from '@/components'
 Vue.use(commonComponents);
 
-import '@/permission';
+import axios from 'axios'
+Vue.prototype.$axios = axios;
+
+
+import echarts from 'echarts';
+Vue.prototype.$echarts = echarts;
 
 
 // i18n国际化
 import i18n from "@/lang";
+import './components/iconSvg' // iconSvg
+import './directive'; // 全局指令
+import '@/permission';
+
 
 
 

@@ -1,7 +1,10 @@
 <template>
   <div class="table_container">
     <el-table
-      v-loading="table.loading"
+      v-loading.lock="table.loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
       :data="table.data.data"
       :height="table.tableHeight"
       :default-sort="{prop: 'begin_time', order: 'descending'}"

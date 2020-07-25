@@ -1,11 +1,11 @@
 <template>
   <div class="money">
-    <div id="money" :style="{width: '600px', height: '300px'}"></div>
+    <div id="money" :style="{width: '500px', height: '300px'}"></div>
   </div>
 </template>
 
 <script>
-import { money } from "@/api/home";
+import { moneyFn } from "@/api/home";
 export default {
   name: "money",
   data() {
@@ -17,10 +17,12 @@ export default {
   methods: {
     drawLine() {
       let money = this.$echarts.init(document.getElementById("money"));
-      money(7).then((res) => {
+      moneyFn(7).then((res) => {
         money.setOption({
           title: { text: "近七天每日总额统计" },
-          tooltip: {},
+          tooltip: {
+            transitionDuration:0,
+          },
           xAxis: {
             data: res.data.xData,
           },

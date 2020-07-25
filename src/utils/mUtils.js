@@ -2,7 +2,7 @@ import Vue from 'vue';
 let md5 = require('js-md5');
 
 
-
+// 消息弹窗
 Vue.prototype.alertMsgBox = function alert(msg, title, settings = {}) {
     Object.assign(settings, { //合并对象
         confirmButtonText: '确定',
@@ -27,7 +27,7 @@ Vue.prototype.alertMsgBox = function alert(msg, title, settings = {}) {
     return this.$confirm(`<p style="font-weight:bold;">${msg || '此操作将删除该数据,30天内可恢复,是否继续?' }</p>`, title || '提示', settings)
 }
 
-
+// 消息提示
 Vue.prototype.message = function(message, type, showClose) {
     this.$message({
         message: message || '成功',
@@ -36,7 +36,7 @@ Vue.prototype.message = function(message, type, showClose) {
     });
 }
 
-
+// 显示dialog
 Vue.prototype.showLoading = function() {
     const loading = this.$loading({
         lock: true,
@@ -48,10 +48,17 @@ Vue.prototype.showLoading = function() {
 }
 
 
-
+// 关闭dialog
 Vue.prototype.hideLoading = function() {
     let loading = this.showLoading();
     loading.close();
+}
+
+
+window.watchTable = function() {
+    if (this.table.table.length > 0) {
+        this.$emit("changeLoading", false);
+    }
 }
 
 
@@ -65,9 +72,12 @@ Vue.prototype.hideLoading = function() {
  * @return {string} 加密后的字符串
  */
 window._md5 = md5
-    /**
-     * 存储localStorage
-     */
+
+
+
+/**
+ * 存储localStorage
+ */
 export const setStore = (name, content) => {
     if (!name) return;
     if (typeof content !== 'string') {
@@ -328,6 +338,13 @@ export const setContentHeight = (that, ele, height) => {
 }
 
 
+/**
+ *
+ * 深拷贝
+ * @export
+ * @param {*} obj
+ * @returns
+ */
 export function deepCopy(obj) {
     var result = Array.isArray(obj) ? [] : {};
     for (var key in obj) {
@@ -340,4 +357,20 @@ export function deepCopy(obj) {
         }
     }
     return result;
+}
+
+
+
+/**
+ *
+ * 表情和中文字去除
+ * @export
+ * @param {*} str
+ * @returns
+ */
+export function  stringRemoveSpecialSymbols(str)  { 
+    str = str.toString();   
+    str  =  str.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\w]/g,  ''); // 特殊符号
+    str  =  str.replace(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g,  ""); // 表情  
+    return  str   
 }

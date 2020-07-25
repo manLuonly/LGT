@@ -17,11 +17,14 @@
 
     <date-picker @changeDate="changeDate($event)" style="margin-bottom:15px"></date-picker>
     <filter-vip @selectIsVip="selectIsVip($event)"></filter-vip>
-    <search @searchUserList="searchUserList($event)"></search>
+    <search :customizePlaceholder="customizePlaceholder" @searchUserList="searchUserList($event)"></search>
 
     <div class="table_container">
       <el-table
         v-loading="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
         :data="table"
         :height="tableHeight"
         :default-sort="{prop: 'update_time', order: 'descending'}"
@@ -82,6 +85,7 @@ export default {
       },
       pageTotal: 0,
       tableHeight: 0,
+      customizePlaceholder: "请输入姓名/电话"
     };
   },
   components: {
@@ -178,7 +182,7 @@ export default {
     selectIsVip(val) {
       this.paginationForm.vip = val;
       this.getDataList();
-    }
+    },
   },
 };
 </script>

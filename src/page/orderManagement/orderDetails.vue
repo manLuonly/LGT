@@ -14,25 +14,28 @@
         size="large"
         class="add-order-details-btn"
         @click="showDialog();setEmptyForm();"
-      >添加订单详情</el-button>
+      >添加订单</el-button>
     </div>
 
-    <!-- <div class="total-money  text_center">
+    <date-picker @changeDate="changeDate($event)"></date-picker>
+    <filter-state @selectState="selectState($event)"></filter-state>
+    <search :customizePlaceholder="customizePlaceholder" @searchUserList="searchUserList($event)"></search>
+
+    <div class="total-money text_center inline-block">
       <div class="left-text inline-block">
         <span>总额</span>
       </div>
       <div class="right-num inline-block">
         <span>{{ total }}</span>
       </div>
-    </div>-->
-
-    <date-picker @changeDate="changeDate($event)"></date-picker>
-    <filter-state @selectState="selectState($event)"></filter-state>
-    <search @searchUserList="searchUserList($event)" ref="search"></search>
+    </div>
 
     <div class="table_container">
       <el-table
         v-loading="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
         :data="tableData"
         :height="tableHeight"
         :default-sort="{prop: 'price', order: 'descending'}"
@@ -43,7 +46,7 @@
         <el-table-column prop="wx_number" label="微信号" align="center"></el-table-column>
         <el-table-column prop="email" label="邮箱" align="center" show-overflow-tooltip></el-table-column>
         <el-table-column prop="service_type" label="服务项目" align="center" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="leave_message" label="备注" align="center" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="note" label="备注" align="center" show-overflow-tooltip></el-table-column>
         <el-table-column prop="vip" label="vip" align="center" :formatter="isVip"></el-table-column>
         <el-table-column prop="state" label="状态" align="center">
           <template slot-scope="scope">
@@ -79,7 +82,7 @@
 import { mapGetters } from "vuex";
 import orderDetailsDialog from "./Dialog/orderDetailsDialog";
 import filterState from "./components/filterState";
-import { listPage } from "@/api/orderDetails";
+import { listPage, deleteOrder } from "@/api/orderDetails";
 
 export default {
   data() {
@@ -102,11 +105,12 @@ export default {
       tableHeight: 0,
       pageTotal: 0,
       total: "", // 总额
+      customizePlaceholder: "请输入姓名/微信号",
     };
   },
   components: {
     orderDetailsDialog,
-    filterState
+    filterState,
   },
   computed: {
     ...mapGetters(["systemType"]),
@@ -154,7 +158,7 @@ export default {
       let id = row.id;
       this.alertMsgBox()
         .then(() => {
-          userOrderInfo(id).then((res) => {
+          deleteOrder(id).then((res) => {
             this.message(res.msg);
             this.getDataList();
           });
@@ -249,18 +253,16 @@ export default {
     padding-bottom: 15px;
   }
   .total-money {
-    position: absolute;
-    top: 0;
-    right: 0;
     width: 126px;
     height: 40px;
+    margin: 0 20px;
     line-height: 40px;
     border: 1px solid rgb(229, 229, 229);
     border-radius: 5px;
-    float: right;
     .left-text {
       width: 40%;
-      background: #eee;
+      color: #fff;
+      background: rgb(64, 158, 255);
     }
     .right-num {
       width: 60%;

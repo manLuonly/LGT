@@ -1,11 +1,11 @@
 <template>
   <div class="reservation">
-    <div id="reservation" :style="{width: '600px', height: '300px'}"></div>
+    <div id="reservation" :style="{width: '500px', height: '300px'}"></div>
   </div>
 </template>
 
 <script>
-import { reservation } from "@/api/home";
+import { reservationFn } from "@/api/home";
 export default {
   name: "reservation",
 
@@ -17,20 +17,52 @@ export default {
   },
   methods: {
     drawLine() {
-      let reservation = this.$echarts.init(document.getElementById("reservation"));
-      reservation(7).then((res) => {
+      let reservation = this.$echarts.init(
+        document.getElementById("reservation")
+      );
+      reservationFn(7).then((res) => {
         reservation.setOption({
-          title: { text: "近七天每日预约人数统计" },
-          tooltip: {},
+          title: {
+            text: "近7天每日预约人数统计",
+          },
+          tooltip: {
+            trigger: "axis",
+            transitionDuration:0,
+          },
+          legend: {
+            data: ["pc","小程序"],
+          },
+          grid: {
+            left: "3%",
+            right: "4%",
+            bottom: "3%",
+            containLabel: true,
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {},
+            },
+          },
           xAxis: {
+            type: "category",
+            boundaryGap: false,
             data: res.data.xData,
           },
-          yAxis: {},
+          yAxis: {
+            type: "value",
+          },
           series: [
             {
-              name: "销量",
-              type: "bar",
-              data: res.data.yData,
+              name: "pc",
+              type: "line",
+              stack: "总量",
+              data: res.data.pcYData,
+            },
+            {
+              name: "小程序",
+              type: "line",
+              stack: "总量",
+              data: res.data.miniYData,
             },
           ],
         });

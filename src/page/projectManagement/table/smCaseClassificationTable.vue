@@ -1,7 +1,10 @@
 <template>
   <div class="table_container">
     <el-table
-      v-loading="table.loading"
+      v-loading.lock="table.loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
       :data="table.table"
       :height="table.tableHeight"
       :default-sort="{prop: 'update_time', order: 'descending'}"
@@ -35,13 +38,13 @@
           ></el-image>
         </template>
       </el-table-column>
-      <el-table-column label="封面图" align="center">
+      <el-table-column label="封面图" align="center" width="130">
         <template slot-scope="scope">
           <el-image
-            style="width: 100px; height: 50px; cursor:pointer"
+            style="width: 130px; height: 50px; cursor:pointer"
             :src="scope.row.cover_img"
             fit="cover"
-            lazy
+       
             :preview-src-list="coveriImgList"
             @click="addCoveriImg(scope.row)"
           ></el-image>
@@ -57,7 +60,7 @@
           <el-tag>{{ scope.row.type }}</el-tag>
         </template>
       </el-table-column>
-       <el-table-column prop="list_total_num" label="案例总条数" align="center" ></el-table-column>
+      <el-table-column prop="list_total_num" label="案例总条数" align="center"></el-table-column>
       <el-table-column show-overflow-tooltip width="120" label="描述" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.details }}</span>
@@ -69,7 +72,7 @@
           <span>{{ Date.format(scope.row.update_time)}}</span>
         </template>
       </el-table-column>
-      <el-table-column width="200" prop="operation" align="center" label="操作">
+      <el-table-column width="150" prop="operation" align="center" label="操作">
         <template slot-scope="scope">
           <el-button icon="edit" size="mini" @click="lookCaseStatus(scope.row);">编辑</el-button>
           <el-button type="danger" icon="delete" size="mini" @click="deleteCase(scope.row)">删除</el-button>
@@ -86,12 +89,12 @@ export default {
   data() {
     return {
       iconImgList: [],
-      coveriImgList: []
+      coveriImgList: [],
     };
   },
   props: {
     table: Object,
-    default: () => {}
+    default: () => {},
   },
   computed: {},
   mounted() {
@@ -117,18 +120,18 @@ export default {
       let id = row.id;
       this.alertMsgBox("此操作将删除该数据,是否继续?")
         .then(() => {
-          deleteH5Type(id).then(res => {
+          deleteH5Type(id).then((res) => {
             if (res.code === 0) {
               this.message(res.msg);
               this.$emit("getCaseList");
             }
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.message("已取消", "info");
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

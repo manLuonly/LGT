@@ -2,7 +2,7 @@
   <div class="user-info">
     <select-system @selectSystem="selectSystem($event)"></select-system>
     <date-picker @changeDate="changeDate($event)" style="margin-bottom:15px"></date-picker>
-    <search @searchUserList="searchUserList($event)"></search>
+    <search :customizePlaceholder="customizePlaceholder" @searchUserList="searchUserList($event)"></search>
 
     <pc-reservations
       v-if="systemType == 'pc'"
@@ -46,11 +46,12 @@ export default {
         end_time: "",
       },
       pageTotal: 1,
+      customizePlaceholder: "请输入姓名/电话"
     };
   },
   components: {
     pcReservations,
-    smReservations
+    smReservations,
   },
   computed: {
     ...mapGetters(["systemType"]),
@@ -68,7 +69,7 @@ export default {
     // 获取列表数据
     getDataList() {
       const form = this.paginationForm;
-      listPage(form).then(res => {
+      listPage(form).then((res) => {
         this.caseTable.data = res || {};
       });
     },

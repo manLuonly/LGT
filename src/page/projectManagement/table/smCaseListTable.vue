@@ -1,7 +1,10 @@
 <template>
   <div class="table_container">
     <el-table
-      v-loading="table.loading"
+      v-loading.lock="table.loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
       :data="table.data.data"
       :height="table.tableHeight"
       :default-sort="{prop: 'update_time', order: 'descending'}"
@@ -80,12 +83,12 @@ export default {
     return {
       caseTable: {},
       imgList: [],
-      pageTotal: 0
+      pageTotal: 0,
     };
   },
   props: {
     table: Object,
-    default: () => {}
+    default: () => {},
   },
   mounted() {
     this.$emit("changeLoading", false);
@@ -101,16 +104,13 @@ export default {
       this.imgList = [];
       this.imgList.push(row.img);
     },
-
     // 上下分页
     handleCurrentChange(val) {
-      this.paginationForm.pageNum = val;
-      this.getDataList();
+      this.$emit("handleCurrentChange", val);
     },
     // 每页显示多少条
     handleSizeChange(val) {
-      this.paginationForm.pageSize = val;
-      this.getDataList();
+      this.$emit("handleSizeChange", val);
     },
     // 编辑操作方法
     lookCaseListStatus(row) {
@@ -122,18 +122,18 @@ export default {
       let id = row.id;
       this.alertMsgBox("此操作将删除该数据,是否继续?")
         .then(() => {
-          deleteH5TypeList(id).then(res => {
+          deleteH5TypeList(id).then((res) => {
             if (res.code === 0) {
               this.message(res.msg);
               this.$emit("getCaseList");
             }
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.message("已取消", "info");
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

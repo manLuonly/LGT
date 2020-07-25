@@ -20,7 +20,7 @@ export function nums() {
  * @param {*} day
  * @returns
  */
-export function money(day) {
+export function moneyFn(day) {
     return request({
         url: `/statistics/money?day=${day}`,
         method: 'get'
@@ -34,7 +34,7 @@ export function money(day) {
  * @param {*} day
  * @returns
  */
-export function reservation(day) {
+export function reservationFn(day) {
     return request({
         url: `/statistics/reservation?day=${day}`,
         method: 'get'

@@ -65,22 +65,22 @@ export default {
       updateCaseDialog: {
         pcShow: false,
         smShow: false,
-        dialogRow: {}
+        dialogRow: {},
       },
       caseTable: {
         loading: true,
         table: [],
-        tableHeight: 0
+        tableHeight: 0,
       },
       paginationForm: {
-        system_type: "pc"
+        system_type: "pc",
       },
       pageTotal: 0,
       dialog: {
         width: "400px",
-        formLabelWidth: "120px"
+        formLabelWidth: "120px",
       },
-      dialogTitle: ""
+      dialogTitle: "",
     };
   },
   components: {
@@ -89,10 +89,10 @@ export default {
     smCaseClassificationDialog,
     smCaseClassificationTable,
     selectSystem,
-    Pagination
+    Pagination,
   },
   computed: {
-    ...mapGetters(["systemType"])
+    ...mapGetters(["systemType"]),
   },
   mounted() {
     this.getDataList();
@@ -107,7 +107,8 @@ export default {
     // 获取列表数据
     getDataList() {
       const form = this.paginationForm;
-      listAll(form).then(res => {
+      this.caseTable.loading = true;
+      listAll(form).then((res) => {
         this.caseTable.table = res.data || [];
       });
     },
@@ -140,8 +141,8 @@ export default {
     // 设置状态,清空表单
     setEmptyForm() {
       this.$store.commit("SET_ADDOREDIT", "add");
-    }
-  }
+    },
+  },
 };
 </script>
 
