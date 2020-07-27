@@ -15,7 +15,7 @@
         </li>
       </ul>
     </div>
-    <div id="echarts">
+    <div id="echarts" :style="{'margin-top':margin+'px'}">
       <money class="wflex"></money>
       <reservation class="wflex"></reservation>
     </div>
@@ -78,7 +78,15 @@ export default {
   },
   components: {
     money,
-    reservation
+    reservation,
+  },
+  computed: {
+    margin() {
+      console.log(document.body.clientWidth);
+      if (document.body.clientWidth > 1366) {
+        return 50
+      }
+    },
   },
   mounted() {
     this.getDataList();
@@ -96,19 +104,19 @@ export default {
     goDetails(title) {
       switch (title) {
         case "案":
-          this.$router.push({ path: "/projectManagement/classificationList" });
+          this.$router.push({ path: "/projectManagement/caseList" });
           break;
-        case "点":
-          this.$router.push({ path: "/projectManagement/classificationList" });
-          break;
-        case "言":
-          this.$router.push({ path: "/clientManagement/userInfo" });
-          break;
-        case "客":
+        case "约":
           this.$router.push({ path: "/clientManagement/userInfo" });
           break;
         case "定":
           this.$router.push({ path: "/orderManagement/orderDetails" });
+          break;
+        case "额":
+          this.$router.push({ path: "/orderManagement/orderDetails" });
+          break;
+        case "户":
+          this.$router.push({ path: "/orderManagement/userDetails" });
           break;
         default:
           break;

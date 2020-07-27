@@ -1,6 +1,6 @@
 <template>
   <div class="system-type inline-block">
-    <span class="system-type-text">系统类型</span>
+    <span class="system-type-text">{{ text }}</span>
     <el-select v-model="systemType" size="large" placeholder="请选择分类" @change="changeType">
       <el-option
         v-for="item in systemTypeOptions"
@@ -22,14 +22,19 @@ export default {
       systemTypeOptions: [
         {
           value: "pc",
-          label: "pc端"
+          label: "pc端",
         },
         {
           value: "mini",
-          label: "小程序"
-        }
-      ]
+          label: "小程序",
+        },
+      ],
     };
+  },
+  props: {
+    text: {
+      default: "系统类型",
+    },
   },
   mounted() {
     this.$store.commit("SET_SYSTEMTYPE", "pc");
@@ -38,8 +43,8 @@ export default {
     changeType() {
       this.$store.commit("SET_SYSTEMTYPE", this.systemType);
       this.$emit("selectSystem", this.systemType);
-    }
-  }
+    },
+  },
 };
 </script>
 

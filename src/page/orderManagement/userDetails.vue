@@ -17,7 +17,7 @@
 
     <date-picker @changeDate="changeDate($event)" style="margin-bottom:15px"></date-picker>
     <filter-vip @selectIsVip="selectIsVip($event)"></filter-vip>
-    <search :customizePlaceholder="customizePlaceholder" @searchUserList="searchUserList($event)"></search>
+    <search @searchUserList="searchUserList($event)"></search>
 
     <div class="table_container">
       <el-table
@@ -49,12 +49,12 @@
           </template>
         </el-table-column>
       </el-table>
+      <pagination
+        :pageTotal="pageTotal"
+        @handleCurrentChange="handleCurrentChange"
+        @handleSizeChange="handleSizeChange"
+      ></pagination>
     </div>
-    <pagination
-      :pageTotal="pageTotal"
-      @handleCurrentChange="handleCurrentChange"
-      @handleSizeChange="handleSizeChange"
-    ></pagination>
   </div>
 </template>
 
@@ -85,7 +85,6 @@ export default {
       },
       pageTotal: 0,
       tableHeight: 0,
-      customizePlaceholder: "请输入姓名/电话"
     };
   },
   components: {
@@ -132,6 +131,7 @@ export default {
     },
     // 搜索列表
     searchUserList(searchVal) {
+      this.paginationForm.pageNum = 1;
       this.paginationForm.search_name = searchVal;
       this.getDataList();
     },

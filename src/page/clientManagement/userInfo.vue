@@ -1,8 +1,8 @@
 <template>
   <div class="user-info">
-    <select-system @selectSystem="selectSystem($event)"></select-system>
+    <select-system :text="text" @selectSystem="selectSystem($event)"></select-system>
     <date-picker @changeDate="changeDate($event)" style="margin-bottom:15px"></date-picker>
-    <search :customizePlaceholder="customizePlaceholder" @searchUserList="searchUserList($event)"></search>
+    <search @searchUserList="searchUserList($event)"></search>
 
     <pc-reservations
       v-if="systemType == 'pc'"
@@ -46,7 +46,7 @@ export default {
         end_time: "",
       },
       pageTotal: 1,
-      customizePlaceholder: "请输入姓名/电话"
+      text: "来源",
     };
   },
   components: {
@@ -85,6 +85,7 @@ export default {
     },
     // 选择系统类型(pc/sm)
     selectSystem(val) {
+      this.paginationForm.pageNum = 1;
       this.paginationForm.source = val;
       this.getDataList();
     },
@@ -96,6 +97,7 @@ export default {
     },
     // 搜索客户列表
     searchUserList(searchVal) {
+      this.paginationForm.pageNum = 1;
       this.paginationForm.search_name = searchVal;
       this.getDataList();
     },

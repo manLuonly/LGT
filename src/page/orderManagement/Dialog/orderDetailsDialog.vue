@@ -57,7 +57,17 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="邮箱">
+        <el-form-item label="金额" prop="price">
+          <el-input
+            v-model.number="ruleForm.price"
+            v-clearSpecial:[ruleForm.price]="{set:setValue, setName:'price'}"
+            v-numberInt
+            oninput="value=value.replace(/[^\d.]/g,'')"
+            maxlength="6"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
           <el-input v-model="ruleForm.email"></el-input>
         </el-form-item>
         <el-form-item label="服务项目" prop="service_type">
@@ -90,15 +100,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="金额" prop="price">
-          <el-input
-            v-model.number="ruleForm.price"
-            v-clearSpecial:[ruleForm.price]="{set:setValue, setName:'price'}"
-            onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
-          ></el-input>
-        </el-form-item>
+
         <el-form-item label="备注">
-          <el-input type="textarea" v-model="ruleForm.note"></el-input>
+          <el-input type="textarea" v-model="ruleForm.note" maxlength="80" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -134,6 +138,20 @@ export default {
         }
       }, 100);
     };
+    var checkEmail = (rule, value, callback) => {
+      const mailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+      if (!value) {
+        return callback();
+      }
+      setTimeout(() => {
+        if (mailReg.test(value)) {
+          callback();
+        } else {
+          callback(new Error("请输入正确的邮箱格式"));
+        }
+      }, 100);
+    };
+
     return {
       isVisible: this.isShow,
       ruleForm: {
@@ -158,6 +176,10 @@ export default {
         ],
         state: [{ required: true, message: "请选择状态", trigger: "change" }],
         price: [{ required: true, message: "请输入金额", trigger: "blur" }],
+        email: [
+          {  message: "请输入邮箱", trigger: "blur" },
+          { validator: checkEmail, trigger: "blur" },
+        ],
       },
       stateOptions: [
         {
@@ -260,7 +282,7 @@ export default {
     // 表单赋值
     currentVal(item) {
       console.log(item, "item");
-      // this.ruleForm = item;
+      this.ruleForm = item;
       this.ruleForm = {
         name: item.name,
         tel: item.tel,
@@ -274,7 +296,6 @@ export default {
       };
     },
     setValue(name, val) {
-      console.log(val, "val");
       this.ruleForm[name] = val;
     },
   },
@@ -282,4 +303,9 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.order-ruleForm {
+  /deep/ .el-select {
+    width: 50%;
+  }
+}
 </style>

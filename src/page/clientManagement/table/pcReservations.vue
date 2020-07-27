@@ -32,7 +32,7 @@
           <span>{{ Date.format(scope.row.create_time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="operation" align="center" label="操作">
+      <el-table-column prop="operation" align="center" label="操作" width="100">
         <template slot-scope="scope">
           <el-button type="danger" icon="delete" size="mini" @click="deleteUser(scope.row)">删除</el-button>
         </template>

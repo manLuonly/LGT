@@ -14,12 +14,14 @@
         :rules="form_rules"
         ref="ruleForm"
         label-width="100px"
-        class="order-ruleForm"
+        class="user-ruleForm"
       >
         <el-form-item label="姓名" prop="name">
           <el-input
             v-model="ruleForm.name"
             v-clearSpecial:[ruleForm.name]="{set:setValue, setName:'name'}"
+            maxlength="20"
+            show-word-limit
           ></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="tel">
@@ -27,12 +29,16 @@
             v-model="ruleForm.tel"
             maxlength="11"
             v-clearSpecial:[ruleForm.tel]="{set:setValue, setName:'tel'}"
+            v-numberInt
+            show-word-limit
           ></el-input>
         </el-form-item>
         <el-form-item label="微信号">
           <el-input
             v-model="ruleForm.wx_number"
             v-clearSpecial:[ruleForm.wx_number]="{set:setValue, setName:'wx_number'}"
+            maxlength="40"
+            show-word-limit
           ></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
@@ -49,7 +55,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input type="textarea" v-model="ruleForm.note"></el-input>
+          <el-input type="textarea" v-model="ruleForm.note" maxlength="80" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -183,9 +189,9 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.order-ruleForm {
+.user-ruleForm {
   /deep/ .el-select {
-    width: 220px;
+    width: 50%;
   }
 }
 </style>

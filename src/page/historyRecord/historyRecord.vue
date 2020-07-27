@@ -53,14 +53,12 @@
         <el-table-column prop="service" label="服务项目" align="center"></el-table-column>
         <el-table-column prop="begin_time" label="开始时间" align="center"></el-table-column>
         <el-table-column prop="of_time" label="结束时间" align="center"></el-table-column>
-        <el-table-column prop="state" label="状态" align="center">
+        <el-table-column prop="state" label="状态" align="center"></el-table-column>
+        <el-table-column prop="money" label="交易金额" align="center">
           <template slot-scope="scope">
-            <span
-              :class="switchConverObj(scope.row.state).cls"
-            >{{ switchConverObj(scope.row.state).val }}</span>
+            <span>￥{{ scope.row.money}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="money" label="交易金额" align="center"></el-table-column>
         <el-table-column prop="operation" align="center" label="操作" width="180">
           <template slot-scope="scope">
             <el-button icon="edit" size="mini" @click="restoreRecording(scope.row)">恢复</el-button>
@@ -100,16 +98,16 @@ export default {
         pid: "pc",
         pageNum: 1,
         pageSize: 20,
-        searchName: ""
+        searchName: "",
       },
-      pageType: "userInfo"
+      pageType: "userInfo",
     };
   },
   components: {
-    pageTypeCps
+    pageTypeCps,
   },
   computed: {
-    ...mapGetters(["systemType"])
+    ...mapGetters(["systemType"]),
   },
   mounted() {
     this.getDataList();
@@ -126,8 +124,8 @@ export default {
       // 请求客户信息列表
       historyRecord({
         ...this.paginationForm,
-        filterType: this.pageType == "userInfo" ? 0 : 1
-      }).then(res => {
+        filterType: this.pageType == "userInfo" ? 0 : 1,
+      }).then((res) => {
         this.tableData = res && res.data;
         this.pageTotal = res.count; // 总条数
       });
@@ -142,36 +140,20 @@ export default {
       this.paginationForm.pageSize = val;
       this.getDataList();
     },
-    switchConverObj(val = 2) {
-      return {
-        0: {
-          val: "已完成",
-          cls: '"completed"'
-        },
-        1: {
-          val: "进行中",
-          cls: "processing"
-        },
-        2: {
-          val: "未完成",
-          cls: "undone"
-        }
-      }[val];
-    },
     // 恢复历史记录
     restoreRecording(row) {
       row.opr = "restore";
       row.filterType = this.pageType == "userInfo" ? 0 : 1;
       this.alertMsgBox("此操作将恢复该数据,是否继续?")
         .then(() => {
-          historyRecord(row).then(res => {
+          historyRecord(row).then((res) => {
             this.message(res.msg);
             if (res.success) {
               this.getDataList();
             }
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.message("已取消", "info");
         });
     },
@@ -181,35 +163,35 @@ export default {
       row.filterType = this.pageType == "userInfo" ? 0 : 1;
       this.alertMsgBox("此操作将永久删除该数据,是否继续?")
         .then(() => {
-          historyRecord(row).then(res => {
+          historyRecord(row).then((res) => {
             this.message(res.msg);
             if (res.success) {
               this.getDataList();
             }
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.message("已取消", "info");
         });
     },
     // 选择系统类型(pc/sm)
     selectSystem(val) {
+      this.paginationForm.pageNum = 1;
       this.paginationForm.pid = val;
       this.getDataList();
     },
     // 选择页面类型
     selectPage(val) {
-      console.log(val, "val");
       this.pageType = val;
       this.getDataList();
     },
     // 获取搜索值
     searchUserList(searchVal) {
-      console.log(searchVal, "我是搜索");
+      this.paginationForm.pageNum = 1;
       this.paginationForm.searchName = searchVal;
       this.getDataList();
-    }
-  }
+    },
+  },
 };
 </script>
 

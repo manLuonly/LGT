@@ -81,6 +81,7 @@ export default {
         formLabelWidth: "120px",
       },
       dialogTitle: "",
+      text: "123",
     };
   },
   components: {
@@ -131,6 +132,7 @@ export default {
     },
     // 选择系统类型
     selectSystem(type) {
+      this.paginationForm.pageNum = 1;
       this.paginationForm.system_type = type;
       this.getDataList();
     },

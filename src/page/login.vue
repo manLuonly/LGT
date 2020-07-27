@@ -4,7 +4,7 @@
       <section class="form_contianer">
         <div class="titleArea rflex">
           <img class="logo" src="~@/assets/img/logo.png" alt="智能桂联后台管理" />
-          <span class='text'>智能桂联</span>
+          <span class="text">智能桂联</span>
         </div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm" class="loginForm">
           <el-form-item prop="user" class="login-item">
@@ -55,24 +55,23 @@
 </template>
 
 <script>
-
 import { login } from "@/api/user";
-import { setToken,setName,setAvatar } from "@/utils/auth";
+import { setToken, setName, setAvatar } from "@/utils/auth";
 
 export default {
   data() {
     return {
       loginForm: {
         user: "",
-        password: ""
+        password: "",
       },
       rules: {
         user: [
           { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 2, max: 8, message: "长度在 2 到 8 个字符", trigger: "blur" }
+          { min: 2, max: 8, message: "长度在 2 到 8 个字符", trigger: "blur" },
         ],
-        password: [{ required: true, message: "请输入密码", trigger: "blur" }]
-      }
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+      },
     };
   },
   mounted() {},
@@ -81,22 +80,21 @@ export default {
     showMessage(type, message) {
       this.$message({
         type: type,
-        message: message
+        message: message,
       });
     },
     submitForm(loginForm) {
-      setToken("Token", 'YGF');
-      console.log('999');
-      this.$refs[loginForm].validate(valid => {
+      setToken("Token", "YGF");
+      this.$refs[loginForm].validate((valid) => {
         if (valid) {
           this.loginForm.password = this.$md5(this.loginForm.password);
           let userinfo = this.loginForm;
           login(userinfo)
-            .then(res => {
+            .then((res) => {
               if (res.code === 0) {
                 setToken("Token", res.success);
-                setName('name',res.user_name);
-                setAvatar('Avatar',res.head);
+                setName("name", res.user_name);
+                setAvatar("Avatar", res.head);
                 setTimeout(() => {
                   this.$router.push({ path: "/" });
                   this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
@@ -105,14 +103,16 @@ export default {
                 this.loginForm.password = "";
               }
             })
-            .catch(err => {
-              if (err) this.loginForm.password = "";
-              this.showMessage("error", "登录失败,请重新登录");
+            .catch((err) => {
+              this.$router.push({ path: "/" });
+              this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
+              // if (err) this.loginForm.password = "";
+              // this.showMessage("error", "登录失败,请重新登录");
             });
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

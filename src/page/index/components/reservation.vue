@@ -1,6 +1,6 @@
 <template>
   <div class="reservation">
-    <div id="reservation" :style="{width: '500px', height: '300px'}"></div>
+    <div id="reservation" :style="{width: '100%', height: '300px'}"></div>
   </div>
 </template>
 
@@ -24,18 +24,20 @@ export default {
         reservation.setOption({
           title: {
             text: "近7天每日预约人数统计",
+            textStyle: {
+              fontSize: 16,
+            },
           },
           tooltip: {
             trigger: "axis",
-            transitionDuration:0,
+            transitionDuration: 0,
+            showDelay: 0, // 显示延迟，添加显示延迟可以避免频繁切换，单位ms
           },
           legend: {
-            data: ["pc","小程序"],
+            data: ["pc", "小程序"],
           },
           grid: {
-            left: "3%",
-            right: "4%",
-            bottom: "3%",
+            bottom: "3%", // 向下撑开百分之3
             containLabel: true,
           },
           toolbox: {
@@ -47,6 +49,13 @@ export default {
             type: "category",
             boundaryGap: false,
             data: res.data.xData,
+            axisLabel: {
+              interval: 0, // 字体设置全部显示
+              // rotate: 40, // 字体倾斜40度
+              formatter(params) { // 字体换行
+                return params.replace(/.{5}(?!$)/g, (a) => a + "\n");
+              },
+            },
           },
           yAxis: {
             type: "value",
@@ -55,16 +64,21 @@ export default {
             {
               name: "pc",
               type: "line",
-              stack: "总量",
+              symbol: "circle",
+              symbolSize: 12,
               data: res.data.pcYData,
             },
             {
               name: "小程序",
               type: "line",
-              stack: "总量",
+              symbol: "circle",
+              symbolSize: 12,
               data: res.data.miniYData,
             },
           ],
+        });
+        window.addEventListener("resize", () => {
+          reservation.resize();
         });
       });
     },
@@ -73,4 +87,8 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.reservation {
+  display: flex;
+  justify-content: center;
+}
 </style>

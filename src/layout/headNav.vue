@@ -1,5 +1,6 @@
 <template>
-  <header class="head-nav rflex" :style="{'width':headNavWidth+'px'}" id="header_container">
+<!-- :style="{'width':headNavWidth+'px'}" id="header_container" -->
+  <header class="head-nav rflex" >
     <div class="right-nav" ref="rightNav">
       <top-menu></top-menu>
       <div class="userinfo-right rflex">
@@ -194,6 +195,7 @@ export default {
   top: 0;
   right: 0;
   z-index: 29;
+  width: calc(100% - 180px);
   transition: width 0.2s;
   justify-content: space-between;
   height: 60px;

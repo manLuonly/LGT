@@ -160,10 +160,9 @@ export default {
     },
     // 选择系统类型(pc/sm)
     selectSystem(val) {
+      this.paginationForm.pageNum = 1;
       this.getCaseTypeList(val);
-      setTimeout(() => {
-        this.selectCaseType(this.caseList[0].type); // 第一条案例类型
-      }, 1500);
+      this.selectCaseType(-1);
       this.paginationForm.system_type = this.systemType; // 修改系统类型
     },
     // 选择案例类型
@@ -173,6 +172,7 @@ export default {
     },
     // 获取搜索值
     searchUserList(searchVal) {
+      this.paginationForm.pageNum = 1;
       this.paginationForm.search_name = searchVal;
       this.getDataList();
     },

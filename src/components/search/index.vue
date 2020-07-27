@@ -7,6 +7,7 @@
       v-model="searchVal"
       clearable
       @clear="searchUserList"
+      @keyup.native="btKeyUp"
     ></el-input>
     <div class="search-button inline-block">
       <el-button icon="el-icon-search" size="large" @click="searchUserList"></el-button>
@@ -23,15 +24,20 @@ export default {
     };
   },
   props: {
-    customizePlaceholder: String,
-    default: "请输入姓名/电话",
+    customizePlaceholder: {
+      default: "请输入姓名/电话",
+    },
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     searchUserList() {
       this.$emit("searchUserList", this.searchVal);
+    },
+    btKeyUp(e) {
+      e.target.value = e.target.value.replace(
+        /[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/g,
+        ""
+      );
     },
   },
 };

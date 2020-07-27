@@ -26,7 +26,7 @@
         <span>总额</span>
       </div>
       <div class="right-num inline-block">
-        <span>{{ total }}</span>
+        <span>￥{{ total }}</span>
       </div>
     </div>
 
@@ -56,7 +56,11 @@
             >{{ scope.row.state }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="price" label="交易金额" align="center" sortable></el-table-column>
+        <el-table-column prop="price" label="交易金额" align="center" sortable>
+          <template slot-scope="scope">
+            <span>￥{{ scope.row.price}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="update_time" label="更新时间" align="center" width="150">
           <template slot-scope="scope">
             <span>{{ Date.format(scope.row.update_time) }}</span>
@@ -104,7 +108,7 @@ export default {
       loading: true,
       tableHeight: 0,
       pageTotal: 0,
-      total: "", // 总额
+      total: 0, // 总额
       customizePlaceholder: "请输入姓名/微信号",
     };
   },
@@ -189,6 +193,7 @@ export default {
     },
     // 搜索客户列表
     searchUserList(searchVal) {
+      this.paginationForm.pageNum = 1;
       this.paginationForm.search_name = searchVal;
       this.getDataList();
     },
