@@ -120,7 +120,7 @@ export default {
     // 删除数据
     deleteCaeList(row) {
       let id = row.id;
-      this.alertMsgBox("此操作将删除该数据,是否继续?")
+      this.alertMsgBox()
         .then(() => {
           deleteH5TypeList(id).then((res) => {
             if (res.code === 0) {

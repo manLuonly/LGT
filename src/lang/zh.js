@@ -17,6 +17,7 @@ const zh = {
         orderDetails: '订单录入',
         userDetails: '客户录入',
         history: '历史记录',
+        uploadFile: '上传文件',
         loginOut: '退出',
         updateInfo: '修改信息',
         updatePassword: '修改密码',

@@ -105,10 +105,9 @@ export default {
       this.$refs[form].validate((valid) => {
         if (valid) {
           const form = this.ruleForm;
+          this.showLoading();
 
           if (this.status === "add") {
-            this.showLoading();
-
             addType(form)
               .then((res) => {
                 this.message("新增案例分类成功");
@@ -120,8 +119,6 @@ export default {
                 this.hideLoading();
               });
           } else {
-            this.showLoading();
-
             editType(form)
               .then((res) => {
                 this.message("编辑案例分类成功");

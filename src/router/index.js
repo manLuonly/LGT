@@ -183,6 +183,26 @@ export const asyncRouterMap = [{
             }
         }, ]
     },
+    {
+        path: '/uploadFile',
+        component: Layout,
+        name: 'uploadFile',
+        meta: {
+            title: '上传文件',
+            icon: 'icon-Icon_orderhistory'
+        },
+        noDropdown: true, // 不开启下拉列表
+        children: [{
+            path: 'uploadFile',
+            name: 'uploadFile',
+            component: () =>
+                import ('@/page/uploadFile/uploadFile'),
+            meta: {
+                title: '上传文件',
+                noCache: true // 不缓存
+            }
+        }, ]
+    },
     { path: '*', redirect: '/404', hidden: true }
 ];
 

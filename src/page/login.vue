@@ -87,28 +87,28 @@ export default {
       setToken("Token", "YGF");
       this.$refs[loginForm].validate((valid) => {
         if (valid) {
-          this.loginForm.password = this.$md5(this.loginForm.password);
-          let userinfo = this.loginForm;
-          login(userinfo)
-            .then((res) => {
-              if (res.code === 0) {
-                setToken("Token", res.success);
-                setName("name", res.user_name);
-                setAvatar("Avatar", res.head);
-                setTimeout(() => {
-                  this.$router.push({ path: "/" });
-                  this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
-                }, 1500);
-              } else {
-                this.loginForm.password = "";
-              }
-            })
-            .catch((err) => {
-              this.$router.push({ path: "/" });
-              this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
-              // if (err) this.loginForm.password = "";
-              // this.showMessage("error", "登录失败,请重新登录");
-            });
+          this.$router.push({ path: "/" });
+          this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
+          // this.loginForm.password = this.$md5(this.loginForm.password);
+          // let userinfo = this.loginForm;
+          // login(userinfo)
+          //   .then((res) => {
+          //     if (res.code === 0) {
+          //       setToken("Token", res.success);
+          //       setName("name", res.user_name);
+          //       setAvatar("Avatar", res.head);
+          //       setTimeout(() => {
+          //         this.$router.push({ path: "/" });
+          //         this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
+          //       }, 1500);
+          //     } else {
+          //       this.loginForm.password = "";
+          //     }
+          //   })
+          //   .catch((err) => {
+          //     if (err) this.loginForm.password = "";
+          //     this.showMessage("error", "登录失败,请重新登录");
+          //   });
         }
       });
     },

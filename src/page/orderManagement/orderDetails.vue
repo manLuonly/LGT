@@ -154,7 +154,8 @@ export default {
     },
     // 订单
     lookorderStatus(row) {
-      this.showDialog(row);
+      this.orderDetails.dialogRow = { ...row };
+      this.showDialog();
       this.$store.commit("SET_ADDOREDIT", "edit");
     },
     // 删除订单详情
@@ -172,8 +173,7 @@ export default {
         });
     },
     // 展示订单详情dialog
-    showDialog(row) {
-      this.orderDetails.dialogRow = { ...row };
+    showDialog() {
       this.orderDetails.isShow = true;
     },
     // 隐藏订单详情dialog

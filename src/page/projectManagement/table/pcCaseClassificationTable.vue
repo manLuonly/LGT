@@ -21,7 +21,7 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="排序" align="center">
+      <el-table-column label="id" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
@@ -84,13 +84,11 @@ export default {
     // 删除数据
     deleteCase(row) {
       let id = row.id;
-      this.alertMsgBox("此操作将删除该数据,是否继续?")
+      this.alertMsgBox()
         .then(() => {
           deleteType(id).then((res) => {
-            if (res.code === 0) {
               this.message(res.msg);
               this.$emit("getCaseList");
-            }
           });
         })
         .catch((err) => {

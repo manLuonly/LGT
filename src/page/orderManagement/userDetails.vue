@@ -136,8 +136,7 @@ export default {
       this.getDataList();
     },
     // 显示dialog
-    showDialog(row) {
-      this.userDetails.dialogRow = { ...row };
+    showDialog() {
       this.userDetails.isShow = true;
     },
     // 隐藏dialog
@@ -161,8 +160,9 @@ export default {
     },
     // 修改客户
     lookCaseListStatus(row) {
+      this.userDetails.dialogRow = { ...row };
+      this.showDialog();
       this.$store.commit("SET_ADDOREDIT", "edit");
-      this.showDialog(row);
     },
     // 删除客户
     deleteUser(row) {
