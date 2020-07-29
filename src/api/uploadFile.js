@@ -55,21 +55,17 @@ export function deleteFile(id) {
 
 /**
  *
- * 修改客户
+ * 修改文件名称
  * @export
- * @param {*} data
- * name 文件名
- * type 文件类型 (1为文件 / 2为单图片)
- * url 文件链接
- * file_type 文件类型
- * file_size 文件大小
- * file 文件(formData)
+ * @param {*} params
+ * id id 
+ * newName 文件新名称
  * @returns
  */
-export function edit(data) {
+export function edit(params) {
     return request({
-        url: 'uploadCaseLists/edit',
-        method: 'put',
-        data
+        url: "uploadCaseLists/edit",
+        method: "put",
+        params
     })
 }

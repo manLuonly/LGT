@@ -21,8 +21,8 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="排序" align="center" width="80" prop="id"></el-table-column>
-      <el-table-column label="分类名称" align="center">
+      <el-table-column prop="id" label="id" align="center" width="80"></el-table-column>
+      <el-table-column prop="type" label="分类名称" align="center">
         <template slot-scope="scope">
           <el-tag>{{ scope.row.type}}</el-tag>
         </template>

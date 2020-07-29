@@ -140,9 +140,9 @@ export default {
     submitFile() {
       let type = this.files.type;
       if (type == "image/jpeg" || type == "image/png") {
-        type = 1;
-      } else {
         type = 2;
+      } else {
+        type = 1;
       }
 
       let name = this.enterImgName ? this.enterImgName : this.enterFileName;

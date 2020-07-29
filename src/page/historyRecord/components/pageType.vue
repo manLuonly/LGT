@@ -18,25 +18,33 @@ export default {
 
   data() {
     return {
-      pageType: "userInfo",
+      pageType: "userDetails",
       pageTypeOptions: [
         {
-          value: "userInfo",
-          label: "客户信息"
+          value: "reservation",
+          label: "预约管理",
         },
         {
           value: "orderDetails",
-          label: "订单详情"
-        }
-      ]
+          label: "订单录入",
+        },
+        {
+          value: "userDetails",
+          label: "客户录入",
+        },
+        {
+          value: "uploadFile",
+          label: "上传文件",
+        },
+      ],
     };
   },
 
   methods: {
     changePageType() {
       this.$emit("selectPage", this.pageType);
-    }
-  }
+    },
+  },
 };
 </script>
 
