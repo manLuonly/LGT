@@ -76,6 +76,7 @@ export default {
     handleSizeChange(val) {
       this.$emit("handleSizeChange", val);
     },
+    // 删除数据
     deleteUser(row) {
       let id = row.id;
       this.alertMsgBox()

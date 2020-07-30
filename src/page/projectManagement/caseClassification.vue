@@ -60,7 +60,6 @@ import { listAll } from "@/api/caseType";
 export default {
   data() {
     return {
-      tableHeight: 0,
       isShow: false,
       updateCaseDialog: {
         pcShow: false,
@@ -74,6 +73,7 @@ export default {
       },
       paginationForm: {
         system_type: "pc",
+        delete_status: 0
       },
       pageTotal: 0,
       dialog: {

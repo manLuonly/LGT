@@ -21,7 +21,7 @@ export function listPage(params) {
 
 /**
  *
- *
+ * 删除数据
  * @export
  * @param {*} id
  * id id
@@ -31,5 +31,22 @@ export function deleteReservations(id) {
     return request({
         url: `reservations/delete?id=${id}`,
         method: 'delete'
+    })
+}
+
+
+
+/**
+ *
+ * 恢复数据
+ * @export
+ * @param {*} id
+ * id id
+ * @returns
+ */
+export function restore(id) {
+    return request({
+        url: `reservations/restore?id=${id}`,
+        method: 'post'
     })
 }

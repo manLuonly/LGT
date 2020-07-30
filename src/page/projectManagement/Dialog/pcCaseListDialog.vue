@@ -156,8 +156,8 @@ export default {
     // 获取案例列表
     getCaseTypeList() {
       let systemType = this.$store.state.user.systemType;
-      let type = { system_type: systemType };
-      listAll(type).then((res) => {
+      let form = { system_type: systemType, delete_status: 0 };
+      listAll(form).then((res) => {
         this.caseOptions = res.data.map((i) => i) || [];
       });
     },

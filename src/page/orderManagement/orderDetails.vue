@@ -104,6 +104,7 @@ export default {
         vip: "",
         start_time: "",
         end_time: "",
+        delete_status: 0
       },
       loading: true,
       tableHeight: 0,

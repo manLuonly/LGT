@@ -1,35 +1,33 @@
 <template>
   <div class="table_container">
     <el-table
-      :data="table"
-      :height="tableHeight"
-      v-loading="loading"
+      v-loading.lock="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
-      :default-sort="{prop: 'create_time', order: 'descending'}"
+      :data="table"
+      :height="Number(tableHeight)"
+      :default-sort="{prop: 'begin_time', order: 'descending'}"
       style="width: 100%"
       align="center"
     >
-      <el-table-column prop="id" label="id" align="center" width="100"></el-table-column>
-      <el-table-column prop="name" label="文件名" align="center"></el-table-column>
-      <el-table-column prop="url" label="文件链接" align="center" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="type" label="文件类型" align="center" :formatter="fileType" width="100"></el-table-column>
-      <el-table-column prop="file_size" label="文件大小" align="center" width="100"></el-table-column>
-      <el-table-column prop="file_type" label="文件格式" align="center" width="100">
+      <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+      <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
+      <el-table-column prop="service_type" label="服务类型" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.file_type.toUpperCase() }}</span>
+          <el-tag>{{ scope.row.service_type }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="create_time" sortable label="更新日期" align="center" width="150">
+      <el-table-column prop="source" label="来源" align="center"></el-table-column>
+      <el-table-column prop="begin_time" sortable label="更新日期" align="center">
         <template slot-scope="scope">
           <span>{{ Date.format(scope.row.create_time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="operation" align="center" label="操作" width="300">
+      <el-table-column prop="operation" align="center" label="操作" width="200">
         <template slot-scope="scope">
           <el-button icon="edit" size="mini" @click="restoreRecording(scope.row)">恢复</el-button>
-          <el-button type="danger" icon="delete" size="mini" @click="deleteCase(scope.row)">删除</el-button>
+          <el-button type="danger" icon="delete" size="mini" @click="deleteUser(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -42,7 +40,7 @@
 </template>
 
 <script>
-import { historyRecord } from "@/api/historyRecord";
+import { listPage, restore, deleteReservations } from "@/api/userInfo";
 export default {
   name: "uploadFile",
 
@@ -51,6 +49,15 @@ export default {
       loading: true,
       table: [],
       tableHeight: "",
+      paginationForm: {
+        pageNum: 1,
+        pageSize: 20,
+        source: "mini",
+        search_name: "",
+        start_time: "",
+        end_time: "",
+        delete_status: 1,
+      },
       pageTotal: 1,
     };
   },
@@ -66,10 +73,11 @@ export default {
       });
     },
     getDataList() {
-      historyRecord({})
+      let form = this.paginationForm;
+      listPage(form)
         .then((res) => {
           this.table = res.data || [];
-          this.pageTotal = res.count || 1; // 总条数
+          this.pageTotal = res.count;
         })
         .finally(() => {
           this.loading = false;
@@ -87,23 +95,32 @@ export default {
     },
     // 恢复历史记录
     restoreRecording(row) {
-      row.opr = "restore";
-      row.filterType = this.pageType == "userInfo" ? 0 : 1;
+      let id = row.id;
       this.alertMsgBox("此操作将恢复该数据,是否继续?")
         .then(() => {
-          historyRecord(row).then((res) => {
+          restore(id).then((res) => {
             this.message(res.msg);
-            if (res.success) {
-              this.getDataList();
-            }
+            this.getDataList();
           });
         })
         .catch((err) => {
           this.message("已取消", "info");
         });
     },
-    //
-    deleteCase() {},
+    // 删除数据
+    deleteUser(row) {
+      let id = row.id;
+      this.alertMsgBox("删除后无法恢复,是否继续?")
+        .then(() => {
+          deleteReservations(id).then((res) => {
+            this.message(res.msg);
+            this.getDataList();
+          });
+        })
+        .catch((err) => {
+          this.message("已取消", "info");
+        });
+    },
   },
 };
 </script>

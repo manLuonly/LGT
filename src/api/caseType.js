@@ -80,7 +80,7 @@ export function deleteH5Type(id) {
 export function deleteType(id) {
     return request({
         url: `caseTypes/deleteType?id=${id}`,
-        method: 'delete',
+        method: 'delete'
     })
 }
 
@@ -116,5 +116,38 @@ export function editH5Type(data) {
         url: 'caseTypes/editH5Type',
         method: 'put',
         data
+    })
+}
+
+
+
+/**
+ *
+ * 恢复pc数据
+ * @export
+ * @param {*} id
+ * id id
+ * @returns
+ */
+export function restorePc(id) {
+    return request({
+        url: `caseTypes/restorePc?id=${id}`,
+        method: 'post'
+    })
+}
+
+
+/**
+ *
+ * 恢复小程序数据
+ * @export
+ * @param {*} id
+ * id id
+ * @returns
+ */
+export function restoreMini(id) {
+    return request({
+        url: `caseTypes/restoreMini?id=${id}`,
+        method: 'post'
     })
 }

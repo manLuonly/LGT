@@ -38,7 +38,8 @@ export default {
             axisLabel: {
               interval: 0, // 字体设置全部显示
               // rotate: 40, // 字体倾斜40度
-              formatter(params) { // 字体换行
+              formatter(params) {
+                // 字体换行
                 return params.replace(/.{5}(?!$)/g, (a) => a + "\n");
               },
             },
@@ -49,8 +50,20 @@ export default {
               name: "当日成交价",
               type: "bar",
               data: res.data.yData,
-
               barWidth: 30, //柱图宽度
+              itemStyle: { // 图表上方显示数值
+                normal: {
+                  label: {
+                    show: true, //开启显示
+                    position: "top", //在上方显示
+                    textStyle: {
+                      //数值样式
+                      color: "black",
+                      fontSize: 16,
+                    },
+                  },
+                },
+              }
             },
           ],
         });

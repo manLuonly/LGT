@@ -1,12 +1,12 @@
 <template>
   <div class="table_container">
     <el-table
-      v-loading.lock="table.loading"
+      v-loading.lock="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
-      :data="table.table"
-      :height="table.tableHeight"
+      :data="table"
+      :height="Number(tableHeight) "
       :default-sort="{prop: 'update_time', order: 'descending'}"
       style="width: 100%"
       align="center"
@@ -43,52 +43,76 @@
           <span style="margin-left: 10px">{{ Date.format(scope.row.update_time)}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="operation" align="center" label="操作">
+      <el-table-column prop="operation" align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button icon="edit" size="mini" @click="lookCaseStatus(scope.row);">编辑</el-button>
+          <el-button icon="edit" size="mini" @click="restoreRecording(scope.row)">恢复</el-button>
           <el-button type="danger" icon="delete" size="mini" @click="deleteCase(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    {{ watchTable }}
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import { deleteType } from "@/api/caseType";
-
+import { listAll, restorePc, deleteType } from "@/api/caseType";
 export default {
+  name: "uploadFile",
+
   data() {
-    return {};
+    return {
+      loading: true,
+      table: [],
+      tableHeight: "",
+      paginationForm: {
+        system_type: "pc",
+        delete_status: 1,
+      },
+      pageTotal: 0,
+    };
   },
-  props: {
-    table: Object,
-    default: () => {},
+   mounted() {
+    this.getDataList();
+    this.setTableHeight();
   },
-  computed: {
-    ...mapGetters(["systemType"]),
-    watchTable() {
-      if (this.table.table.length > 0) {
-        this.$emit("changeLoading", false);
-      }
-    },
-  },
-  mounted() {},
   methods: {
-    // 编辑操作方法
-    lookCaseStatus(row) {
-      this.$emit("showCaseDialog", row);
-      this.$store.commit("SET_ADDOREDIT", "edit");
+    setTableHeight() {
+      this.$nextTick(() => {
+        this.tableHeight = document.body.clientHeight - 250;
+      });
+    },
+    getDataList() {
+      let form = this.paginationForm;
+      listAll(form)
+        .then((res) => {
+          this.table = res.data || [];
+          this.pageTotal = res.count;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    // 恢复历史记录
+    restoreRecording(row) {
+      let id = row.id;
+      this.alertMsgBox("此操作将恢复该数据,是否继续?")
+        .then(() => {
+          restorePc(id).then((res) => {
+            this.message(res.msg);
+            this.getDataList();
+          });
+        })
+        .catch((err) => {
+          this.message("已取消", "info");
+        });
     },
     // 删除数据
     deleteCase(row) {
       let id = row.id;
-      this.alertMsgBox()
+      this.alertMsgBox("删除后无法恢复,是否继续?")
         .then(() => {
           deleteType(id).then((res) => {
             this.message(res.msg);
-            this.$emit("getCaseList");
+            this.getDataList();
           });
         })
         .catch((err) => {
@@ -99,5 +123,5 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang='scss' scoped>
 </style>

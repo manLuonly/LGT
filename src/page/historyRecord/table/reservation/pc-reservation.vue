@@ -1,28 +1,38 @@
 <template>
   <div class="table_container">
     <el-table
-      v-loading="loading"
+      v-loading.lock="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
       :data="table"
       :height="Number(tableHeight)"
-      :default-sort="{prop: 'update_time', order: 'descending'}"
+      :default-sort="{prop: 'begin_time', order: 'descending'}"
       style="width: 100%"
       align="center"
     >
       <el-table-column prop="name" label="姓名" align="center"></el-table-column>
       <el-table-column prop="tel" label="联系电话" align="center"></el-table-column>
-      <el-table-column prop="wx_number" label="微信号" align="center"></el-table-column>
-      <el-table-column prop="email" label="邮箱" align="center" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="vip" label="vip" align="center" :formatter="isVip"></el-table-column>
-      <el-table-column prop="note" label="备注" align="center" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="update_time" sortable label="更新日期" align="center" width="150">
+      <el-table-column prop="service_type" label="服务类型" align="center">
         <template slot-scope="scope">
-          <span>{{ Date.format(scope.row.update_time) }}</span>
+          <el-tag>{{ scope.row.service_type }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="operation" align="center" label="操作" width="150">
+      <el-table-column
+        prop="leave_message"
+        label="留言"
+        align="center"
+        width="200"
+        show-overflow-tooltip
+      ></el-table-column>
+      <el-table-column prop="email" label="邮箱" align="center" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="source" label="来源" align="center" width="100"></el-table-column>
+      <el-table-column prop="begin_time" sortable label="更新日期" align="center" width="200">
+        <template slot-scope="scope">
+          <span>{{ Date.format(scope.row.create_time) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="operation" align="center" label="操作" width="200">
         <template slot-scope="scope">
           <el-button icon="edit" size="mini" @click="restoreRecording(scope.row)">恢复</el-button>
           <el-button type="danger" icon="delete" size="mini" @click="deleteUser(scope.row)">删除</el-button>
@@ -38,9 +48,9 @@
 </template>
 
 <script>
-import { listPage, restore, deleteUser } from "@/api/user";
+import { listPage, restore, deleteReservations } from "@/api/userInfo";
 export default {
-  name: "userDetails",
+  name: "uploadFile",
 
   data() {
     return {
@@ -50,8 +60,8 @@ export default {
       paginationForm: {
         pageNum: 1,
         pageSize: 20,
+        source: "pc",
         search_name: "",
-        vip: -1,
         start_time: "",
         end_time: "",
         delete_status: 1,
@@ -59,6 +69,7 @@ export default {
       pageTotal: 1,
     };
   },
+
   mounted() {
     this.getDataList();
     this.setTableHeight();
@@ -109,7 +120,7 @@ export default {
       let id = row.id;
       this.alertMsgBox("删除后无法恢复,是否继续?")
         .then(() => {
-          deleteUser(id).then((res) => {
+          deleteReservations(id).then((res) => {
             this.message(res.msg);
             this.getDataList();
           });
@@ -117,17 +128,6 @@ export default {
         .catch((err) => {
           this.message("已取消", "info");
         });
-    },
-    // 是否vip格式转换
-    isVip(row) {
-      let vip = row.vip;
-      if (vip === 0) {
-        return "否";
-      } else if (vip === 1) {
-        return "是";
-      } else {
-        return "否";
-      }
     },
   },
 };

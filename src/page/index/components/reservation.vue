@@ -52,7 +52,8 @@ export default {
             axisLabel: {
               interval: 0, // 字体设置全部显示
               // rotate: 40, // 字体倾斜40度
-              formatter(params) { // 字体换行
+              formatter(params) {
+                // 字体换行
                 return params.replace(/.{5}(?!$)/g, (a) => a + "\n");
               },
             },
@@ -67,6 +68,7 @@ export default {
               symbol: "circle",
               symbolSize: 12,
               data: res.data.pcYData,
+              itemStyle: { normal: { label: { show: true } } }, // 图表上方显示数值
             },
             {
               name: "小程序",
@@ -74,6 +76,7 @@ export default {
               symbol: "circle",
               symbolSize: 12,
               data: res.data.miniYData,
+              itemStyle: { normal: { label: { show: true } } }, // 图表上方显示数值
             },
           ],
         });

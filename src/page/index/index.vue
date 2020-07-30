@@ -2,14 +2,14 @@
   <div class="index">
     <div class="show_info_box">
       <ul>
-        <li v-for="item in infoForm" :key="item.tiele">
+        <li v-for="item in infoForm" :key="item.tiele" @click="goDetails(item.title)">
           <div class="left">
             <span class="title">{{ item.title}}</span>
           </div>
           <div class="right">
             <div class="right_text_box">
               <span class="text">{{ item.right.text }}:</span>
-              <span class="number" @click="goDetails(item.title)">{{ item.right.number }}</span>
+              <span class="number">{{ item.right.number }}</span>
             </div>
           </div>
         </li>
@@ -67,9 +67,9 @@ export default {
           },
         },
         {
-          title: "录",
+          title: "分",
           right: {
-            text: "历史记录",
+            text: "分类总数",
             number: 0,
           },
         },
@@ -84,7 +84,7 @@ export default {
     margin() {
       console.log(document.body.clientWidth);
       if (document.body.clientWidth > 1366) {
-        return 50
+        return 50;
       }
     },
   },
@@ -99,6 +99,7 @@ export default {
         this.infoForm[2].right.number = res.data.orderNum; // 订单总数
         this.infoForm[3].right.number = res.data.totalPrice; // 交易总额
         this.infoForm[4].right.number = res.data.clientNum; // 客户总数
+        this.infoForm[5].right.number = res.data.caseListNum; // 分类总数
       });
     },
     goDetails(title) {
@@ -165,6 +166,7 @@ export default {
         height: 70px;
         margin: 20px 10px;
         background-color: rgb(47, 114, 184);
+        cursor: pointer;
         .left {
           position: relative;
           width: 30%;
@@ -195,7 +197,6 @@ export default {
             .number {
               font-size: 16px;
               color: rgb(47, 114, 184);
-              cursor: pointer;
             }
           }
         }

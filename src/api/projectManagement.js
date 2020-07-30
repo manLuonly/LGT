@@ -108,7 +108,6 @@ export function editH5TypeList(data) {
 }
 
 
-
 /**
  * 编辑pc案例
  * @export
@@ -126,5 +125,33 @@ export function editTypeList(data) {
         url: 'caseLists/editTypeList',
         method: 'put',
         data,
+    })
+}
+
+/**
+ * 恢复小程序数据
+ * @export
+ * @param {*} id
+ * @returns
+ */
+export function restoreMini(id) {
+    return request({
+        url: `caseLists/restoreMini?id=${id}`,
+        method: 'post'
+    })
+}
+
+
+
+/**
+ * 恢复pc数据
+ * @export
+ * @param {*} id
+ * @returns
+ */
+export function restorePc(id) {
+    return request({
+        url: `caseLists/restorePc?id=${id}`,
+        method: 'post'
     })
 }

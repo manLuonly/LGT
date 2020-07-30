@@ -18,8 +18,16 @@ export default {
 
   data() {
     return {
-      pageType: "userDetails",
+      pageType: "caseClassification",
       pageTypeOptions: [
+        {
+          value: "caseClassification",
+          label: "案例分类",
+        },
+        {
+          value: "caseList",
+          label: "案例列表",
+        },
         {
           value: "reservation",
           label: "预约管理",
@@ -32,10 +40,10 @@ export default {
           value: "userDetails",
           label: "客户录入",
         },
-        {
-          value: "uploadFile",
-          label: "上传文件",
-        },
+        // {
+        //   value: "uploadFile",
+        //   label: "上传文件",
+        // },
       ],
     };
   },

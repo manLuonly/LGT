@@ -82,6 +82,7 @@ export default {
         vip: -1,
         start_time: "",
         end_time: "",
+        delete_status: 0,
       },
       pageTotal: 0,
       tableHeight: 0,
@@ -167,7 +168,7 @@ export default {
     // 删除客户
     deleteUser(row) {
       let id = row.id;
-      this.alertMsgBox("")
+      this.alertMsgBox()
         .then(() => {
           deleteUser(id).then((res) => {
             this.message(res.msg);

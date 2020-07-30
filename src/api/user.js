@@ -55,7 +55,7 @@ export function add(data) {
 export function deleteUser(id) {
     return request({
         url: `clientLists/delete?id=${id}`,
-        method: 'delete',
+        method: 'delete'
     })
 }
 
@@ -79,5 +79,21 @@ export function edit(data) {
         url: 'clientLists/edit',
         method: 'put',
         data
+    })
+}
+
+
+/**
+ *
+ * 恢复数据
+ * @export
+ * @param {*} id
+ * id id
+ * @returns
+ */
+export function restore(id) {
+    return request({
+        url: `clientLists/restore?id=${id}`,
+        method: 'post'
     })
 }

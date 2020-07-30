@@ -106,3 +106,20 @@ export function userListAll(search_name) {
         method: 'get'
     })
 }
+
+
+
+/**
+ *
+ * 恢复数据
+ * @export
+ * @param {*} id
+ * id id
+ * @returns
+ */
+export function restore(id) {
+    return request({
+        url: `orderLists/restore?id=${id}`,
+        method: 'post'
+    })
+}

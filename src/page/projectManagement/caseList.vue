@@ -81,6 +81,7 @@ export default {
         system_type: "pc",
         type: "",
         search_name: "",
+        delete_status: 0,
       },
       searchVal: "", // 搜索值
       dialog: {
@@ -117,8 +118,8 @@ export default {
     },
     // 获取案例列表
     getCaseTypeList(val) {
-      let type = { system_type: val };
-      listAll(type).then((res) => {
+      let form = { system_type: val, delete_status: 0 };
+      listAll(form).then((res) => {
         const all = [{ list_total_num: 0, type_name: "全部", id: 0, type: -1 }];
         this.caseList = all.concat(res.data);
         this.paginationForm.type = -1;

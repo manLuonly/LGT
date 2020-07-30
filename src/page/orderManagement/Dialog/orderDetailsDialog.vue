@@ -177,7 +177,7 @@ export default {
         state: [{ required: true, message: "请选择状态", trigger: "change" }],
         price: [{ required: true, message: "请输入金额", trigger: "blur" }],
         email: [
-          {  message: "请输入邮箱", trigger: "blur" },
+          { message: "请输入邮箱", trigger: "blur" },
           { validator: checkEmail, trigger: "blur" },
         ],
       },
@@ -237,7 +237,12 @@ export default {
     },
     // 获取服务项目
     getCaseType() {
-      const form = { pageNum: 1, pageSize: 20, system_type: "pc" };
+      const form = {
+        pageNum: 1,
+        pageSize: 20,
+        system_type: "pc",
+        delete_status: 0,
+      };
       listAll(form).then((res) => {
         this.serviceOptions = res.data.map((i) => i) || [];
       });
