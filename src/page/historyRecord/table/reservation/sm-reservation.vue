@@ -58,7 +58,7 @@ export default {
         end_time: "",
         delete_status: 1,
       },
-      pageTotal: 1,
+      pageTotal: 0,
     };
   },
 

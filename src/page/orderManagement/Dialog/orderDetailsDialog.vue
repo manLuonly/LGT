@@ -58,14 +58,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="金额" prop="price">
-          <el-input
-            v-model.number="ruleForm.price"
-            v-clearSpecial:[ruleForm.price]="{set:setValue, setName:'price'}"
-            v-numberInt
-            oninput="value=value.replace(/[^\d.]/g,'')"
-            maxlength="6"
-            show-word-limit
-          ></el-input>
+          <el-input-number
+            v-model="ruleForm.price"
+            :precision="2"
+            :step="0.1"
+            :min="0"
+            :max="999999"
+          ></el-input-number>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="ruleForm.email"></el-input>
@@ -286,7 +285,7 @@ export default {
     },
     // 表单赋值
     currentVal(item) {
-      console.log(item, "item");
+      // console.log(item, "item");
       this.ruleForm = item;
       this.ruleForm = {
         name: item.name,
@@ -310,6 +309,9 @@ export default {
 <style lang='less' scoped>
 .order-ruleForm {
   /deep/ .el-select {
+    width: 50%;
+  }
+  /deep/ .el-input-number--mini {
     width: 50%;
   }
 }

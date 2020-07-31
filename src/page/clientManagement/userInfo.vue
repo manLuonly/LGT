@@ -46,7 +46,7 @@ export default {
         end_time: "",
         delete_status: 0
       },
-      pageTotal: 1,
+      pageTotal: 0,
       text: "来源",
     };
   },

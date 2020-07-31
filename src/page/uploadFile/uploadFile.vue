@@ -179,7 +179,8 @@ export default {
     // 预览
     lookCase(row) {
       let url = row.url;
-      window.open(url);
+      let ip = getStore("ip");
+      window.open(ip + url);
     },
     // 编辑名字dialog
     showEditNameDialog(row) {
@@ -194,7 +195,7 @@ export default {
         name: this.name,
       };
       if (!this.name) {
-        this.message("请输入文件名称","error");
+        this.message("请输入文件名称", "error");
         return;
       }
       edit(form).then((res) => {

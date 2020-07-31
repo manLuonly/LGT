@@ -80,8 +80,6 @@ export default {
         width: "400px",
         formLabelWidth: "120px",
       },
-      dialogTitle: "",
-      text: "123",
     };
   },
   components: {

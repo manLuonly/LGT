@@ -47,7 +47,15 @@
         <el-table-column prop="email" label="邮箱" align="center" show-overflow-tooltip></el-table-column>
         <el-table-column prop="service_type" label="服务项目" align="center" show-overflow-tooltip></el-table-column>
         <el-table-column prop="note" label="备注" align="center" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="vip" label="vip" align="center" :formatter="isVip"></el-table-column>
+        <!-- :filter-multiple='false' -->
+        <el-table-column
+          prop="vip"
+          label="vip"
+          align="center"
+          :formatter="isVip"
+          :filters="[{ text: '是', value: 1 }, { text: '否', value: 0 }]"
+          :filter-method="filterTag"
+        ></el-table-column>
         <el-table-column prop="state" label="状态" align="center">
           <template slot-scope="scope">
             <el-tag
@@ -101,10 +109,10 @@ export default {
         pageSize: 20,
         search_name: "",
         state: -1,
-        vip: "",
+        vip: -1,
         start_time: "",
         end_time: "",
-        delete_status: 0
+        delete_status: 0,
       },
       loading: true,
       tableHeight: 0,
@@ -135,8 +143,8 @@ export default {
       const form = this.paginationForm;
       listPage(form)
         .then((res) => {
-          this.total = res.total;
           this.tableData = res.data || [];
+          this.total = res.total; // 总额
           this.pageTotal = res.count;
         })
         .finally(() => {
@@ -202,6 +210,10 @@ export default {
     setEmptyForm() {
       this.$store.commit("SET_ADDOREDIT", "add");
     },
+    // 筛选是否vip
+    filterTag(value, row) {
+      return row.vip === value;
+    },
     // 是否vip格式转换
     isVip(row) {
       let vip = row.vip;
@@ -259,9 +271,10 @@ export default {
     padding-bottom: 15px;
   }
   .total-money {
-    width: 126px;
+    width: 170px;
+    min-width: 150px;
     height: 40px;
-    margin: 0 20px;
+    margin: 0 10px;
     line-height: 40px;
     border: 1px solid rgb(229, 229, 229);
     border-radius: 5px;

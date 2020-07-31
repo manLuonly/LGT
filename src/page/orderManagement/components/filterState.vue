@@ -54,7 +54,7 @@ export default {
     margin-right: 10px;
   }
   /deep/ .el-select {
-    width: 145px;
+    width: 120px;
   }
 }
 </style>

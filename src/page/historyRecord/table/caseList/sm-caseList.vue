@@ -96,7 +96,7 @@ export default {
         delete_status: 1,
       },
       imgList: [],
-      pageTotal: 1,
+      pageTotal: 0,
     };
   },
 

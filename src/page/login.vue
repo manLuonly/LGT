@@ -57,6 +57,7 @@
 <script>
 import { login } from "@/api/user";
 import { setToken, setName, setAvatar } from "@/utils/auth";
+import { getIp } from "@/api/home";
 
 export default {
   data() {
@@ -89,6 +90,9 @@ export default {
         if (valid) {
           this.$router.push({ path: "/" });
           this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
+          getIp().then((res) => {
+            setStore("ip", res.data.ip);
+          });
           // this.loginForm.password = this.$md5(this.loginForm.password);
           // let userinfo = this.loginForm;
           // login(userinfo)

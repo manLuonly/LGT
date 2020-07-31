@@ -1,4 +1,5 @@
 import request from '@/utils/axios';
+import { local } from "@/utils/env";
 
 
 /**
@@ -37,6 +38,20 @@ export function moneyFn(day) {
 export function reservationFn(day) {
     return request({
         url: `/statistics/reservation?day=${day}`,
+        method: 'get'
+    })
+}
+
+
+/**
+ *
+ *公网ip获取
+ * @export
+ * @returns
+ */
+export function getIp() {
+    return request({
+        url: `${local}/common/ip`,
         method: 'get'
     })
 }

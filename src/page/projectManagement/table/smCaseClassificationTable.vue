@@ -21,11 +21,8 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="id" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column type="index" label="序号" align="center"></el-table-column>
+      <el-table-column prop="id" label="id" align="center"></el-table-column>
       <el-table-column label="icon" align="center">
         <template slot-scope="scope">
           <el-image
@@ -44,13 +41,12 @@
             style="width: 130px; height: 50px; cursor:pointer"
             :src="scope.row.cover_img"
             fit="cover"
-       
             :preview-src-list="coveriImgList"
             @click="addCoveriImg(scope.row)"
           ></el-image>
         </template>
       </el-table-column>
-      <el-table-column label="名称" align="center">
+      <el-table-column label="名称" align="center" width="100">
         <template slot-scope="scope">
           <el-tag>{{ scope.row.type_name }}</el-tag>
         </template>
@@ -66,7 +62,7 @@
           <span>{{ scope.row.details }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="200" prop="update_time" label="更新时间" align="center" sortable>
+      <el-table-column width="170" prop="update_time" label="更新时间" align="center" sortable>
         <template slot-scope="scope">
           <el-icon name="time"></el-icon>
           <span>{{ Date.format(scope.row.update_time)}}</span>

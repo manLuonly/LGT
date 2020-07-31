@@ -21,11 +21,8 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="id" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column type="index" label="序号"  align="center"></el-table-column>
+      <el-table-column prop="id" label="id" align="center" width="100"></el-table-column>
       <el-table-column label="名称" align="center">
         <template slot-scope="scope">
           <el-tag>{{ scope.row.type_name }}</el-tag>
@@ -43,7 +40,7 @@
           <span style="margin-left: 10px">{{ Date.format(scope.row.update_time)}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="operation" align="center" label="操作">
+      <el-table-column prop="operation" align="center" label="操作" width="200">
         <template slot-scope="scope">
           <el-button icon="edit" size="mini" @click="lookCaseStatus(scope.row);">编辑</el-button>
           <el-button type="danger" icon="delete" size="mini" @click="deleteCase(scope.row)">删除</el-button>

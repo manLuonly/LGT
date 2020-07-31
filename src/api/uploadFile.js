@@ -1,4 +1,5 @@
 import request from '@/utils/axios';
+import { local } from "@/utils/env";
 
 /**
  *
@@ -36,6 +37,8 @@ export function add(data) {
         data
     })
 }
+
+
 
 /**
  *

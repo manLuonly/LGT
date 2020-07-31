@@ -57,6 +57,7 @@
           </el-upload>
         </el-form-item>
 
+        <!--   :limit="9" -->
         <el-form-item label="案例详情图">
           <el-upload
             :file-list="ruleForm.details_imgs"
@@ -67,7 +68,7 @@
             :on-success="uploadSuccess"
             :on-remove="removeImg"
             :on-preview="handlePictureCardPreview"
-            :limit="9"
+            :on-exceed="onExceed"
             multiple
             accept=".jpg, .jpeg, .png, .JPG, .JPEG"
           >
@@ -118,7 +119,7 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       fileList: [],
-      action: "https://imgkr.com/api/v2/files/upload",
+      action: "http://192.168.31.80:15000/common/fileWrite",
       type: "",
     };
   },
@@ -179,7 +180,7 @@ export default {
     },
     // 封面图上传图片
     successImg(res, file) {
-      this.ruleForm.img = res.data;
+      this.ruleForm.img = getStore("ip") + res.data.url;
     },
     // 详情图上传成功
     uploadSuccess(res, file, fileList) {
@@ -194,7 +195,9 @@ export default {
     getDetailsImgs() {
       let details_imgs = [];
       this.fileList.map((item) => {
-        let data = item.response ? item.response.data : item.url;
+        let data = item.response
+          ? getStore("ip") + item.response.data.url
+          : item.url;
         details_imgs.push(data);
       });
 
@@ -246,7 +249,10 @@ export default {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
-
+    // 文件超出个数限制
+    onExceed(files, fileList) {
+      this.message("超出上传限制，最多上传9张图片", "warning");
+    },
     // 关闭dialog
     closeDialog() {
       this.$emit("closeDialog");

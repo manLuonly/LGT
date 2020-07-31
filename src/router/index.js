@@ -189,7 +189,7 @@ export const asyncRouterMap = [{
         name: 'uploadFile',
         meta: {
             title: '上传文件',
-            icon: 'icon-Icon_orderhistory'
+            icon: 'icon-upload'
         },
         noDropdown: true, // 不开启下拉列表
         children: [{

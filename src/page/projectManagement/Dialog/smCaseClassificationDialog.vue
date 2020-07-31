@@ -33,6 +33,7 @@
         <el-form-item prop="type" label="分类">
           <el-input
             v-model="ruleForm.type"
+            :disabled="isEdit"
             maxlength="20"
             show-word-limit
             clearable
@@ -115,6 +116,7 @@ export default {
       description1: "",
       description2: "",
       action: "https://imgkr.com/api/v2/files/upload",
+      isEdit: false,
     };
   },
   props: {
@@ -131,6 +133,7 @@ export default {
         this.$refs["form"].resetFields();
       });
     } else {
+      this.isEdit = true;
       this.ruleForm = this.dialogRow;
     }
     this.description1 = this.dialogRow.details.split("|")[0];
@@ -164,10 +167,17 @@ export default {
       this.$refs[form].validate((valid) => {
         if (valid) {
           let form = this.ruleForm;
-
           form.details = this.description1 + "|" + this.description2;
+          this.showLoading();
+
           if (this.status === "add") {
-            this.showLoading();
+            /** 检测是否中文 */
+            const reg = /^[\u4e00-\u9fa5]*$/;
+            if (reg.test(this.ruleForm.type)) {
+              this.message("禁止输入中文", "error");
+              this.hideLoading();
+              return;
+            }
 
             addH5Type(form)
               .then((res) => {
@@ -180,8 +190,6 @@ export default {
                 this.hideLoading();
               });
           } else {
-            this.showLoading();
-
             editH5Type(form)
               .then((res) => {
                 this.message("编辑案例分类成功");

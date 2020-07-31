@@ -71,7 +71,8 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { add, edit } from "@/api/orderDetails";
+import { add } from "@/api/uploadFile";
+import { local } from "@/utils/env";
 
 export default {
   name: "uploadFileDialog",
@@ -85,19 +86,15 @@ export default {
       fileName: "", // 选中文件的名字
       enterImgName: "", // 输入的图片名
       enterFileName: "", // 输入的文件名
+      type: "", // 文件类型 (1为文件 / 2为单图片)
     };
   },
   props: {
     isShow: Boolean,
-    default: () => {},
+    default: true,
   },
   computed: {
     ...mapGetters(["status"]),
-  },
-  mounted() {
-    // this.$nextTick(() => {
-    //   this.$refs["form"].resetFields();
-    // });
   },
   methods: {
     // 图片上传限制
@@ -139,6 +136,7 @@ export default {
     // 确定上传文件
     submitFile() {
       let type = this.files.type;
+      // 文件类型 (1为文件 / 2为单图片)
       if (type == "image/jpeg" || type == "image/png") {
         type = 2;
       } else {
@@ -150,21 +148,32 @@ export default {
       let fileFormData = new FormData();
       fileFormData.append("file", this.files); // 文件
       fileFormData.append("name", name); // 文件名
-      fileFormData.append("type", type); // 文件类型 (1为文件 / 2为单图片)
+      fileFormData.append("directory", "system"); // 对应项目目录
+      fileFormData.append("state", 0); // 是否为下载链接， 0 在线预览，1 下载
       let requestConfig = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       };
       this.$axios
-        .post(`/uploadCaseLists/add`, fileFormData, requestConfig)
+        .post(`${local}/common/fileWrite`, fileFormData, requestConfig)
         .then((res) => {
           if (res.data.code === 0) {
-            this.message("上传成功");
-            this.isVisible = false;
-            this.$emit("getCaseList");
+            let result = res.data.data;
+            let form = {
+              name: result.name,
+              type: type,
+              url: result.url,
+              file_size: result.size,
+              file_type: result.suffix,
+            };
+            add(form).then((res) => {
+              this.message("上传成功");
+              this.isVisible = false;
+              this.$emit("getCaseList");
+            });
           } else {
-            this.$message.error(res.data.msg);
+            this.$message.error(res.data.data.msg);
           }
         });
     },

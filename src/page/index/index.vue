@@ -39,6 +39,13 @@ export default {
           },
         },
         {
+          title: "分",
+          right: {
+            text: "分类总数",
+            number: 0,
+          },
+        },
+        {
           title: "约",
           right: {
             text: "预约人数",
@@ -66,13 +73,6 @@ export default {
             number: 17,
           },
         },
-        {
-          title: "分",
-          right: {
-            text: "分类总数",
-            number: 0,
-          },
-        },
       ],
     };
   },
@@ -94,12 +94,12 @@ export default {
   methods: {
     getDataList() {
       nums().then((res) => {
-        this.infoForm[0].right.number = res.data.caseNum; // 案例总数
-        this.infoForm[1].right.number = res.data.reservationNum; // 预约总数
-        this.infoForm[2].right.number = res.data.orderNum; // 订单总数
-        this.infoForm[3].right.number = res.data.totalPrice; // 交易总额
-        this.infoForm[4].right.number = res.data.clientNum; // 客户总数
-        this.infoForm[5].right.number = res.data.caseListNum; // 分类总数
+        this.infoForm[0].right.number = res.data.caseListNum; // 案例总数
+        this.infoForm[1].right.number = res.data.caseNum; //分类总数
+        this.infoForm[2].right.number = res.data.reservationNum; // 预约总数
+        this.infoForm[3].right.number = res.data.orderNum; // 订单总数
+        this.infoForm[4].right.number = res.data.totalPrice; // 交易总额
+        this.infoForm[5].right.number = res.data.clientNum; // 客户总数
       });
     },
     goDetails(title) {
@@ -189,6 +189,7 @@ export default {
             position: absolute;
             top: 50%;
             left: 50%;
+            min-width: 130px;
             transform: translate(-50%, -50%);
             .text {
               margin-right: 2px;

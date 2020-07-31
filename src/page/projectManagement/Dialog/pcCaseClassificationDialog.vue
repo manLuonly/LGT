@@ -33,6 +33,7 @@
         <el-form-item prop="type" label="分类">
           <el-input
             v-model="ruleForm.type"
+            :disabled="isEdit"
             maxlength="20"
             show-word-limit
             clearable
@@ -75,6 +76,7 @@ export default {
         formLabelWidth: "120px",
       },
       staticNumber: 0,
+      isEdit: false,
     };
   },
   props: {
@@ -92,6 +94,7 @@ export default {
         this.$refs["form"].resetFields();
       });
     } else {
+      this.isEdit = true;
       this.ruleForm = this.dialogRow;
     }
   },
@@ -108,6 +111,14 @@ export default {
           this.showLoading();
 
           if (this.status === "add") {
+            /** 检测是否中文 */
+            const reg = /^[\u4e00-\u9fa5]*$/;
+            if (reg.test(this.ruleForm.type)) {
+              this.message("禁止输入中文", "error");
+              this.hideLoading();
+              return;
+            }
+
             addType(form)
               .then((res) => {
                 this.message("新增案例分类成功");

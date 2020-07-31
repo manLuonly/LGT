@@ -1,6 +1,5 @@
 <template>
-<!-- :style="{'width':headNavWidth+'px'}" id="header_container" -->
-  <header class="head-nav rflex" >
+  <header class="head-nav rflex" :style="{'width':headNavWidth+'px'}" id="header_container">
     <div class="right-nav" ref="rightNav">
       <top-menu></top-menu>
       <div class="userinfo-right rflex">
@@ -13,7 +12,7 @@
             </div>
             <el-dropdown>
               <img
-                src="https://wx.qlogo.cn/mmopen/vi_32/un2HbJJc6eiaviaibvMgiasFNlVDlNOb9E6WCpCrsO4wMMhHIbsvTkAbIehLwROVFlu8dLMcg00t3ZtOcgCCdcxlZA/132"
+                src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1582757028,805496526&fm=26&gp=0.jpg"
                 class="avatar"
               />
               <el-dropdown-menu slot="dropdown">
@@ -42,21 +41,21 @@
         status-icon
         :rules="rules"
         ref="ruleForm"
-        label-width='auto'
+        label-width="auto"
         class="updatePwd-ruleForm"
       >
         <el-form-item label="密码" prop="pass">
           <el-row type="flex" class="row-bg" justify="center">
-          <el-col>
-            <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
-          </el-col>
+            <el-col>
+              <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+            </el-col>
           </el-row>
         </el-form-item>
         <el-form-item label="确认密码" prop="checkPass">
           <el-row type="flex" class="row-bg" justify="center">
-          <el-col>
-            <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
-          </el-col>
+            <el-col>
+              <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+            </el-col>
           </el-row>
         </el-form-item>
       </el-form>
@@ -75,7 +74,7 @@ import {
   removeName,
   removeAvatar,
   getName,
-  getAvatar
+  getAvatar,
 } from "@/utils/auth";
 import store from "@/store";
 import topMenu from "./topMenu";
@@ -106,51 +105,49 @@ export default {
     };
     return {
       menu: {
-        userBgcolor: "#f0f2f5"
+        userBgcolor: "#f0f2f5",
       },
       trueName: "卢广宗",
       avatar: "",
       updatePwd: false,
       ruleForm: {
         pass: "",
-        checkPass: ""
+        checkPass: "",
       },
       rules: {
         pass: [{ required: true, validator: validatePass, trigger: "blur" }],
         checkPass: [
-          { required: true, validator: validatePass2, trigger: "blur" }
-        ]
-      }
+          { required: true, validator: validatePass2, trigger: "blur" },
+        ],
+      },
     };
   },
   components: {
-    topMenu
+    topMenu,
   },
   computed: {
     ...mapGetters(["sidebar"]),
     headNavWidth() {
       return document.body.clientWidth - this.sidebar.width;
-    }
+    },
   },
   created() {},
   mounted() {
-    this.trueName = getName("name");
+    this.trueName = getName("name") ? getName("name") : '管理员';
     this.avatar = getAvatar("Avatar");
   },
   methods: {
     // 退出登录
     logout() {
       logout()
-        .then(res => {
-          if (res.code === 0) {
-            removeToken();
-            removeName();
-            removeAvatar();
-            this.$router.push({ path: "/login" });
-            window.location.reload();
-          }
+        .then((res) => {
+          removeToken();
+          removeName();
+          removeAvatar();
+          this.$router.push({ path: "/login" });
+          window.location.reload();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err, "err");
         });
     },
@@ -165,7 +162,7 @@ export default {
       }
     },
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           alert("submit!");
         } else {
@@ -176,8 +173,8 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-    }
-  }
+    },
+  },
 };
 </script>
 

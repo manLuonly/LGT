@@ -16,7 +16,14 @@
       <el-table-column prop="email" label="邮箱" align="center" show-overflow-tooltip></el-table-column>
       <el-table-column prop="service_type" label="服务项目" align="center" show-overflow-tooltip></el-table-column>
       <el-table-column prop="note" label="备注" align="center" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="vip" label="vip" align="center" :formatter="isVip"></el-table-column>
+      <el-table-column
+        prop="vip"
+        label="vip"
+        align="center"
+        :formatter="isVip"
+        :filters="[{ text: '是', value: 1 }, { text: '否', value: 0 }]"
+        :filter-method="filterTag"
+      ></el-table-column>
       <el-table-column prop="state" label="状态" align="center">
         <template slot-scope="scope">
           <el-tag
@@ -65,12 +72,12 @@ export default {
         pageSize: 20,
         search_name: "",
         state: -1,
-        vip: "",
+        vip: -1,
         start_time: "",
         end_time: "",
         delete_status: 1,
       },
-      pageTotal: 1,
+      pageTotal: 0,
     };
   },
   mounted() {
@@ -131,6 +138,10 @@ export default {
         .catch((err) => {
           this.message("已取消", "info");
         });
+    },
+    // 筛选是否vip
+    filterTag(value, row) {
+      return row.vip === value;
     },
     // 是否vip格式转换
     isVip(row) {

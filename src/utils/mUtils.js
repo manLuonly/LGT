@@ -55,11 +55,11 @@ Vue.prototype.hideLoading = function() {
 }
 
 
-window.watchTable = function() {
-    if (this.table.table.length > 0) {
-        this.$emit("changeLoading", false);
-    }
-}
+// window.watchTable = function() {
+//     if (this.table.table.length > 0) {
+//         this.$emit("changeLoading", false);
+//     }
+// }
 
 
 /**
@@ -73,12 +73,11 @@ window.watchTable = function() {
  */
 window._md5 = md5
 
-
-
 /**
  * 存储localStorage
  */
-export const setStore = (name, content) => {
+
+window.setStore = function(name, content) {
     if (!name) return;
     if (typeof content !== 'string') {
         content = JSON.stringify(content);
@@ -86,10 +85,11 @@ export const setStore = (name, content) => {
     window.localStorage.setItem(name, content);
 }
 
+
 /**
  * 获取localStorage
  */
-export const getStore = name => {
+window.getStore = function(name) {
     if (!name) return;
     var value = window.localStorage.getItem(name);
     if (value !== null) {
@@ -105,17 +105,17 @@ export const getStore = name => {
 /**
  * 删除localStorage
  */
-export const removeStore = name => {
+window.removeStore = function(name) {
     if (!name) return;
     window.localStorage.removeItem(name);
 }
+
 
 
 /**
  *  获取时间 YYYY-MM-DD 
  * 
  */
-
 
 Date.getTime = () => {
     let yy = new Date().getFullYear();
