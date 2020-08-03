@@ -8,7 +8,7 @@
       @close="closeDialog"
       center
     >
-      <el-tabs v-model="activeName" type="border-card" @tab-click="tabsClick">
+      <el-tabs v-model="activeName" type="card" @tab-click="tabsClick">
         <el-tab-pane label="上传图片" name="img">
           <el-input
             v-model="enterImgName"

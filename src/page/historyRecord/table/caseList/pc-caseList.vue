@@ -34,7 +34,6 @@
             style="width: 100px; height: 50px; cursor:pointer"
             :src="scope.row.img"
             fit="cover"
-            lazy
             :preview-src-list="imgList"
             @click="addImg(scope.row)"
           ></el-image>
@@ -46,7 +45,6 @@
             style="width: 100px; height: 50px; cursor:pointer"
             :src="scope.row.details_imgs[0]"
             fit="cover"
-            lazy
             :preview-src-list="scope.row.details_imgs"
           ></el-image>
         </template>

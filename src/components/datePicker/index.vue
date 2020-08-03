@@ -5,7 +5,7 @@
         v-model="date"
         type="daterange"
         size="large"
-        align="right"
+        align="left"
         unlink-panels
         range-separator="至"
         start-placeholder="开始日期"

@@ -13,12 +13,12 @@ Vue.prototype.alertMsgBox = function alert(msg, title, settings = {}) {
             if (action === 'confirm') {
                 instance.confirmButtonLoading = true;
                 instance.confirmButtonText = '执行中...';
+
+                done();
                 setTimeout(() => {
-                    done();
-                    setTimeout(() => {
-                        instance.confirmButtonLoading = false;
-                    }, 300);
-                }, 1000);
+                    instance.confirmButtonLoading = false;
+                }, 0);
+
             } else {
                 done();
             }
@@ -345,7 +345,7 @@ export const setContentHeight = (that, ele, height) => {
  * @param {*} obj
  * @returns
  */
-export function deepCopy(obj) {
+window.deepCopy = function(obj) {
     var result = Array.isArray(obj) ? [] : {};
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {

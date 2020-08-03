@@ -50,7 +50,7 @@
             :on-success="successImg"
             :before-upload="beforeUploadImg"
             accept=".jpg, .jpeg, .png, .JPG, .JPEG"
-            :limit="1"
+            :data="additionalForm"
           >
             <img v-if="ruleForm.img" :src="ruleForm.img" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -69,6 +69,7 @@
             :on-remove="removeImg"
             :on-preview="handlePictureCardPreview"
             :on-exceed="onExceed"
+            :data="additionalForm"
             multiple
             accept=".jpg, .jpeg, .png, .JPG, .JPEG"
           >
@@ -106,7 +107,7 @@ export default {
       },
       form_rules: {
         type: [{ required: true, message: "分类不能为空", trigger: "change" }],
-        type_name: [
+        name: [
           { required: true, message: "案例名称不能为空", trigger: "blur" },
         ],
       },
@@ -121,6 +122,10 @@ export default {
       fileList: [],
       action: "http://192.168.31.80:15000/common/fileWrite",
       type: "",
+      additionalForm: {
+        directory: "system",
+        state: 0,
+      },
     };
   },
   props: {
@@ -168,15 +173,15 @@ export default {
         file.type === "image/jpg" ||
         file.type === "image/jpeg" ||
         file.type === "image/png";
-      const isLt5M = file.size / 1024 / 1024 < 5;
+      const isLt20M = file.size / 1024 / 1024 < 20;
 
       if (!isImg) {
         this.$message.error("只能上传图片格式为jpg,jpeg,png!");
       }
-      if (!isLt5M) {
-        this.$message.error("上传图片大小不能超过 5MB!");
+      if (!isLt20M) {
+        this.$message.error("上传图片大小不能超过 20MB!");
       }
-      return isImg && isLt5M;
+      return isImg && isLt20M;
     },
     // 封面图上传图片
     successImg(res, file) {
@@ -205,17 +210,30 @@ export default {
       this.ruleForm.details_total = details_imgs.length;
     },
 
+    // 表单处理
+    formProcess() {
+      let form = this.ruleForm;
+      let arr = [];
+      form.img = form.img.split("?")[1];
+      form.details_imgs.filter((i) => {
+        arr.push(i.split("?")[1]);
+      });
+      form.details_imgs = arr;
+    },
+
     //表单提交
     onSubmit(form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
           let form = this.ruleForm;
-
+          if (!form.img) {
+            return this.message("案例图不能为空", "warning");
+          }
+          this.showLoading();
           this.getDetailsImgs();
+          this.formProcess();
 
           if (this.type === "add") {
-            this.showLoading();
-
             addH5TypeList(form)
               .then((res) => {
                 this.message("新增案例列表成功");
@@ -227,8 +245,6 @@ export default {
                 this.hideLoading();
               });
           } else {
-            this.showLoading();
-
             editH5TypeList(form)
               .then((res) => {
                 this.message("修改案例列表成功");

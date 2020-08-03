@@ -49,13 +49,13 @@
             :on-success="successIcon"
             :before-upload="beforeUpload"
             accept="image/jpg, image/jpeg, image/png"
-            :limit="1"
+            :data="additionalForm"
           >
             <img v-if="ruleForm.icon_img" :src="ruleForm.icon_img" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
-
+        <!-- :http-request="httpRequest" -->
         <el-form-item label="封面图">
           <el-upload
             class="avatar-uploader"
@@ -63,7 +63,7 @@
             :show-file-list="false"
             :on-success="successImg"
             :before-upload="beforeUpload"
-            :limit="1"
+            :data="additionalForm"
           >
             <img v-if="ruleForm.cover_img" :src="ruleForm.cover_img" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -113,10 +113,14 @@ export default {
         width: "400px",
         formLabelWidth: "120px",
       },
-      description1: "",
-      description2: "",
-      action: "https://imgkr.com/api/v2/files/upload",
+      description1: "沟通-需求-制作-完稿",
+      description2: "微信小程序定制,一站式管理服务",
+      action: "http://192.168.31.80:15000/common/fileWrite",
       isEdit: false,
+      additionalForm: {
+        directory: "system",
+        state: 0,
+      },
     };
   },
   props: {
@@ -124,9 +128,8 @@ export default {
     dialogRow: Object,
   },
   computed: {
-    ...mapGetters(["systemType", "status"]),
+    ...mapGetters(["status"]),
   },
-  created() {},
   mounted() {
     if (this.status === "add") {
       this.$nextTick(() => {
@@ -135,31 +138,43 @@ export default {
     } else {
       this.isEdit = true;
       this.ruleForm = this.dialogRow;
+      this.editForm();
     }
-    this.description1 = this.dialogRow.details.split("|")[0];
-    this.description2 = this.dialogRow.details.split("|")[1];
   },
   methods: {
+    editForm() {
+      this.description1 = this.dialogRow.details.split("|")[0];
+      this.description2 = this.dialogRow.details.split("|")[1];
+    },
     successIcon(res, file) {
-      this.ruleForm.icon_img = res.data;
+      this.ruleForm.icon_img = getStore("ip") + res.data.url;
     },
     successImg(res, file) {
-      this.ruleForm.cover_img = res.data;
+      this.ruleForm.cover_img = getStore("ip") + res.data.url;
     },
+    // 上传文件之前
     beforeUpload(file) {
       const isImg =
         file.type === "image/jpg" ||
         file.type === "image/jpeg" ||
         file.type === "image/png";
-      const isLt5M = file.size / 1024 / 1024 < 5;
+      const isLt20M = file.size / 1024 / 1024 < 20;
 
       if (!isImg) {
         this.$message.error("只能上传图片格式为jpg,jpeg,png!");
       }
-      if (!isLt5M) {
-        this.$message.error("上传图片大小不能超过 5MB!");
+      if (!isLt20M) {
+        this.$message.error("上传图片大小不能超过 20MB!");
       }
-      return isImg && isLt5M;
+      return isImg && isLt20M;
+    },
+
+    // 表单处理
+    formProcess() {
+      let form = this.ruleForm;
+      form.details = this.description1 + "|" + this.description2;
+      form.icon_img = form.icon_img.split("?")[1];
+      form.cover_img = form.cover_img.split("?")[1];
     },
 
     //表单提交
@@ -167,18 +182,25 @@ export default {
       this.$refs[form].validate((valid) => {
         if (valid) {
           let form = this.ruleForm;
-          form.details = this.description1 + "|" + this.description2;
+          /** 检测是否中文 */
+          const reg = /^[\u4e00-\u9fa5]*$/;
+          if (reg.test(this.ruleForm.type)) {
+            this.message("禁止输入中文", "error");
+            return;
+          }
+          if (!form.icon_img) {
+            this.message("icon不能为空", "warning");
+            return;
+          }
+          if (!form.cover_img) {
+            this.message("封面图不能为空", "warning");
+            return;
+          }
+
           this.showLoading();
+          this.formProcess();
 
           if (this.status === "add") {
-            /** 检测是否中文 */
-            const reg = /^[\u4e00-\u9fa5]*$/;
-            if (reg.test(this.ruleForm.type)) {
-              this.message("禁止输入中文", "error");
-              this.hideLoading();
-              return;
-            }
-
             addH5Type(form)
               .then((res) => {
                 this.message("新增案例分类成功");

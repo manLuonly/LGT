@@ -44,7 +44,7 @@ export default {
         search_name: "",
         start_time: "",
         end_time: "",
-        delete_status: 0
+        delete_status: 0,
       },
       pageTotal: 0,
       text: "来源",
@@ -70,9 +70,13 @@ export default {
     // 获取列表数据
     getDataList() {
       const form = this.paginationForm;
-      listPage(form).then((res) => {
-        this.caseTable.data = res || {};
-      });
+      listPage(form)
+        .then((res) => {
+          this.caseTable.data = res || {};
+        })
+        .finally(() => {
+          this.changeLoading(false);
+        });
     },
     // 上下分页
     handleCurrentChange(val) {

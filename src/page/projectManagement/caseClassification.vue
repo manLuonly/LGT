@@ -73,7 +73,7 @@ export default {
       },
       paginationForm: {
         system_type: "pc",
-        delete_status: 0
+        delete_status: 0,
       },
       pageTotal: 0,
       dialog: {
@@ -106,10 +106,18 @@ export default {
     // 获取列表数据
     getDataList() {
       const form = this.paginationForm;
-      this.caseTable.loading = true;
-      listAll(form).then((res) => {
-        this.caseTable.table = res.data || [];
-      });
+      this.changeLoading(true);
+      listAll(form)
+        .then((res) => {
+          res.data.filter((i) => {
+            i.icon_img = getStore("ip") + i.icon_img;
+            i.cover_img = getStore("ip") + i.cover_img;
+          });
+          this.caseTable.table = res.data || [];
+        })
+        .finally(() => {
+          this.changeLoading(false);
+        });
     },
     // 显示案例分类dialog
     showCaseDialog(row) {

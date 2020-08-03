@@ -12,7 +12,7 @@
             </div>
             <el-dropdown>
               <img
-                src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1582757028,805496526&fm=26&gp=0.jpg"
+                :src="avatar"
                 class="avatar"
               />
               <el-dropdown-menu slot="dropdown">
@@ -108,7 +108,7 @@ export default {
         userBgcolor: "#f0f2f5",
       },
       trueName: "卢广宗",
-      avatar: "",
+      avatar: "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1582757028,805496526&fm=26&gp=0.jpg",
       updatePwd: false,
       ruleForm: {
         pass: "",
@@ -134,7 +134,7 @@ export default {
   created() {},
   mounted() {
     this.trueName = getName("name") ? getName("name") : '管理员';
-    this.avatar = getAvatar("Avatar");
+    this.avatar = getAvatar("Avatar") ? getAvatar("Avatar") : this.avatar;
   },
   methods: {
     // 退出登录

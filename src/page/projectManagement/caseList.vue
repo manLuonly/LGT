@@ -128,9 +128,21 @@ export default {
     // 获取列表数据
     getDataList() {
       const form = this.paginationForm;
-      listPage(form).then((res) => {
-        this.caseTable.data = res || {};
-      });
+      listPage(form)
+        .then((res) => {
+          let arr = [];
+          res.data.filter((i) => {
+            i.img = getStore("ip") + i.img;
+            i.details_imgs = i.details_imgs.map((item, index) => {
+              return (item = getStore("ip") + item);
+            });
+          });
+
+          this.caseTable.data = res || {};
+        })
+        .finally(() => {
+          this.changeLoading(false);
+        });
     },
     // 上下分页
     handleCurrentChange(val) {

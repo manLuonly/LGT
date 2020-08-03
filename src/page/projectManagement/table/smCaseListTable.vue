@@ -34,7 +34,6 @@
             style="width: 100px; height: 50px; cursor:pointer"
             :src="scope.row.img"
             fit="cover"
-            lazy
             :preview-src-list="imgList"
             @click="addImg(scope.row)"
           ></el-image>
@@ -42,13 +41,16 @@
       </el-table-column>
       <el-table-column prop="details_imgs" label="详情图" align="center">
         <template slot-scope="scope">
-          <el-image
-            style="width: 100px; height: 50px; cursor:pointer"
-            :src="scope.row.details_imgs[0]"
-            fit="cover"
-            lazy
-            :preview-src-list="scope.row.details_imgs"
-          ></el-image>
+          <div>
+            <span v-if="scope.row.details_imgs.length == 0">无</span>
+            <el-image
+              v-else
+              style="width: 100px; height: 50px; cursor:pointer"
+              :src="scope.row.details_imgs[0]"
+              fit="cover"
+              :preview-src-list="scope.row.details_imgs"
+            ></el-image>
+          </div>
         </template>
       </el-table-column>
       <el-table-column prop="details_total" label="详情图数量" align="center"></el-table-column>

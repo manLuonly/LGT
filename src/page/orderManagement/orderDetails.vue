@@ -102,7 +102,9 @@ export default {
       tableData: [],
       orderDetails: {
         isShow: false,
-        dialogRow: {},
+        dialogRow: {
+          title: "注:需要有当前客户,才能输入订单",
+        },
       },
       paginationForm: {
         pageNum: 1,

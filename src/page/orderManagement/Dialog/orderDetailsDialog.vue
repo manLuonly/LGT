@@ -40,7 +40,7 @@
             <el-option v-for="item in userOptions" :key="item.tel" :label="item.tel" :value="item"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="微信号">
+        <el-form-item label="微信号" prop="wxNumber">
           <el-select
             v-model="ruleForm.wx_number"
             v-clearSpecial:[ruleForm.wx_number]="{set:setValue, setName:'wx_number'}"
@@ -61,7 +61,7 @@
           <el-input-number
             v-model="ruleForm.price"
             :precision="2"
-            :step="0.1"
+            :step="1"
             :min="0"
             :max="999999"
           ></el-input-number>
@@ -170,10 +170,11 @@ export default {
           { required: true, message: "请输入联系电话", trigger: "blur" },
           { validator: checkTel, trigger: "blur" },
         ],
+        wxNumber: [{ required: true, message: "请输入微信号", trigger: "blur" }],
         service_type: [
-          { required: true, message: "请选择服务项目", trigger: "change" },
+          { required: true, message: "请选择服务项目", trigger: "blur" },
         ],
-        state: [{ required: true, message: "请选择状态", trigger: "change" }],
+        state: [{ required: true, message: "请选择状态", trigger: "blur" }],
         price: [{ required: true, message: "请输入金额", trigger: "blur" }],
         email: [
           { message: "请输入邮箱", trigger: "blur" },
@@ -286,16 +287,14 @@ export default {
     // 表单赋值
     currentVal(item) {
       // console.log(item, "item");
-      this.ruleForm = item;
+      // 不能把原有数据改变
       this.ruleForm = {
+        ...this.ruleForm,
         name: item.name,
         tel: item.tel,
         wx_number: item.wx_number,
         email: item.email,
-        service_type: "",
-        state: "",
         vip: item.vip,
-        price: "",
         note: item.note,
       };
     },

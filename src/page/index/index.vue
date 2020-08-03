@@ -35,7 +35,7 @@ export default {
           title: "案",
           right: {
             text: "案例总数",
-            number: 100,
+            number: 0,
           },
         },
         {
@@ -49,14 +49,14 @@ export default {
           title: "约",
           right: {
             text: "预约人数",
-            number: 10,
+            number: 0,
           },
         },
         {
           title: "定",
           right: {
             text: "成交订单",
-            number: 20,
+            number: 0,
           },
         },
         {
@@ -70,7 +70,7 @@ export default {
           title: "户",
           right: {
             text: "客户总数",
-            number: 17,
+            number: 0,
           },
         },
       ],
@@ -105,6 +105,9 @@ export default {
     goDetails(title) {
       switch (title) {
         case "案":
+          this.$router.push({ path: "/projectManagement/caseList" });
+          break;
+        case "分":
           this.$router.push({ path: "/projectManagement/caseList" });
           break;
         case "约":

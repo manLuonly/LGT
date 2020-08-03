@@ -33,7 +33,6 @@
             style="width: 20px; height: 20px; cursor:pointer"
             :src="scope.row.icon_img"
             fit="cover"
-            lazy
             :preview-src-list="iconImgList"
             @click="addIconImg(scope.row)"
           ></el-image>
