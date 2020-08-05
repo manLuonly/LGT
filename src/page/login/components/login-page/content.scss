@@ -1,0 +1,356 @@
+@function pxtorem($value) {
+	@return ($value/100) + rem;
+}
+
+/*模版1*/
+
+.login-content1 {
+	position: absolute;
+	bottom: pxtorem(270);
+	right: pxtorem(270);
+	width: pxtorem(500);
+	color: #fff;
+	/deep/ .el-input--prefix {
+		.el-input__prefix {
+			display: flex !important;
+			align-items: center !important;
+		}
+		.el-input__inner {
+			height: pxtorem(60);
+			padding-left: pxtorem(50);
+			background: rgba(255, 255, 255, 0.32);
+			border: pxtorem(2) solid #39bdff;
+			color: #fff;
+
+			&:focus {
+				border: pxtorem(2) solid #39bdff;
+			}
+		}
+	}
+
+	.title {
+		font-size: pxtorem(50);
+		margin-bottom: pxtorem(60);
+		text-align: center;
+	}
+
+	.prefix_icon {
+		width: pxtorem(40);
+		height: pxtorem(40);
+		line-height: pxtorem(40);
+		font-size: pxtorem(30);
+	}
+
+	.submit_btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: pxtorem(60);
+		margin-top: pxtorem(60);
+		background: #39bdff;
+		border: none;
+		border-radius: pxtorem(7);
+		font-size: pxtorem(30);
+		color: #ffffff;
+	}
+}
+
+/*模版2*/
+.login-content2 {
+	position: absolute;
+	bottom: pxtorem(270);
+	right: pxtorem(270);
+	width: pxtorem(500);
+	padding: pxtorem(40);
+	border-radius: pxtorem(7);
+	color: #000;
+	background-color: #fff;
+	/deep/ .el-input--prefix {
+		.el-input__prefix {
+			display: flex !important;
+			align-items: center !important;
+			color: #5b5b5b;
+		}
+		.el-input__inner {
+			height: pxtorem(60);
+			padding-left: pxtorem(54);
+			background: rgba(255, 255, 255, 0.32);
+			border: none;
+			border-bottom: 1px solid #979797;
+			color: #5b5b5b;
+			border-radius: 0;
+
+			&::placeholder {
+				color: #5b5b5b;
+			}
+		}
+	}
+
+	.title {
+		font-size: pxtorem(50);
+		margin-bottom: pxtorem(60);
+		text-align: center;
+	}
+
+	.prefix_icon {
+		width: pxtorem(40);
+		height: pxtorem(40);
+		line-height: pxtorem(40);
+		font-size: pxtorem(30);
+	}
+
+	.submit_btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: pxtorem(60);
+		border: none;
+		margin-top: pxtorem(60);
+		background: #e83333;
+		border-radius: pxtorem(7);
+		font-size: pxtorem(30);
+		color: #ffffff;
+	}
+}
+
+
+
+/*模版3*/
+.login-content3 {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: pxtorem(500);
+	padding: pxtorem(40);
+	border-radius: pxtorem(7);
+	color: #fff;
+	/deep/ .el-input--prefix {
+		.el-input__prefix {
+			display: flex !important;
+			align-items: center !important;
+			color: #fff;
+		}
+		.el-input__inner {
+			height: pxtorem(60);
+			padding-left: pxtorem(54);
+			background: transparent;
+			border: none;
+			border-bottom: 1px solid #fff;
+			color: #fff;
+			border-radius: 0;
+
+			&::placeholder {
+				color: #fff;
+			}
+		}
+	}
+
+	.title {
+		font-size: pxtorem(50);
+		margin-bottom: pxtorem(60);
+		text-align: center;
+	}
+
+	.prefix_icon {
+		width: pxtorem(40);
+		height: pxtorem(40);
+		line-height: pxtorem(40);
+		font-size: pxtorem(30);
+	}
+
+	.submit_btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: pxtorem(60);
+		border: none;
+		margin-top: pxtorem(60);
+		background: #007AFF;
+		border-radius: pxtorem(7);
+		font-size: pxtorem(30);
+		color: #ffffff;
+	}
+}
+
+/*模版4*/
+.login-content4 {
+	position: absolute;
+	bottom: pxtorem(220);
+	right: pxtorem(270);
+	width: pxtorem(500);
+	padding: pxtorem(40);
+	border-radius: pxtorem(7);
+	color: #000;
+	background-color: #fff;
+	/deep/ .el-input--prefix {
+		.el-input__prefix {
+			display: flex !important;
+			align-items: center !important;
+			color: #5b5b5b;
+		}
+		.el-input__inner {
+			height: pxtorem(60);
+			padding-left: pxtorem(54);
+			background: rgba(255, 255, 255, 0.32);
+			border: none;
+			border-bottom: 1px solid #979797;
+			color: #5b5b5b;
+			border-radius: 0;
+
+			&::placeholder {
+				color: #5b5b5b;
+			}
+		}
+	}
+
+	.title {
+		font-size: pxtorem(50);
+		margin-bottom: pxtorem(60);
+		text-align: center;
+	}
+
+	.prefix_icon {
+		width: pxtorem(40);
+		height: pxtorem(40);
+		line-height: pxtorem(40);
+		font-size: pxtorem(30);
+	}
+
+	.submit_btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: pxtorem(60);
+		border: none;
+		margin-top: pxtorem(60);
+		background: #E87B2F;
+		border-radius: pxtorem(7);
+		font-size: pxtorem(30);
+		color: #ffffff;
+	}
+}
+
+
+/*模版5*/
+.login-content5 {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: pxtorem(500);
+	padding: pxtorem(40);
+	border-radius: pxtorem(7);
+	color: #fff;
+	/deep/ .el-input--prefix {
+		.el-input__prefix {
+			display: flex !important;
+			align-items: center !important;
+			color: #5B5B5B;
+		}
+		.el-input__inner {
+			height: pxtorem(60);
+			padding-left: pxtorem(54);
+			background: #FFFFFF;
+			border: none;
+			border-bottom: 1px solid #979797;
+			color: #5B5B5B;
+
+			&::placeholder {
+				color: #5B5B5B;
+			}
+		}
+	}
+
+	.title {
+		font-size: pxtorem(50);
+		margin-bottom: pxtorem(60);
+		text-align: center;
+	}
+
+	.prefix_icon {
+		width: pxtorem(40);
+		height: pxtorem(40);
+		line-height: pxtorem(40);
+		font-size: pxtorem(30);
+	}
+
+	.submit_btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: pxtorem(60);
+		border: none;
+		margin-top: pxtorem(60);
+		background: #00CC99;
+		border-radius: pxtorem(7);
+		font-size: pxtorem(30);
+		color: #ffffff;
+	}
+}
+
+
+/*模版6*/
+.login-content6 {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: pxtorem(500);
+	padding: pxtorem(40);
+	border-radius: pxtorem(7);
+	color: #fff;
+	/deep/ .el-input--prefix {
+		.el-input__prefix {
+			display: flex !important;
+			align-items: center !important;
+			color: #5B5B5B;
+		}
+		.el-input__inner {
+			height: pxtorem(60);
+			padding-left: pxtorem(54);
+			background: #FFFFFF;
+			border: none;
+			border-bottom: 1px solid #979797;
+			color: #5B5B5B;
+			box-shadow: 0 0 19px 5px rgba(0,203,255,0.81);
+
+			&::placeholder {
+				color: #5B5B5B;
+			}
+		}
+	}
+
+	.title {
+		font-size: pxtorem(50);
+		margin-bottom: pxtorem(60);
+		text-align: center;
+	}
+
+	.prefix_icon {
+		width: pxtorem(40);
+		height: pxtorem(40);
+		line-height: pxtorem(40);
+		font-size: pxtorem(30);
+	}
+
+	.submit_btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: pxtorem(60);
+		border: none;
+		margin-top: pxtorem(60);
+		background: #fff;
+		border-radius: pxtorem(7);
+		font-size: pxtorem(30);
+		color: #2F3756;
+		box-shadow: 0 0 19px 5px rgba(0,203,255,0.81);
+	}
+}

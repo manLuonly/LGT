@@ -11,10 +11,7 @@
               <span class="name avatarname">{{ trueName }}</span>
             </div>
             <el-dropdown>
-              <img
-                :src="avatar"
-                class="avatar"
-              />
+              <img :src="avatar" class="avatar" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getParameter('updatePwd')">修改密码</el-dropdown-item>
               </el-dropdown-menu>
@@ -69,23 +66,14 @@
 
 <script>
 import { mapGetters } from "vuex";
-import {
-  removeToken,
-  removeName,
-  removeAvatar,
-  getName,
-  getAvatar,
-} from "@/utils/auth";
-import store from "@/store";
+import { getName, getAvatar } from "@/utils/auth";
 import topMenu from "./topMenu";
-import { logout } from "@/api/user";
-import router from "../router";
 
 export default {
   name: "head-nav",
   data() {
     var validatePass = (rule, value, callback) => {
-      if (value === "") {
+      if (!value) {
         callback(new Error("请输入密码"));
       } else {
         if (this.ruleForm.checkPass !== "") {
@@ -95,7 +83,7 @@ export default {
       }
     };
     var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
+      if (!value) {
         callback(new Error("请再次输入密码"));
       } else if (value !== this.ruleForm.pass) {
         callback(new Error("两次输入密码不一致!"));
@@ -108,7 +96,8 @@ export default {
         userBgcolor: "#f0f2f5",
       },
       trueName: "卢广宗",
-      avatar: "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1582757028,805496526&fm=26&gp=0.jpg",
+      avatar:
+        "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1582757028,805496526&fm=26&gp=0.jpg",
       updatePwd: false,
       ruleForm: {
         pass: "",
@@ -131,25 +120,15 @@ export default {
       return document.body.clientWidth - this.sidebar.width;
     },
   },
-  created() {},
+
   mounted() {
-    this.trueName = getName("name") ? getName("name") : '管理员';
+    this.trueName = getName("name") ? getName("name") : "管理员";
     this.avatar = getAvatar("Avatar") ? getAvatar("Avatar") : this.avatar;
   },
   methods: {
     // 退出登录
     logout() {
-      logout()
-        .then((res) => {
-          removeToken();
-          removeName();
-          removeAvatar();
-          this.$router.push({ path: "/login" });
-          window.location.reload();
-        })
-        .catch((err) => {
-          console.log(err, "err");
-        });
+      this.$store.dispatch("LogOut");
     },
     // 修改密码
     getParameter(val) {

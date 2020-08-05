@@ -1,6 +1,6 @@
 import * as mUtils from '@/utils/mUtils'
-import { logout } from '@/api/user'
-import { getToken, removeToken } from '@/utils/auth'
+import { login, logout, getIp, admin } from '@/api/home'
+import { getToken, setToken, removeToken, setName, removeName } from '@/utils/auth'
 
 
 const user = {
@@ -43,12 +43,28 @@ const user = {
         },
     },
     actions: {
-        //登出
-        LogOut({ commit, reqData }) {
+        // 登录
+        Login({ commit }, form) {
             return new Promise((resolve, reject) => {
-                logout(reqData).then(response => {
+                login(form)
+                    .then((res) => {
+                        setToken("Token", res.token);
+                        setName("name", res.data.username);
+                        getIp().then((res) => {
+                            setStore("ip", res.data.ip);
+                        });
+                        admin().then(() => {});
+                        resolve()
+                    })
+            })
+        },
+        // 登出
+        LogOut({ commit }) {
+            return new Promise((resolve, reject) => {
+                logout().then(() => {
                     commit('SET_ROLES', [])
                     removeToken('Token')
+                    removeName('name')
                     resolve()
                 })
             })

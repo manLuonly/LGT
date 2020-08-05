@@ -38,7 +38,9 @@ export const constantRouterMap = [{
         path: '/login',
         name: 'login',
         component: () =>
-            import ('@/page/login'),
+            import ('@/page/login/components/login-page'),
+        //    component: () =>
+        // import ('@/page/login'),
         hidden: true
     },
     {
@@ -217,9 +219,6 @@ export const asyncRouterMap = [{
  * 
  * 
  * 
- * 什么情况下，路由会定位到404页面?
- * 路由中redirect:'',不起作用？
- * 三级子菜单要在顶部展示？
  * 
  * 
  * 

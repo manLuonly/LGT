@@ -52,7 +52,7 @@ module.exports = {
         port: 8081,
         proxy: {
             '/': {
-                target: "http://192.168.31.170:9000",
+                target: "http://222.217.127.29:9999",
                 changeOrigin: true
             }
         }

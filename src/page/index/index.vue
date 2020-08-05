@@ -25,7 +25,7 @@
 <script>
 import money from "./components/money";
 import reservation from "./components/reservation";
-import { nums } from "@/api/home";
+import { nums, login } from "@/api/home";
 
 export default {
   data() {
@@ -89,9 +89,13 @@ export default {
     },
   },
   mounted() {
+    this.getToken();
     this.getDataList();
   },
   methods: {
+    getToken() {
+      login().then((res) => {});
+    },
     getDataList() {
       nums().then((res) => {
         this.infoForm[0].right.number = res.data.caseListNum; // 案例总数

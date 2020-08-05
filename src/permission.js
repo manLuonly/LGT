@@ -4,7 +4,7 @@ import NProgress from 'nprogress' // Progress 进度条
 process.env.NODE_ENV === "development" &&
     import ('nprogress/nprogress.css')
 import { Message } from 'element-ui'
-import { getToken } from '@/utils/auth' // 验权(从cookie中获取)
+import { getToken, getName } from '@/utils/auth' // 验权(从cookie中获取)
 import {
     setTitle
 } from '@/utils/mUtils' // 设置浏览器头部标题
@@ -33,14 +33,15 @@ router.beforeEach((to, from, next) => {
             if (store.getters.roles.length === 0) {
                 let token = getToken('Token');
                 if (token) {
-                    const userList = {
-                        avatar: 'https://wx.qlogo.cn/mmopen/vi_32/un2HbJJc6eiaviaibvMgiasFNlVDlNOb9E6WCpCrsO4wMMhHIbsvTkAbIehLwROVFlu8dLMcg00t3ZtOcgCCdcxlZA/132',
-                        name: 'admin',
-                        roles: ['admin']
+                    let name = getName();
+                    let userList = {
+                        avatar: '',
+                        name: name,
+                        roles: [name]
                     }
                     store.commit("SET_ROLES", userList.roles);
-                    store.commit("SET_NAME", userList.name);
-                    store.commit("SET_AVATAR", userList.avatar);
+                    store.commit("SET_NAME", name);
+                    // store.commit("SET_AVATAR", userList.avatar);
                     store.dispatch('GenerateRoutes', { "roles": userList.roles }).then(() => { // 根据roles权限生成可访问的路由表
                         router.addRoutes(store.getters.addRouters) // 动态添加可访问权限路由表
                         next({...to, replace: true }) // hack方法 确保addRoutes已完成

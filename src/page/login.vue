@@ -7,7 +7,7 @@
           <span class="text">智能桂联</span>
         </div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm" class="loginForm">
-          <el-form-item prop="user" class="login-item">
+          <el-form-item prop="username" class="login-item">
             <span class="loginTips">
               <icon-svg icon-class="icon-user" />
             </span>
@@ -16,7 +16,7 @@
               class="area"
               type="text"
               placeholder="用户名"
-              v-model="loginForm.user"
+              v-model="loginForm.username"
             ></el-input>
           </el-form-item>
           <el-form-item prop="password" class="login-item">
@@ -55,19 +55,15 @@
 </template>
 
 <script>
-import { login } from "@/api/user";
-import { setToken, setName, setAvatar } from "@/utils/auth";
-import { getIp } from "@/api/home";
-
 export default {
   data() {
     return {
       loginForm: {
-        user: "",
+        username: "",
         password: "",
       },
       rules: {
-        user: [
+        username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
           { min: 2, max: 8, message: "长度在 2 到 8 个字符", trigger: "blur" },
         ],
@@ -78,41 +74,20 @@ export default {
   mounted() {},
   methods: {
     loginByWechat() {},
-    showMessage(type, message) {
-      this.$message({
-        type: type,
-        message: message,
-      });
-    },
     submitForm(loginForm) {
-      setToken("Token", "YGF");
       this.$refs[loginForm].validate((valid) => {
         if (valid) {
-          this.$router.push({ path: "/" });
-          this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
-          getIp().then((res) => {
-            setStore("ip", res.data.ip);
-          });
-          // this.loginForm.password = this.$md5(this.loginForm.password);
-          // let userinfo = this.loginForm;
-          // login(userinfo)
-          //   .then((res) => {
-          //     if (res.code === 0) {
-          //       setToken("Token", res.success);
-          //       setName("name", res.user_name);
-          //       setAvatar("Avatar", res.head);
-          //       setTimeout(() => {
-          //         this.$router.push({ path: "/" });
-          //         this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
-          //       }, 1500);
-          //     } else {
-          //       this.loginForm.password = "";
-          //     }
-          //   })
-          //   .catch((err) => {
-          //     if (err) this.loginForm.password = "";
-          //     this.showMessage("error", "登录失败,请重新登录");
-          //   });
+          // this.loginForm.password = _md5(this.loginForm.password);
+          let userinfo = this.loginForm;
+          this.$store.dispatch("Login", userinfo)
+            .then(() => {
+              this.$router.push({ path: "/" });
+              this.$store.dispatch("initLeftMenu"); //设置左边菜单始终为展开状态
+            })
+            .catch((err) => {
+              if (err) this.loginForm.password = "";
+              this.message("登录失败,请重新登录", "error");
+            });
         }
       });
     },

@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Message } from 'element-ui';
+import { Message, MessageBox } from 'element-ui';
 import store from '../store';
-import { getToken } from '@/utils/auth';
+import { getToken, removeToken, removeName } from '@/utils/auth';
 
 
 // 创建axios实例
@@ -11,11 +11,7 @@ let service = axios.create({
     })
     // request拦截器
 service.interceptors.request.use(config => {
-    if (store.getters.token) {
-        config.headers = {
-            'Authorization': "Token " + getToken('Token'), //携带权限参数
-        };
-    }
+    config.headers['token'] = getToken().Token;
     return config
 }, error => {
     Promise.reject(error)
@@ -34,6 +30,20 @@ service.interceptors.response.use(
                     type: 'error',
                     duration: 5 * 1000
                 })
+
+                if (res.code === -1 || res.code === -2 || res.code === -3 || res.code === -4) {
+                    MessageBox.confirm('你已被登出，请重新登录', '确定登出', {
+                        showCancelButton: false, // 不显示取消按钮
+                        confirmButtonText: '重新登录',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        // store.dispatch(['LogOut'])
+                        removeToken('Token')
+                        removeName('name')
+                        location.reload();
+                    })
+                }
                 return Promise.reject(response.data)
             }
         } else {

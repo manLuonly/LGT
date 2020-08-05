@@ -2,6 +2,45 @@ import request from '@/utils/axios';
 import { local } from "@/utils/env";
 
 
+
+/**
+ *登录接口
+ *
+ * @export
+ * @param {*} params 
+ * @returns 
+ */
+export function login(params) {
+    return request({
+        url: '/login',
+        method: 'get',
+        params
+    })
+}
+
+export function logout() {
+    return request({
+        url: '/logout',
+        method: 'post'
+    })
+}
+
+
+
+export function admin() {
+    return request({
+        url: '/admin',
+        method: 'post'
+    })
+}
+
+export function user() {
+    return request({
+        url: '/user',
+        method: 'post'
+    })
+}
+
 /**
  *
  * 首页参数统计
@@ -51,7 +90,7 @@ export function reservationFn(day) {
  */
 export function getIp() {
     return request({
-        url: `${local}/common/ip`,
+        url: `${local}/realIp`,
         method: 'get'
     })
 }
